@@ -26,7 +26,7 @@
     ]
   },
   "fine-bonecraft": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Orc Fang) removed from Fine-tier processed goods. Confirmed in game (Superior Additive no longer needs Orc Fang); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-bonecraft",
