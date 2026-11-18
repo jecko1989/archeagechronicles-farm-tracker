@@ -230,6 +230,18 @@ function reconcile(p, items) {
   return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates }, dropped };
 }
 
+// ---- file offline: i dati stanno dentro la pagina, in un blocco JSON con id "embedded-data" ----
+// embeddedFetch(data) imita fetch(): serve meta.json, items.json e overrides.json dai dati incorporati.
+function embeddedFetch(data) {
+  const files = { 'meta.json': data.meta, 'items.json': data.items, 'overrides.json': data.overrides };
+  return async (url) => {
+    const body = files[String(url).split('/').pop()];
+    return body === undefined
+      ? { ok: false, status: 404, json: async () => ({}) }
+      : { ok: true, status: 200, json: async () => body };
+  };
+}
+
 // ---- ordine del selettore: rarità dal più scarso al più forte, poi alfabetico ----
 // entries: [[id, item]]. Rarità sconosciuta o mancante: in fondo. Non modifica l'array ricevuto.
 const RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
@@ -368,7 +380,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -608,7 +620,11 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   async function start() {
     loadState = 'loading'; renderStatus();
     try {
-      const d = await C.loadData(dataUrl());
+      // nel file offline i dati sono incorporati: niente rete e niente cache; altrimenti si scaricano da data/
+      const emb = document.getElementById('embedded-data');
+      const d = emb
+        ? await C.loadData('embedded/', { fetchFn: C.embeddedFetch(JSON.parse(emb.textContent)), storage: { getItem: () => null, setItem() {} } })
+        : await C.loadData(dataUrl());
       items = d.items; meta = d.meta; offline = d.offline;
       craftable = Object.entries(items).filter(([, it]) => it.crafts.length);
       loadSaved();

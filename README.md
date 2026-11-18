@@ -16,6 +16,9 @@ Pick the items you want to craft in **ArcheAge Chronicles** and find out which m
 
 It also works as a local file: download `index.html` and open it. Data is always read from this repository (`data/`), so it stays up to date without downloading anything again. After the first load the latest version is cached and the page works offline.
 
+### Single offline file
+`node scraper/build-offline.mjs` creates `dist/farm-tracker-offline.html`: one file with the data embedded, which works with a double click (no server, no internet; only the item icons need a connection). It needs `data/items.json` and `data/meta.json` on your machine, and `dist/` is git-ignored. The file contains MetaForge data, so please do not republish it without MetaForge's permission.
+
 ## How the data is kept up to date
 A scraper (`scraper/`, Node 20 + Playwright) reads the [MetaForge](https://metaforge.app/archeage-chronicles/database) database and regenerates `data/items.json` and `data/meta.json`. A GitHub Action (`.github/workflows/scrape.yml`) runs it on demand from the *Actions* tab and commits only if something changed; the weekly schedule (every Monday) is ready but **switched off** until MetaForge gives permission. If the safety checks fail (far fewer items, unknown ingredients, empty recipes) nothing is written and the Action fails.
 
