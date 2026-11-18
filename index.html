@@ -533,7 +533,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
-          `<span class="num${missing ? '' : ' done'}">= ${missing ? fmt(missing) : '✓'}</span></div>`; // "=": Servono − Hai = Mancano
+          `<span class="num${missing ? '' : ' done'}">${missing ? fmt(missing) : '✓'}</span></div>`;
       }).join('')
     ).join('');
 
