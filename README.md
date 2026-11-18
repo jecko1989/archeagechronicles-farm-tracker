@@ -42,7 +42,7 @@ When a patch changes recipes before MetaForge updates its database, they can be 
 ```
 Allowed fields (all refer to the first recipe): `ingredients` (replaces the list), `gold`, `yield`, `note`. An invalid correction is ignored. Once MetaForge catches up, the entry should be removed.
 
-The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. Only Standard Bonecraft, Fine Additive and Fine Bonecraft are **confirmed in game**; the others are derived by analogy and still need checking. The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
+The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. Five are **confirmed in game** (Standard Bonecraft, Standard Additive, Fine Additive, Fine Bonecraft, Fine Stone); the other 12 are derived by analogy and still need checking. The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
 
 ### `data/items.json` format
 ```json

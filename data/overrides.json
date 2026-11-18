@@ -78,7 +78,7 @@
     ]
   },
   "fine-stone": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Twisted Scale) removed from Fine-tier processed goods. Ingredients confirmed in game (18 Standard Stone + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-stone",
@@ -113,7 +113,7 @@
     ]
   },
   "standard-additive": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed. Ingredients confirmed in game (3 Wild Petal only); gold 100 -> 125 by analogy with Standard Bonecraft (confirmed).",
     "ingredients": [
       {
         "id": "wild-petal",
