@@ -45,6 +45,53 @@ test('un ciclo di ricette non lancia e produce un warning cycle:', () => {
   assert.ok(Object.keys(r.materials).length > 0);
 });
 
+// ---- ordine dei passi: dai più basilari fino all'oggetto finale ----
+const rec = (ingredients) => ({ crafts: [{ profession: 'P', level: 1, stations: ['S'], gold: 0, ingredients }] });
+const raw = () => ({ crafts: [] });
+
+test('i passi sono in ordine di crafting: gli ingredienti prima dell oggetto', () => {
+  const r = computeNeeds(items, [{ id: 'hood', qty: 1 }]);
+  assert.deepEqual(r.steps.map((s) => s.id), ['textile', 'hood']);
+  assert.deepEqual(r.steps.map((s) => s.depth), [0, 1]);
+});
+
+test('catena a più livelli: ogni passo viene dopo tutti i suoi ingredienti', () => {
+  const chain = {
+    a: rec([{ id: 'b', qty: 1 }, { id: 'c', qty: 1 }]),
+    b: rec([{ id: 'c', qty: 2 }, { id: 'x', qty: 1 }]),
+    c: rec([{ id: 'y', qty: 1 }]),
+    x: raw(), y: raw(),
+  };
+  const r = computeNeeds(chain, [{ id: 'a', qty: 1 }]);
+  assert.deepEqual(r.steps.map((s) => s.id), ['c', 'b', 'a']);
+  assert.deepEqual(r.steps.map((s) => s.depth), [0, 1, 2]);
+});
+
+test('un intermedio condiviso compare una volta sola, prima di entrambi i genitori, con la quantità sommata', () => {
+  const chain = {
+    a: rec([{ id: 'b', qty: 1 }, { id: 'c', qty: 1 }]),
+    b: rec([{ id: 'c', qty: 2 }]),
+    c: rec([{ id: 'y', qty: 1 }]),
+    y: raw(),
+  };
+  const r = computeNeeds(chain, [{ id: 'a', qty: 1 }]);
+  assert.deepEqual(r.steps.map((s) => s.id), ['c', 'b', 'a']);
+  assert.equal(r.steps[0].times, 3); // 1 per a + 2 per b
+  assert.equal(r.materials.y, 3);
+});
+
+test('più obiettivi: l obiettivo che serve a un altro viene prima', () => {
+  const chain = { a: rec([{ id: 'b', qty: 1 }]), b: rec([{ id: 'y', qty: 1 }]), y: raw() };
+  const r = computeNeeds(chain, [{ id: 'a', qty: 1 }, { id: 'b', qty: 1 }]);
+  assert.deepEqual(r.steps.map((s) => s.id), ['b', 'a']);
+  assert.equal(r.steps[0].times, 2);
+});
+
+test('con intermedi da farmare restano solo i passi degli obiettivi, tutti a depth 0', () => {
+  const r = computeNeeds(items, [{ id: 'hood', qty: 1 }], { expandIntermediates: false });
+  assert.deepEqual(r.steps.map((s) => [s.id, s.depth]), [['hood', 0]]);
+});
+
 test('un id sconosciuto produce un warning unknown: senza eccezioni', () => {
   const r = computeNeeds(items, [{ id: 'ghost', qty: 1 }]);
   assert.ok(r.warnings.includes('unknown:ghost'));

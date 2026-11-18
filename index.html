@@ -50,6 +50,7 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 #suggestions li button:hover { background: rgba(237, 126, 29, .08); }
 #suggestions li button { display: flex; align-items: center; gap: 10px; }
 .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.no { flex: none; min-width: 1.6em; text-align: right; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 .ico { width: 32px; height: 32px; object-fit: contain; flex: none; background: var(--field); border-radius: 6px; }
 .picker { max-height: 320px; overflow-y: auto; border: 1px solid var(--divider); border-radius: 8px; padding: 0 8px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -168,10 +169,10 @@ function computeNeeds(items, targets, opts) {
   // 2) propaga la domanda dall'alto verso il basso
   const steps = [];
   let gold = 0;
-  for (const id of order.reverse()) {
+  for (const id of [...order].reverse()) {
     const craft = recipe(id);
     const times = Math.ceil(demand[id] / (craft.yield || 1));
-    steps.push({ id, times, craft });
+    steps.push({ id, times, craft, depth: 0 });
     gold += (craft.gold || 0) * times;
     for (const ing of craft.ingredients) {
       if (!items[ing.id]) warn('unknown:' + ing.id);
@@ -179,6 +180,20 @@ function computeNeeds(items, targets, opts) {
       else add(materials, ing.id, ing.qty * times);
     }
   }
+
+  // 3) profondità = 0 se servono solo materiali grezzi, altrimenti 1 + la più alta tra gli ingredienti craftati.
+  //    `order` è in post-ordine: gli ingredienti arrivano prima di chi li usa.
+  const depth = {};
+  for (const id of order) {
+    let d = 0;
+    for (const ing of recipe(id).ingredients) {
+      if (items[ing.id] && expandable(ing.id) && !cyclic.has(id + '>' + ing.id)) d = Math.max(d, depth[ing.id] + 1);
+    }
+    depth[id] = d;
+  }
+  for (const s of steps) s.depth = depth[s.id];
+  // ordine di crafting: dal più basilare all'oggetto finale (ogni ingrediente ha profondità minore del suo uso)
+  steps.sort((a, b) => a.depth - b.depth || a.craft.profession.localeCompare(b.craft.profession) || (a.id < b.id ? -1 : 1));
   return { materials, steps, gold, warnings };
 }
 
@@ -260,7 +275,8 @@ const STRINGS = {
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
-    h_steps: 'Crafting steps', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
+    h_steps: 'Crafting steps', stage: 'Stage {n}',
+    steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above.', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
     dropped: 'Removed because they are no longer in the database:',
     h_progress: 'Progress', export: 'Export', import: 'Import',
     progress_note: 'Your progress stays in this browser. Export it to move it to another device.',
@@ -280,7 +296,8 @@ const STRINGS = {
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
-    h_steps: 'Passi di crafting', level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
+    h_steps: 'Passi di crafting', stage: 'Fase {n}',
+    steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra.", level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
     dropped: 'Rimossi perché non più nel database:',
     h_progress: 'Progressi', export: 'Esporta', import: 'Importa',
     progress_note: 'I progressi restano in questo browser. Esportali per spostarli su un altro dispositivo.',
@@ -428,19 +445,24 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       }).join('')
     ).join('');
 
-    const byProf = {};
-    for (const s of r.steps) (byProf[s.craft.profession] ||= []).push(s);
-    const stepHtml = Object.keys(byProf).sort().map((p) =>
-      `<h3>${esc(p)}</h3>` + byProf[p].sort((a, b) => a.craft.level - b.craft.level || name(a.id).localeCompare(name(b.id))).map((s) =>
-        `<div class="step nm">${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} <small>· ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
-      ).join('')
+    // passi in ordine di crafting: fase 1 = solo materiali grezzi, ultima fase = l'oggetto finale
+    const byStage = {};
+    for (const s of r.steps) (byStage[s.depth] ||= []).push(s);
+    let n = 0;
+    const stepHtml = Object.keys(byStage).map(Number).sort((a, b) => a - b).map((d) =>
+      `<h3>${esc(t('stage', { n: d + 1 }))}</h3>` + byStage[d]
+        .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
+        .map((s) =>
+          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} ` +
+          `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
+        ).join('')
     ).join('');
 
     box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${toggle}
       <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
       <div class="line head"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span>${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
       ${matHtml}
-      <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2>${stepHtml}
+      <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2><p class="muted">${esc(t('steps_hint'))}</p>${stepHtml}
       <p>${esc(t('total_cost'))} <strong>${fmt(r.gold)} Gold</strong></p>
       ${r.warnings.length ? `<p class="warn">${esc(t('warnings'))} ${r.warnings.map(esc).join(', ')}</p>` : ''}
       ${dropped.length ? `<p class="warn">${esc(t('dropped'))} ${dropped.map(esc).join(', ')}</p>` : ''}`;
