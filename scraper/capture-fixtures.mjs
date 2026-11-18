@@ -9,6 +9,8 @@ const PAGES = {
   'listing-armor-1': '/database/armor/page/1',
   'lifeflow-potion': '/database/consumables/lifeflow-potion', // yield 5 + tre stazioni "A, B or C"
   'city-guard-longsword': '/database/weapons/city-guard-longsword', // arma: statistiche diverse dall'armatura
+  'large-gothic-house': '/database/housing/large-gothic-house-1f-2', // casa: nella lista ingredienti compare l'oggetto stesso
+  'station-atelier': '/database/housing/station-atelier', // postazione di Ingegneria
 };
 
 mkdirSync(new URL('./tests/fixtures/', import.meta.url), { recursive: true });

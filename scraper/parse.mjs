@@ -12,7 +12,8 @@ function label($, names) {
 }
 
 // Ogni sezione "How to Craft …" ha: <p>Crafted at the A or B with Prof level N. Costs G Gold.</p> + <ul> di "N x <link>".
-function parseCrafts($) {
+// self = slug dell'oggetto: nelle case/annessi la lista ingredienti inizia con "1 x <l'oggetto stesso>", che è il prodotto.
+function parseCrafts($, self) {
   const crafts = [];
   const refs = [];
   $('h2').filter((_, e) => /^How to Craft/.test(norm($(e).text()))).each((_, h2) => {
@@ -38,6 +39,7 @@ function parseCrafts($) {
           if (!q || !href) return;
           const parts = href.split('/').filter(Boolean);
           const ref = { id: parts[parts.length - 1], category: parts[parts.length - 2] };
+          if (ref.id === self) return; // è il prodotto, non un ingrediente
           current.ingredients.push({ id: ref.id, qty: Number(q[1].replace(/,/g, '')) });
           if (!refs.some((r) => r.id === ref.id)) refs.push(ref);
         });
@@ -81,7 +83,7 @@ function parseInfo($, typeLabel) {
 // html: pagina oggetto di MetaForge. ctx.category: cartella dell'URL (armor, materials, ...).
 export function parseItemPage(html, ctx) {
   const $ = cheerio.load(html);
-  const { crafts, refs } = parseCrafts($);
+  const { crafts, refs } = parseCrafts($, ctx.slug);
   const labels = $('dt').map((_, e) => norm($(e).text())).get();
   const typeLabel = ['Type', 'Armor Type'].find((n) => labels.includes(n)) || labels.find((n) => /Type$/.test(n)) || '';
   const type = (typeLabel && label($, [typeLabel])) || ctx.category;

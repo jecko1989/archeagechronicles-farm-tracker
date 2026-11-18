@@ -97,6 +97,38 @@ test('pagina con solo categoria, rarità e tipo: nessun campo info', () => {
   assert.equal('info' in item, false);
 });
 
+// ---- Housing: case, annessi e postazioni (professione Ingegneria) ----
+test('casa: la riga "1 x <la casa stessa>" non è un ingrediente', needs('large-gothic-house'), () => {
+  const { item, refs } = parseItemPage(fx('large-gothic-house'), { slug: 'large-gothic-house-1f-2', category: 'housing' });
+  assert.equal(item.name, 'Large Gothic House (1F)');
+  assert.equal(item.type, 'Houses');
+  assert.deepEqual(item.crafts, [{
+    profession: 'Engineering', level: 1, stations: ['Construction Workshop', 'Engineering Workbench'], gold: 300000,
+    ingredients: [{ id: 'fine-stone', qty: 180 }, { id: 'fine-lumber', qty: 72 }, { id: 'superior-stone', qty: 6 }, { id: 'thunderstruck-shell', qty: 10 }],
+  }]);
+  assert.equal(refs.some((r) => r.id === 'large-gothic-house-1f-2'), false);
+});
+
+test('postazione: la blueprint "1 x Atelier" è un ingrediente vero', needs('station-atelier'), () => {
+  const { item, refs } = parseItemPage(fx('station-atelier'), { slug: 'station-atelier', category: 'housing' });
+  assert.equal(item.type, 'Stations');
+  assert.equal(item.crafts[0].gold, 45000);
+  assert.deepEqual(item.crafts[0].ingredients, [
+    { id: 'atelier', qty: 1 }, { id: 'fine-stone', qty: 30 }, { id: 'fine-lumber', qty: 60 },
+    { id: 'superior-textile', qty: 1 }, { id: 'tough-wild-fiber', qty: 3 },
+  ]);
+  assert.deepEqual(refs.find((r) => r.id === 'atelier'), { id: 'atelier', category: 'housing' });
+});
+
+test('un ingrediente uguale all oggetto stesso viene scartato anche in una pagina minima', () => {
+  const html = '<main><h1>Casa</h1><section><h2>How to Craft Casa</h2><p>Crafted at the Bench with Engineering level 1. Costs 10 Gold.</p>' +
+    '<ul><li><span>1 x <a href="/archeage-chronicles/database/housing/casa">Casa</a></span></li>' +
+    '<li><span>5 x <a href="/archeage-chronicles/database/materials/stone">Stone</a></span></li></ul></section></main>';
+  const { item, refs } = parseItemPage(html, { slug: 'casa', category: 'housing' });
+  assert.deepEqual(item.crafts[0].ingredients, [{ id: 'stone', qty: 5 }]);
+  assert.deepEqual(refs, [{ id: 'stone', category: 'materials' }]);
+});
+
 test('senza riga Costs il gold vale 0', needs('no-gold'), () => {
   const { item } = parseItemPage(fx('no-gold'), { slug: 'cultist-hood', category: 'armor' });
   assert.equal(item.crafts[0].gold, 0);

@@ -2,7 +2,26 @@ import * as cheerio from 'cheerio';
 import { BASE } from './browser.mjs';
 import { parseItemPage } from './parse.mjs';
 
-export const CATEGORIES = ['weapons', 'armor', 'accessories', 'bags', 'gliders', 'consumables', 'materials', 'tools'];
+// housing: case, annessi e postazioni, craftati con Ingegneria (le 15 "Crafting Stations" non hanno ricetta: sono dove si crafta)
+export const CATEGORIES = ['weapons', 'armor', 'accessories', 'bags', 'gliders', 'consumables', 'materials', 'tools', 'housing'];
+
+// Categorie in cui si scaricano solo certi tipi (terza colonna dell'elenco). Housing ha ~270 voci, per lo più arredi:
+// si craftano con Ingegneria solo case, annessi e postazioni.
+export const CATEGORY_TYPES = { housing: ['Houses', 'Annexes', 'Stations'] };
+
+// {slug: tipo} dalla terza colonna dell'elenco di una categoria.
+export function listItemTypes(html, category) {
+  const $ = cheerio.load(html);
+  const prefix = `/archeage-chronicles/database/${category}/`;
+  const types = {};
+  $('main tr').each((_, tr) => {
+    const href = $(tr).find('a[href]').filter((__, a) => $(a).attr('href').startsWith(prefix)).first().attr('href');
+    if (!href) return;
+    const slug = href.slice(prefix.length);
+    if (slug && !/[/?#]/.test(slug)) types[slug] = $(tr).find('td').eq(2).text().replace(/\s+/g, ' ').trim();
+  });
+  return types;
+}
 
 // Slug unici degli oggetti elencati in una pagina di categoria (esclude paginazione e altre categorie).
 export function listItemLinks(html, category) {
@@ -70,7 +89,10 @@ export async function crawlAll(getHtml, opts = {}) {
       const html = await fetchPage(`${BASE}/database/${category}/page/${page}`);
       const fresh = listItemLinks(html, category).filter((s) => !seen.has(s));
       if (!fresh.length) break; // pagina vuota o ripetuta: stop (evita loop su redirect)
-      fresh.forEach((s) => { seen.add(s); queue.push({ id: s, category }); });
+      const onlyTypes = CATEGORY_TYPES[category];
+      const types = onlyTypes ? listItemTypes(html, category) : {};
+      // `fresh` guida la paginazione; in coda vanno solo gli oggetti dei tipi voluti
+      fresh.forEach((s) => { seen.add(s); if (!onlyTypes || onlyTypes.includes(types[s])) queue.push({ id: s, category }); });
       Object.assign(icons, listItemIcons(html, category));
       max = Math.max(max, maxPage(html));
       page++;
@@ -79,7 +101,7 @@ export async function crawlAll(getHtml, opts = {}) {
   }
 
   const items = {};
-  const visited = new Set();
+  const visited = new Set(opts.known || []); // opts.known: id già presenti nei dati, non si riscaricano né si restituiscono
   while (queue.length) {
     const { id, category } = queue.shift();
     if (visited.has(id)) continue;

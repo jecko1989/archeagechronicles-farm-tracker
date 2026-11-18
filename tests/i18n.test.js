@@ -37,6 +37,6 @@ test('chiave inesistente: restituisce la chiave, non lancia', () => {
 });
 
 test('i nomi delle sezioni esistono per tutte le categorie dei dati', () => {
-  const cats = ['weapons', 'armor', 'accessories', 'bags', 'gliders', 'consumables', 'tools', 'materials'];
+  const cats = ['weapons', 'armor', 'accessories', 'bags', 'gliders', 'consumables', 'tools', 'materials', 'housing'];
   for (const lang of ['en', 'it']) for (const c of cats) assert.ok(`sec_${c}` in core.STRINGS[lang], `${lang} sec_${c}`);
 });
