@@ -8,7 +8,7 @@ Scegli gli oggetti che vuoi craftare in **ArcheAge Chronicles** e scopri quali m
 
 ## Come si usa
 1. **Scegli cosa craftare.** Sfoglia le sezioni (Armi, Armature, Accessori, …) e i tipi, oppure scrivi per filtrare la lista. La lista è ordinata per rarità, dalla più scarsa alla più forte (Common → Uncommon → Rare → Epic → Legendary), e in ordine alfabetico dentro ogni rarità. Clicca un oggetto per aggiungerlo, oppure premi Invio per aggiungere il primo della lista.
-   **Passa il mouse su un oggetto della lista o della tua selezione** (o selezionalo con la tastiera, o toccalo su uno schermo touch) per vederne i dettagli come su MetaForge: livello, slot, set, peso, durabilità, prezzo di vendita, statistiche, opzioni casuali, descrizione e ricetta di crafting.
+   **Passa il mouse su un oggetto della lista o della tua selezione, o sull'icona di un materiale o di un passo di crafting,** (o selezionalo con la tastiera, o toccalo su uno schermo touch) per vederne i dettagli come su MetaForge: livello, slot, set, peso, durabilità, prezzo di vendita, statistiche, opzioni casuali, descrizione e ricetta di crafting.
 2. **Leggi i materiali** da farmare: *Servono / Hai / Mancano*. Con i pulsanti −/+ segni quanti ne hai già. Clicca su un materiale (o su un passo di crafting) per aprire la sua pagina su MetaForge in una nuova scheda, per esempio per vedere dove si trova.
 3. **Segui i passi di crafting** dall'alto in basso: sono numerati e divisi in fasi, dagli oggetti più basilari (solo materiali grezzi) fino all'oggetto che vuoi craftare.
 4. Con **Intermedi** scegli se materiali come *Standard Textile* sono da craftare (si scende fino ai grezzi) o da farmare.

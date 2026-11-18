@@ -78,6 +78,7 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .line.mat { grid-template-columns: minmax(0, 1fr) 5rem 10.5rem 7rem; } /* rem, non em: l'intestazione ha un carattere più piccolo */
 .line.mat .have { justify-content: center; }
 .ctr { text-align: center; }
+.ico.tipable { cursor: help; }
 a.ext { color: inherit; text-decoration: none; }
 a.ext:hover, a.ext:focus-visible { color: var(--accent); text-decoration: underline; }
 .line > span:first-child { color: var(--strong); }
@@ -463,8 +464,9 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     try { localStorage.setItem(KEY, C.serializeProgress(progress)); } catch (e) { /* ignora */ }
   }
   const name = (id) => (items[id] ? items[id].name : id);
-  const icon = (id) => (items[id] && items[id].icon
-    ? `<img class="ico" src="${esc(ICON_BASE + items[id].icon)}" alt="" width="32" height="32" loading="lazy" referrerpolicy="no-referrer">`
+  // withTip: l'icona apre il tooltip (nella pagina centrale il nome è un link, quindi il tooltip sta solo sull'icona)
+  const icon = (id, withTip) => (items[id] && items[id].icon
+    ? `<img class="ico${withTip ? ' tipable' : ''}"${withTip ? ` data-tip="${esc(id)}"` : ''} src="${esc(ICON_BASE + items[id].icon)}" alt="" width="32" height="32" loading="lazy" referrerpolicy="no-referrer">`
     : '');
   // nome cliccabile: apre la pagina dell'oggetto su MetaForge in una nuova scheda (nella pagina centrale, al posto del tooltip)
   const link = (id) => {
@@ -544,7 +546,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     const matHtml = Object.keys(groups).sort().map((g) =>
       `<h3>${esc(g)}</h3>` + groups[g].sort((a, b) => name(a).localeCompare(name(b))).map((id) => {
         const need = r.materials[id], missing = Math.max(0, need - have(id));
-        return `<div class="line mat"><span class="nm">${icon(id)}${link(id)}</span><span class="num">${fmt(need)}</span>` +
+        return `<div class="line mat"><span class="nm">${icon(id, true)}${link(id)}</span><span class="num">${fmt(need)}</span>` +
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
@@ -560,7 +562,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       `<h3>${esc(t('stage', { n: d + 1 }))}</h3>` + byStage[d]
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
-          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id)}<span>${link(s.id)} ×${fmt(s.times)} ` +
+          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id, true)}<span>${link(s.id)} ×${fmt(s.times)} ` +
           `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
           `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
         ).join('')

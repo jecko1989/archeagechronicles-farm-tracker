@@ -8,7 +8,7 @@ Pick the items you want to craft in **ArcheAge Chronicles** and find out which m
 
 ## How to use it
 1. **Pick what to craft.** Browse the sections (Weapons, Armor, Accessories, …) and types, or type to filter the list. The list is sorted by rarity, from the weakest to the strongest (Common → Uncommon → Rare → Epic → Legendary), and alphabetically within each rarity. Click an item to add it, or press Enter to add the first one in the list.
-   **Hover over an item in the list or in your selection** (or focus it with the keyboard, or tap it on a touch screen) to see its details as on MetaForge: level, slot, set, weight, durability, sell price, stats, random options, description and the crafting recipe.
+   **Hover over an item in the list or in your selection, or over the icon of a material or crafting step,** (or focus it with the keyboard, or tap it on a touch screen) to see its details as on MetaForge: level, slot, set, weight, durability, sell price, stats, random options, description and the crafting recipe.
 2. **Read the materials** you need to farm: *Needed / Have / Missing*. Use the −/+ buttons to mark how many you already have. Click a material (or a crafting step) to open its MetaForge page in a new tab, for example to see where it drops.
 3. **Follow the crafting steps** from top to bottom: they are numbered and split into stages, from the most basic items (raw materials only) up to the item you want to craft.
 4. **Intermediates** lets you choose whether materials such as *Standard Textile* are crafted (the tool goes down to the raw materials) or farmed.
