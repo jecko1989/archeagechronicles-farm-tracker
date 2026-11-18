@@ -78,6 +78,8 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .line.mat { grid-template-columns: minmax(0, 1fr) 5rem 10.5rem 7rem; } /* rem, non em: l'intestazione ha un carattere più piccolo */
 .line.mat .have { justify-content: center; }
 .ctr { text-align: center; }
+a.ext { color: inherit; text-decoration: none; }
+a.ext:hover, a.ext:focus-visible { color: var(--accent); text-decoration: underline; }
 .line > span:first-child { color: var(--strong); }
 .line.head { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; border-bottom-color: var(--border); }
 .line.head > span:first-child { color: var(--muted); }
@@ -258,6 +260,13 @@ function reconcile(p, items) {
   return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates }, dropped };
 }
 
+// ---- indirizzo della pagina MetaForge di un oggetto: database/<categoria>/<slug> ----
+const METAFORGE_DB = 'https://metaforge.app/archeage-chronicles/database';
+function itemUrl(items, id) {
+  const it = items && items[id];
+  return it && it.category ? `${METAFORGE_DB}/${encodeURIComponent(it.category)}/${encodeURIComponent(id)}` : '';
+}
+
 // ---- file offline: i dati stanno dentro la pagina, in un blocco JSON con id "embedded-data" ----
 // embeddedFetch(data) imita fetch(): serve meta.json, items.json e overrides.json dai dati incorporati.
 function embeddedFetch(data) {
@@ -366,7 +375,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
-    tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
+    open_mf: 'Open on MetaForge', tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
     h_steps: 'Crafting steps', stage: 'Stage {n}', patch_badge: 'patch',
     steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above.', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
     dropped: 'Removed because they are no longer in the database:',
@@ -388,7 +397,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
-    tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
+    open_mf: 'Apri su MetaForge', tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
     h_steps: 'Passi di crafting', stage: 'Fase {n}', patch_badge: 'patch',
     steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra.", level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
     dropped: 'Rimossi perché non più nel database:',
@@ -410,7 +419,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -457,6 +466,12 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   const icon = (id) => (items[id] && items[id].icon
     ? `<img class="ico" src="${esc(ICON_BASE + items[id].icon)}" alt="" width="32" height="32" loading="lazy" referrerpolicy="no-referrer">`
     : '');
+  // nome cliccabile: apre la pagina dell'oggetto su MetaForge in una nuova scheda (nella pagina centrale, al posto del tooltip)
+  const link = (id) => {
+    const u = C.itemUrl(items, id);
+    const n = esc(name(id));
+    return u ? `<a class="ext" href="${esc(u)}" target="_blank" rel="noopener noreferrer" title="${esc(t('open_mf'))}">${n}</a>` : n;
+  };
   // icona non caricabile (offline, bloccata): nascondila senza rompere il layout
   document.addEventListener('error', (e) => {
     if (e.target.classList && e.target.classList.contains('ico')) e.target.style.visibility = 'hidden';
@@ -529,7 +544,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     const matHtml = Object.keys(groups).sort().map((g) =>
       `<h3>${esc(g)}</h3>` + groups[g].sort((a, b) => name(a).localeCompare(name(b))).map((id) => {
         const need = r.materials[id], missing = Math.max(0, need - have(id));
-        return `<div class="line mat"><span class="nm" data-tip="${esc(id)}" tabindex="0">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
+        return `<div class="line mat"><span class="nm">${icon(id)}${link(id)}</span><span class="num">${fmt(need)}</span>` +
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
@@ -545,7 +560,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       `<h3>${esc(t('stage', { n: d + 1 }))}</h3>` + byStage[d]
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
-          `<div class="step nm" data-tip="${esc(s.id)}" tabindex="0"><span class="no">${++n}</span>${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} ` +
+          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id)}<span>${link(s.id)} ×${fmt(s.times)} ` +
           `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
           `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
         ).join('')
