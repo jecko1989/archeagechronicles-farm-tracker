@@ -1,30 +1,33 @@
 # ArcheAge Chronicles Farm Tracker
 
-Scegli gli oggetti che vuoi craftare in **ArcheAge Chronicles** e scopri quali materiali devi farmare. Il tool scende lungo l'albero delle ricette fino ai materiali grezzi, li raggruppa, mostra professione, livello e stazione di ogni craft e il costo totale in gold. Tu segni quanti materiali hai già e vedi cosa manca.
+**English** · [Italiano](README.it.md)
 
-> **Stato del progetto:** il codice è pubblico, ma i **dati degli oggetti (`data/`) non sono ancora pubblicati**: ho chiesto a MetaForge il permesso di raccoglierli e ripubblicarli e aspetto la loro risposta. Finché i dati non ci sono, la pagina mostra "Data unavailable" e l'aggiornamento automatico è disattivato.
+Pick the items you want to craft in **ArcheAge Chronicles** and find out which materials you need to farm. The tool walks down the recipe tree to the raw materials, groups them, tells you in which order to craft every step (with profession, level and station) and works out the total gold cost. You mark how many materials you already have and see what is missing.
 
-## Come si usa
-1. Cerca un oggetto (es. *Cultist Hood*) e aggiungilo con la quantità.
-2. Leggi la lista dei materiali: *Servono / Hai / Mancano*.
-3. Con **Intermedi** scegli se materiali come *Standard Textile* sono da craftare (si scende fino ai grezzi) o da farmare.
-4. L'interfaccia è in inglese di base; il pulsante **IT** in alto a destra la passa in italiano (la scelta resta salvata). I nomi degli oggetti sono sempre quelli inglesi di MetaForge.
-5. I progressi restano nel tuo browser. **Esporta/Importa** per spostarli su un altro dispositivo.
+> **Project status:** the code is public, but the **item data (`data/items.json`) is not published yet**: publishing it depends on MetaForge's permission to collect and republish it. Until the data is there, the published page shows "Data unavailable" and the automatic update is switched off. The `data/overrides.json` file (manual corrections, see below) is already included.
 
-Funziona anche da file locale: scarica `index.html` e aprilo. I dati vengono sempre letti da questa repo (`data/`), quindi restano aggiornati senza riscaricare nulla. Dopo il primo caricamento l'ultima versione resta in cache e la pagina funziona anche offline.
+## How to use it
+1. **Pick what to craft.** Browse the sections (Weapons, Armor, Accessories, …) and types, or type to filter the list. The list is sorted by rarity, from the weakest to the strongest (Common → Uncommon → Rare → Epic → Legendary), and alphabetically within each rarity. Click an item to add it, or press Enter to add the first one in the list.
+2. **Read the materials** you need to farm: *Needed / Have / Missing*. Use the −/+ buttons to mark how many you already have.
+3. **Follow the crafting steps** from top to bottom: they are numbered and split into stages, from the most basic items (raw materials only) up to the item you want to craft.
+4. **Intermediates** lets you choose whether materials such as *Standard Textile* are crafted (the tool goes down to the raw materials) or farmed.
+5. The interface is in English by default; the **IT** button at the top right switches it to Italian (your choice is remembered). Item names are always the English ones from MetaForge.
+6. Your progress stays in your browser. Use **Export/Import** to move it to another device.
 
-## Come restano aggiornati i dati
-Uno scraper (`scraper/`, Node 20 + Playwright) legge il database di [MetaForge](https://metaforge.app/archeage-chronicles/database) e rigenera `data/items.json` e `data/meta.json`. Una GitHub Action (`.github/workflows/scrape.yml`) lo esegue a richiesta dal tab *Actions* e committa solo se qualcosa è cambiato; la pianificazione settimanale (ogni lunedì) è pronta ma **disattivata** finché MetaForge non risponde. Se le guardie di controllo falliscono (troppi oggetti in meno, ingredienti sconosciuti, ricette vuote) non scrive nulla e l'Action risulta in errore.
+It also works as a local file: download `index.html` and open it. Data is always read from this repository (`data/`), so it stays up to date without downloading anything again. After the first load the latest version is cached and the page works offline.
 
-Per rigenerare i dati a mano:
+## How the data is kept up to date
+A scraper (`scraper/`, Node 20 + Playwright) reads the [MetaForge](https://metaforge.app/archeage-chronicles/database) database and regenerates `data/items.json` and `data/meta.json`. A GitHub Action (`.github/workflows/scrape.yml`) runs it on demand from the *Actions* tab and commits only if something changed; the weekly schedule (every Monday) is ready but **switched off** until MetaForge gives permission. If the safety checks fail (far fewer items, unknown ingredients, empty recipes) nothing is written and the Action fails.
+
+To regenerate the data by hand:
 ```
 npm --prefix scraper ci
-npx --prefix scraper playwright install chromium   # oppure PW_CHANNEL=msedge per usare Edge
+npx --prefix scraper playwright install chromium   # or PW_CHANNEL=msedge to use Edge
 node scraper/run.mjs
 ```
 
-### Correzioni manuali: `data/overrides.json`
-Se una patch cambia le ricette prima che MetaForge aggiorni il database, si possono correggere a mano senza rifare lo scraping. La pagina scarica `overrides.json` a ogni apertura e lo applica sopra i dati (i passi corretti hanno il segnalino **patch**). Si può modificare direttamente dal sito di GitHub.
+### Manual corrections: `data/overrides.json`
+When a patch changes recipes before MetaForge updates its database, they can be corrected by hand without scraping again. The page downloads `overrides.json` every time it opens and applies it on top of the data (corrected steps show a **patch** badge). You can edit it directly on the GitHub website.
 ```json
 {
   "standard-bonecraft": {
@@ -33,15 +36,15 @@ Se una patch cambia le ricette prima che MetaForge aggiorni il database, si poss
   }
 }
 ```
-Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la lista), `gold`, `yield`, `note`. Una correzione non valida viene ignorata. Quando MetaForge si aggiorna, la voce va tolta.
+Allowed fields (all refer to the first recipe): `ingredients` (replaces the list), `gold`, `yield`, `note`. An invalid correction is ignored. Once MetaForge catches up, the entry should be removed.
 
-Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri dai materiali lavorati, come da lettera degli sviluppatori): le 9 ricette "base" (Standard …) e le 8 "Fine …". Solo Standard Bonecraft, Fine Additive e Fine Bonecraft sono **confermate in gioco**; le altre sono derivate per analogia e vanno verificate. Le ricette "Superior …" non sono ancora corrette.
+The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. Only Standard Bonecraft, Fine Additive and Fine Bonecraft are **confirmed in game**; the others are derived by analogy and still need checking. The "Superior …" recipes are not corrected yet.
 
-### Formato di `data/items.json`
+### `data/items.json` format
 ```json
 {
   "cultist-hood": {
-    "name": "Cultist Hood", "category": "armor", "rarity": "Uncommon", "type": "Cloth",
+    "name": "Cultist Hood", "category": "armor", "rarity": "Uncommon", "type": "Cloth", "icon": "UI_Item_….webp",
     "crafts": [{
       "profession": "Tailoring", "level": 1, "stations": ["Armor Workbench", "Light Armor Workbench"], "gold": 3000,
       "ingredients": [{ "id": "standard-textile", "qty": 2 }, { "id": "rag-scrap", "qty": 20 }]
@@ -49,17 +52,17 @@ Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch d
   }
 }
 ```
-`crafts` vuoto = materiale grezzo. `yield` (opzionale, default 1) indica quanti pezzi produce un craft.
+An empty `crafts` means a raw material. `yield` (optional, default 1) is how many items one craft produces.
 
-## Sviluppo
+## Development
 ```
 node --test 'tests/*.test.js' 'scraper/tests/*.test.mjs'
 ```
-I test del parser usano pagine di esempio di MetaForge che **non sono incluse** nella repo (sono copie delle loro pagine): `PW_CHANNEL=msedge node scraper/capture-fixtures.mjs` le scarica; senza, quei test vengono saltati.
+The parser tests use sample pages from MetaForge that are **not included** in the repository (they are copies of their pages): `PW_CHANNEL=msedge node scraper/capture-fixtures.mjs` downloads them; without them those tests are skipped.
 
-`index.html` è l'intera app (nessun build). La logica pura sta nel blocco `<script id="core">`, testato in Node. Checklist manuale dell'interfaccia: `tests/ui-checklist.md`. Design e piano: `docs/superpowers/`.
+`index.html` is the whole app (no build step). The pure logic lives in the `<script id="core">` block, which is tested in Node. Manual UI checklist: `tests/ui-checklist.md`. Design and plan (written in Italian): `docs/superpowers/`.
 
-## Crediti e note
-- Dati raccolti da [MetaForge](https://metaforge.app/archeage-chronicles/database): ringraziamenti ai loro curatori. Le immagini **non sono copiate in questa repo**: `items.json` contiene solo il nome del file di ogni icona e la pagina la carica direttamente da `static.metaforge.app` (se non si carica, viene nascosta).
-- ArcheAge Chronicles e i suoi contenuti appartengono ai rispettivi proprietari. Progetto amatoriale, **non affiliato** agli sviluppatori del gioco né a MetaForge.
-- Il codice è sotto licenza MIT (vedi `LICENSE`). I dati restano di proprietà dei rispettivi titolari.
+## Credits and notes
+- Data collected from [MetaForge](https://metaforge.app/archeage-chronicles/database): thanks to their maintainers. Images are **not copied into this repository**: `items.json` only holds each icon's file name, and the page loads it directly from `static.metaforge.app` (it is hidden if it fails to load).
+- ArcheAge Chronicles and its content belong to their respective owners. This is a fan project, **not affiliated** with the game's developers or with MetaForge.
+- The code is released under the MIT license (see `LICENSE`). The data remains the property of its respective owners.
