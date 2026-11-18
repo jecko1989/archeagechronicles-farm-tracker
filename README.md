@@ -35,7 +35,7 @@ Se una patch cambia le ricette prima che MetaForge aggiorni il database, si poss
 ```
 Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la lista), `gold`, `yield`, `note`. Una correzione non valida viene ignorata. Quando MetaForge si aggiorna, la voce va tolta.
 
-Il file attuale contiene le 9 ricette "base" cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri normali dai materiali lavorati, come da lettera degli sviluppatori). Le quantità sono **derivate da quella regola e vanno verificate in gioco**.
+Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri dai materiali lavorati, come da lettera degli sviluppatori): le 9 ricette "base" (Standard …) e le 8 "Fine …". Solo Standard Bonecraft e Fine Additive sono **confermate in gioco**; le altre sono derivate per analogia e vanno verificate. Le ricette "Superior …" non sono ancora corrette.
 
 ### Formato di `data/items.json`
 ```json

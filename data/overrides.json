@@ -1,4 +1,108 @@
 {
+  "fine-additive": {
+    "note": "Patch 2026-11-17: high-grade monster loot removed from processed goods. Confirmed in game for this recipe (only Standard Additive and Standard Bonecraft are needed); quantities unchanged.",
+    "ingredients": [
+      {
+        "id": "standard-additive",
+        "qty": 18
+      },
+      {
+        "id": "standard-bonecraft",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-archeum": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-archeum",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-bonecraft": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-bonecraft",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-ingot": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-ingot",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-leather": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-leather",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-lumber": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-lumber",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-stone": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-stone",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
+  "fine-textile": {
+    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "ingredients": [
+      {
+        "id": "standard-textile",
+        "qty": 18
+      },
+      {
+        "id": "standard-additive",
+        "qty": 9
+      }
+    ]
+  },
   "rough-meat": {
     "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
     "ingredients": [
