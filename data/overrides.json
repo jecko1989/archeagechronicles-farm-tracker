@@ -104,16 +104,17 @@
     ]
   },
   "rough-meat": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "raw-meat",
         "qty": 15
       }
-    ]
+    ],
+    "gold": 125
   },
   "standard-additive": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed. Ingredients confirmed in game (3 Wild Petal only); gold 100 -> 125 by analogy with Standard Bonecraft (confirmed).",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "wild-petal",
@@ -123,7 +124,7 @@
     "gold": 125
   },
   "standard-archeum": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "archeum-shard",
@@ -133,7 +134,7 @@
     "gold": 125
   },
   "standard-bonecraft": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Confirmed in game (15 Bone Chip only, 125 gold).",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "bone-chip",
@@ -143,7 +144,7 @@
     "gold": 125
   },
   "standard-ingot": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "iron-ore",
@@ -153,7 +154,7 @@
     "gold": 125
   },
   "standard-leather": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "raw-pelt",
@@ -163,7 +164,7 @@
     "gold": 125
   },
   "standard-lumber": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "log",
@@ -173,7 +174,7 @@
     "gold": 125
   },
   "standard-stone": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "marble",
@@ -183,7 +184,7 @@
     "gold": 125
   },
   "standard-textile": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold cost 100 -> 125. Derived by analogy with Standard Bonecraft (confirmed in game): verify.",
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
     "ingredients": [
       {
         "id": "wild-fiber",
