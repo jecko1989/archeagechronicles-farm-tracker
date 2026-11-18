@@ -23,6 +23,20 @@ npx --prefix scraper playwright install chromium   # oppure PW_CHANNEL=msedge pe
 node scraper/run.mjs
 ```
 
+### Correzioni manuali: `data/overrides.json`
+Se una patch cambia le ricette prima che MetaForge aggiorni il database, si possono correggere a mano senza rifare lo scraping. La pagina scarica `overrides.json` a ogni apertura e lo applica sopra i dati (i passi corretti hanno il segnalino **patch**). Si può modificare direttamente dal sito di GitHub.
+```json
+{
+  "standard-bonecraft": {
+    "note": "Patch 2026-11-17",
+    "ingredients": [{ "id": "bone-chip", "qty": 15 }]
+  }
+}
+```
+Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la lista), `gold`, `yield`, `note`. Una correzione non valida viene ignorata. Quando MetaForge si aggiorna, la voce va tolta.
+
+Il file attuale contiene le 9 ricette "base" cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri normali dai materiali lavorati, come da lettera degli sviluppatori). Le quantità sono **derivate da quella regola e vanno verificate in gioco**.
+
 ### Formato di `data/items.json`
 ```json
 {

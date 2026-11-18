@@ -33,17 +33,17 @@ test('prima chiamata scarica meta e items e salva la cache', async () => {
   assert.equal(r.offline, false);
   assert.equal(r.meta.updatedAt, 't1');
   assert.ok(r.items.hood);
-  assert.deepEqual(net.calls, ['https://x/data/meta.json', 'https://x/data/items.json']);
+  assert.deepEqual(net.calls, ['https://x/data/meta.json', 'https://x/data/items.json', 'https://x/data/overrides.json']);
   assert.ok(storage.map.has('aa-farm-data-v1'));
 });
 
-test('con lo stesso updatedAt scarica solo meta.json', async () => {
+test('con lo stesso updatedAt non riscarica items.json (solo meta e overrides)', async () => {
   const net = fakeNet({ meta: meta('t1'), items: loadSample() });
   const storage = fakeStorage();
   await loadData('https://x/data/', { fetchFn: net.fetchFn, storage });
   net.calls.length = 0;
   const r = await loadData('https://x/data/', { fetchFn: net.fetchFn, storage });
-  assert.deepEqual(net.calls, ['https://x/data/meta.json']);
+  assert.deepEqual(net.calls, ['https://x/data/meta.json', 'https://x/data/overrides.json']);
   assert.ok(r.items.hood);
   assert.equal(r.offline, false);
 });
@@ -56,7 +56,7 @@ test('con un updatedAt nuovo riscarica items.json', async () => {
   state.meta = meta('t2');
   net.calls.length = 0;
   const r = await loadData('https://x/data/', { fetchFn: net.fetchFn, storage });
-  assert.deepEqual(net.calls, ['https://x/data/meta.json', 'https://x/data/items.json']);
+  assert.deepEqual(net.calls, ['https://x/data/meta.json', 'https://x/data/items.json', 'https://x/data/overrides.json']);
   assert.equal(r.meta.updatedAt, 't2');
 });
 

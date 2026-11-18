@@ -1,0 +1,83 @@
+{
+  "rough-meat": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "raw-meat",
+        "qty": 15
+      }
+    ]
+  },
+  "standard-additive": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "wild-petal",
+        "qty": 3
+      }
+    ]
+  },
+  "standard-archeum": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "archeum-shard",
+        "qty": 3
+      }
+    ]
+  },
+  "standard-bonecraft": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "bone-chip",
+        "qty": 15
+      }
+    ]
+  },
+  "standard-ingot": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "iron-ore",
+        "qty": 3
+      }
+    ]
+  },
+  "standard-leather": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "raw-pelt",
+        "qty": 15
+      }
+    ]
+  },
+  "standard-lumber": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "log",
+        "qty": 3
+      }
+    ]
+  },
+  "standard-stone": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "marble",
+        "qty": 3
+      }
+    ]
+  },
+  "standard-textile": {
+    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade monster loot removed from processed goods (developer letter, Nov 13). Derived from that rule: verify in game.",
+    "ingredients": [
+      {
+        "id": "wild-fiber",
+        "qty": 3
+      }
+    ]
+  }
+}

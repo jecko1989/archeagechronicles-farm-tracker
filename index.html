@@ -230,6 +230,45 @@ function reconcile(p, items) {
   return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates }, dropped };
 }
 
+// ---- ordine del selettore: rarità dal più scarso al più forte, poi alfabetico ----
+// entries: [[id, item]]. Rarità sconosciuta o mancante: in fondo. Non modifica l'array ricevuto.
+const RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+function sortByRarity(entries) {
+  const rank = (it) => {
+    const i = RARITY_ORDER.indexOf(String(it.rarity || '').toLowerCase());
+    return i < 0 ? RARITY_ORDER.length : i;
+  };
+  return [...entries].sort((a, b) =>
+    rank(a[1]) - rank(b[1]) || a[1].name.localeCompare(b[1].name, undefined, { sensitivity: 'base' }));
+}
+
+// ---- correzioni manuali delle ricette (data/overrides.json) ----
+// overrides: {id: {ingredients?:[{id,qty}], gold?, yield?, note?}}. Si applicano alla prima ricetta (crafts[0]);
+// note diventa craft.patch. Serve quando il gioco cambia le ricette prima che la fonte dei dati si aggiorni.
+// Ignora id sconosciuti, materiali grezzi e correzioni non valide; non modifica l'input.
+function applyOverrides(items, overrides) {
+  const out = { ...items };
+  const validIngredients = (a) => Array.isArray(a) && a.length > 0 &&
+    a.every((g) => g && typeof g.id === 'string' && Number.isInteger(g.qty) && g.qty > 0);
+  for (const [id, ov] of Object.entries(overrides || {})) {
+    const it = items[id];
+    if (!it || !it.crafts || !it.crafts.length || !ov || typeof ov !== 'object') continue;
+    const craft = { ...it.crafts[0] };
+    let changed = false;
+    if ('ingredients' in ov) {
+      if (!validIngredients(ov.ingredients)) continue; // correzione non valida: scartata per intero
+      craft.ingredients = ov.ingredients.map((g) => ({ id: g.id, qty: g.qty }));
+      changed = true;
+    }
+    if (Number.isInteger(ov.gold) && ov.gold >= 0) { craft.gold = ov.gold; changed = true; }
+    if (Number.isInteger(ov.yield) && ov.yield > 0) { craft.yield = ov.yield; changed = true; }
+    if (!changed) continue;
+    if (typeof ov.note === 'string') craft.patch = ov.note;
+    out[id] = { ...it, crafts: [craft, ...it.crafts.slice(1)] };
+  }
+  return out;
+}
+
 // ---- caricamento dati con cache ----
 // Cache in localStorage. // ponytail: ~5 MB di tetto; passare a IndexedDB se items.json lo supera
 async function loadData(baseUrl, deps) {
@@ -247,15 +286,27 @@ async function loadData(baseUrl, deps) {
     return r.json();
   };
 
+  // overrides.json è facoltativo (404 = nessuna correzione) e si riscarica sempre: cambia indipendentemente dai dati.
+  const getOverrides = async (fallback) => {
+    try {
+      const r = await fetchFn(base + 'overrides.json');
+      if (r.status === 404) return {};
+      if (!r.ok) throw new Error('overrides.json -> HTTP ' + r.status);
+      const o = await r.json();
+      return o && typeof o === 'object' ? o : {};
+    } catch (e) { return fallback || {}; }
+  };
+
   const cache = readCache();
   try {
     const meta = await getJson('meta.json');
-    if (cache && cache.meta && cache.meta.updatedAt === meta.updatedAt) return { items: cache.items, meta, offline: false };
-    const items = await getJson('items.json');
-    writeCache({ meta, items });
-    return { items, meta, offline: false };
+    const fresh = cache && cache.meta && cache.meta.updatedAt === meta.updatedAt && cache.items;
+    const items = fresh ? cache.items : await getJson('items.json');
+    const overrides = await getOverrides(cache && cache.overrides);
+    writeCache({ meta, items, overrides }); // gli oggetti restano grezzi in cache: le correzioni si applicano a ogni caricamento
+    return { items: applyOverrides(items, overrides), meta, offline: false };
   } catch (e) {
-    if (cache && cache.items) return { items: cache.items, meta: cache.meta, offline: true };
+    if (cache && cache.items) return { items: applyOverrides(cache.items, cache.overrides), meta: cache.meta, offline: true };
     throw new Error('NO_DATA: ' + base + ' (' + (e && e.message) + ')');
   }
 }
@@ -275,7 +326,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
-    h_steps: 'Crafting steps', stage: 'Stage {n}',
+    h_steps: 'Crafting steps', stage: 'Stage {n}', patch_badge: 'patch',
     steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above.', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
     dropped: 'Removed because they are no longer in the database:',
     h_progress: 'Progress', export: 'Export', import: 'Import',
@@ -296,7 +347,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
-    h_steps: 'Passi di crafting', stage: 'Fase {n}',
+    h_steps: 'Passi di crafting', stage: 'Fase {n}', patch_badge: 'patch',
     steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra.", level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
     dropped: 'Rimossi perché non più nel database:',
     h_progress: 'Progressi', export: 'Esporta', import: 'Importa',
@@ -317,7 +368,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -338,7 +389,6 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   let lang = initialLang();
   let t = C.translator(lang);
   const fmt = (n) => Number(n).toLocaleString(LOCALE[lang], { useGrouping: 'always' });
-  const byName = (a, b) => a.name.localeCompare(b.name);
 
   let items = {};
   let dropped = [];
@@ -389,9 +439,8 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       ? chip('type', '', t('all_types'), inCat.length, !browse.type) +
         types.map((t) => chip('type', t, t, inCat.filter(([, it]) => it.type === t).length, browse.type === t)).join('')
       : '';
-    const hits = inCat
-      .filter(([, it]) => (!browse.type || it.type === browse.type) && (!q || it.name.toLowerCase().includes(q)))
-      .sort((a, b) => byName(a[1], b[1]));
+    const hits = C.sortByRarity(inCat
+      .filter(([, it]) => (!browse.type || it.type === browse.type) && (!q || it.name.toLowerCase().includes(q))));
     $('#pickCount').textContent = t('pick_count', { n: hits.length });
     $('#suggestions').innerHTML = hits.map(([id, it]) =>
       `<li><button type="button" data-action="add" data-id="${esc(id)}">${icon(id)}<span>${esc(it.name)} ` +
@@ -454,6 +503,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
           `<div class="step nm"><span class="no">${++n}</span>${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} ` +
+          `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
           `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
         ).join('')
     ).join('');
