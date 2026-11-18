@@ -1,7 +1,7 @@
 name: Scrape MetaForge
 
 on:
-  # Pianificazione DISATTIVATA finché MetaForge non risponde alla richiesta di permesso.
+  # Pianificazione DISATTIVATA per ora: MetaForge sta valutando delle API per gli sviluppatori.
   # Per riattivarla: togliere i commenti qui sotto (ogni lunedì alle 06:00 UTC).
   # schedule:
   #   - cron: '0 6 * * 1'
