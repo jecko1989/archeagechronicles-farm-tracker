@@ -41,7 +41,8 @@ button { cursor: pointer; background: transparent; }
 button:hover { border-color: var(--accent); color: var(--accent); }
 button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
 button.primary:hover { color: var(--accent-text); filter: brightness(1.1); }
-input[type=number] { width: 5.5em; }
+input[type=number] { width: 5.5em; appearance: textfield; -moz-appearance: textfield; } /* senza le frecce interne: c'è già −/+ e tolgono spazio alle cifre */
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=file]::file-selector-button { background: transparent; color: var(--strong); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; margin-right: 10px; cursor: pointer; }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .row > input[type=search] { flex: 1 1 200px; }
@@ -73,11 +74,15 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .chip small { margin-left: 4px; }
 .r-uncommon { color: #5fd68a; } .r-rare { color: #5aa9ff; } .r-epic { color: #b388ff; } .r-legendary { color: #f5a524; }
 .line { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--divider); }
+/* tabella dei materiali: colonne a larghezza fissa, uguali per intestazione e righe, così i numeri stanno sotto i titoli */
+.line.mat { grid-template-columns: minmax(0, 1fr) 5rem 10.5rem 7rem; } /* rem, non em: l'intestazione ha un carattere più piccolo */
+.line.mat .have { justify-content: center; }
+.ctr { text-align: center; }
 .line > span:first-child { color: var(--strong); }
 .line.head { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; border-bottom-color: var(--border); }
 .line.head > span:first-child { color: var(--muted); }
 .have { display: flex; gap: 4px; align-items: center; }
-.have input { width: 4.5em; text-align: right; }
+.have input { width: 5.5rem; padding-left: 6px; padding-right: 6px; text-align: right; } /* larga abbastanza per 6-7 cifre */
 .have button { padding: 3px 10px; }
 .num { text-align: right; min-width: 3.5em; font-variant-numeric: tabular-nums; }
 .done { color: var(--ok); font-weight: 600; }
@@ -86,7 +91,16 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .step { padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); }
 footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
 a { color: var(--accent); }
-@media (max-width: 520px) { header, main, footer { padding-left: 16px; padding-right: 16px; } .line { grid-template-columns: 1fr auto; } .line .num { text-align: left; } }
+@media (max-width: 520px) {
+  header, main, footer { padding-left: 16px; padding-right: 16px; }
+  .line { grid-template-columns: 1fr auto; } .line .num { text-align: left; }
+  /* materiali su schermo stretto: nome su tutta la prima riga, sotto le tre colonne numeriche allineate all'intestazione */
+  .line.mat { grid-template-columns: 4rem minmax(0, 1fr) 5rem; }
+  .have input { width: 4rem; } .have button { padding-left: 8px; padding-right: 8px; }
+  .line.mat > :first-child { grid-column: 1 / -1; }
+  .line.head.mat > :first-child { display: none; }
+  .line.mat .num { text-align: right; }
+}
 </style>
 </head>
 <body>
@@ -515,11 +529,11 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     const matHtml = Object.keys(groups).sort().map((g) =>
       `<h3>${esc(g)}</h3>` + groups[g].sort((a, b) => name(a).localeCompare(name(b))).map((id) => {
         const need = r.materials[id], missing = Math.max(0, need - have(id));
-        return `<div class="line"><span class="nm" data-tip="${esc(id)}" tabindex="0">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
+        return `<div class="line mat"><span class="nm" data-tip="${esc(id)}" tabindex="0">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
-          `<span class="num${missing ? '' : ' done'}">${missing ? fmt(missing) : '✓'}</span></div>`;
+          `<span class="num${missing ? '' : ' done'}">= ${missing ? fmt(missing) : '✓'}</span></div>`; // "=": Servono − Hai = Mancano
       }).join('')
     ).join('');
 
@@ -539,7 +553,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
 
     box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${toggle}
       <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
-      <div class="line head"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span>${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
+      <div class="line head mat"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span class="ctr">${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
       ${matHtml}
       <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2><p class="muted">${esc(t('steps_hint'))}</p>${stepHtml}
       <p>${esc(t('total_cost'))} <strong>${fmt(r.gold)} Gold</strong></p>
