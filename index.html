@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArcheAge Chronicles Farm Tracker</title>
+<link rel="icon" href="data:,">
+<style>
+/* Palette ispirata al database di MetaForge: sfondo quasi nero caldo, card scure, titoli arancioni.
+   Nessun logo, icona o immagine copiati. Solo tema scuro, come il sito di riferimento. */
+:root {
+  color-scheme: dark;
+  --bg: #0d0b09; --bar: #120f0d; --card: #15130f; --field: #0f0d0b; --border: #2a2723; --divider: #25221f;
+  --text: #cfcbc4; --strong: #f2efea; --muted: #8f8a82;
+  --accent: #ed7e1d; --accent-text: #1a0f05; --ok: #5fd68a; --warn: #e3a54a; --err: #f08a82;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 Poppins, system-ui, -apple-system, 'Segoe UI', sans-serif; }
+header { background: var(--bar); border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; }
+main, footer { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+h1 { font-size: 1.5rem; font-weight: 400; margin: 0; color: var(--text); }
+h2 { font-size: 1rem; font-weight: 600; margin: 0 0 12px; color: var(--accent); }
+h3 { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin: 18px 0 4px; color: var(--muted); }
+#status { margin-left: auto; font-size: .85rem; }
+.lang { display: flex; gap: 6px; }
+#app { display: grid; gap: 20px; grid-template-columns: 340px minmax(0, 1fr); grid-template-areas: "targets results" "progress results"; grid-template-rows: auto 1fr; align-items: start; margin-top: 20px; }
+.a-targets { grid-area: targets; }
+.a-results { grid-area: results; }
+.a-progress { grid-area: progress; }
+@media (max-width: 900px) { #app { grid-template-columns: 1fr; grid-template-areas: "targets" "results" "progress"; } }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 20px 0; }
+#app .card { margin: 0; }
+.muted, small { color: var(--muted); }
+.badge { background: var(--accent); color: var(--accent-text); border-radius: 999px; padding: 1px 10px; font-size: .78rem; font-weight: 600; }
+.error { border-color: var(--err); }
+.error h2 { color: var(--err); }
+input, select, button { font: inherit; color: var(--strong); background: var(--field); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button { cursor: pointer; background: transparent; }
+button:hover { border-color: var(--accent); color: var(--accent); }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+button.primary:hover { color: var(--accent-text); filter: brightness(1.1); }
+input[type=number] { width: 5.5em; }
+input[type=file]::file-selector-button { background: transparent; color: var(--strong); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; margin-right: 10px; cursor: pointer; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > input[type=search] { flex: 1 1 200px; }
+ul { list-style: none; margin: 8px 0 0; padding: 0; }
+#suggestions li button { width: 100%; text-align: left; border-radius: 0; border-width: 0 0 1px; border-color: var(--divider); padding: 9px 4px; }
+#suggestions li button:hover { background: rgba(237, 126, 29, .08); }
+#suggestions li button { display: flex; align-items: center; gap: 10px; }
+.nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ico { width: 32px; height: 32px; object-fit: contain; flex: none; background: var(--field); border-radius: 6px; }
+.picker { max-height: 320px; overflow-y: auto; border: 1px solid var(--divider); border-radius: 8px; padding: 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chips:empty { display: none; }
+.chip { border-radius: 999px; padding: 3px 12px; font-size: .82rem; color: var(--text); }
+.chip.on { border-color: var(--accent); background: rgba(237, 126, 29, .15); color: var(--accent); }
+.chip small { margin-left: 4px; }
+.r-uncommon { color: #5fd68a; } .r-rare { color: #5aa9ff; } .r-epic { color: #b388ff; } .r-legendary { color: #f5a524; }
+.line { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--divider); }
+.line > span:first-child { color: var(--strong); }
+.line.head { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; border-bottom-color: var(--border); }
+.line.head > span:first-child { color: var(--muted); }
+.have { display: flex; gap: 4px; align-items: center; }
+.have input { width: 4.5em; text-align: right; }
+.have button { padding: 3px 10px; }
+.num { text-align: right; min-width: 3.5em; font-variant-numeric: tabular-nums; }
+.done { color: var(--ok); font-weight: 600; }
+progress { width: 100%; height: 10px; accent-color: var(--accent); }
+.warn { color: var(--warn); }
+.step { padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); }
+footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
+a { color: var(--accent); }
+@media (max-width: 520px) { header, main, footer { padding-left: 16px; padding-right: 16px; } .line { grid-template-columns: 1fr auto; } .line .num { text-align: left; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>ArcheAge Chronicles Farm Tracker</h1>
+  <div id="status" class="muted">Loading data…</div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" class="chip" data-action="lang" data-v="en" aria-pressed="true">EN</button>
+    <button type="button" class="chip" data-action="lang" data-v="it" aria-pressed="false">IT</button>
+  </div>
+</header>
+<main>
+  <section id="error" class="card error" hidden></section>
+  <div id="app" hidden>
+    <section class="card a-targets">
+      <h2 data-i18n="h_targets">What do you want to craft</h2>
+      <ul id="targets"></ul>
+      <h3 data-i18n="h_add">Add an item</h3>
+      <div class="row">
+        <input id="search" type="search" placeholder="Type to filter (e.g. hood)" data-i18n-ph="filter_ph" autocomplete="off" aria-label="Filter items" data-i18n-aria="filter_label">
+        <label><span data-i18n="qty">Quantity</span> <input id="addQty" type="number" min="1" value="1"></label>
+      </div>
+      <div id="catChips" class="chips" role="group" aria-label="Sections" data-i18n-aria="sections"></div>
+      <div id="typeChips" class="chips" role="group" aria-label="Types" data-i18n-aria="types"></div>
+      <p id="pickCount" class="muted"></p>
+      <ul id="suggestions" class="picker"></ul>
+    </section>
+    <section class="card a-results" id="results"></section>
+    <section class="card a-progress">
+      <h2 data-i18n="h_progress">Progress</h2>
+      <div class="row">
+        <button type="button" data-action="export" data-i18n="export">Export</button>
+        <label class="row"><span data-i18n="import">Import</span> <input id="importFile" type="file" accept="application/json"></label>
+        <span id="msg" class="muted" role="status"></span>
+      </div>
+      <p class="muted" data-i18n="progress_note">Your progress stays in this browser. Export it to move it to another device.</p>
+    </section>
+  </div>
+</main>
+<footer>
+  Data from <a href="https://metaforge.app/archeage-chronicles/database" target="_blank" rel="noopener">MetaForge</a>
+  (collected automatically). Unofficial project, not affiliated with the game's developers.
+</footer>
+<script id="config">
+// URL della cartella data/ della repo; la pagina servita da GitHub Pages usa ./data/; override con ?data=<url>
+const DATA_BASE_URL = 'https://raw.githubusercontent.com/jecko1989/archeagechronicles-farm-tracker/main/data/';
+// Le icone non sono copiate nella repo: items.json contiene solo il nome file e la pagina le carica da qui.
+const ICON_BASE = 'https://static.metaforge.app/archeage-chronicles/icons/';
+</script>
+<script id="core">
+// ---- core: logica pura, testata in Node estraendo questo blocco (tests/load-core.js) ----
+
+// Espande gli obiettivi fino ai materiali grezzi.
+// items: {id: {crafts:[{ingredients:[{id,qty}], yield?, gold, ...}], ...}}
+// targets: [{id, qty}]; opts.expandIntermediates (default true).
+// Si usa sempre crafts[0]. La domanda per oggetto è aggregata prima di arrotondare per yield.
+function computeNeeds(items, targets, opts) {
+  const expand = !opts || opts.expandIntermediates !== false;
+  const targetIds = new Set(targets.map((t) => t.id));
+  const materials = {};
+  const warnings = [];
+  const warn = (w) => { if (!warnings.includes(w)) warnings.push(w); };
+  const add = (o, id, n) => { o[id] = (o[id] || 0) + n; };
+  const recipe = (id) => (items[id] && items[id].crafts && items[id].crafts[0]) || null;
+  const expandable = (id) => !!recipe(id) && (expand || targetIds.has(id));
+
+  // 1) ordine topologico (genitori prima dei figli); gli archi che chiudono un ciclo sono tagliati
+  const state = {};
+  const order = [];
+  const cyclic = new Set();
+  const visit = (id) => {
+    state[id] = 1;
+    for (const ing of recipe(id).ingredients) {
+      if (!expandable(ing.id)) continue;
+      if (state[ing.id] === 1) {
+        warn('cycle:' + id + '->' + ing.id);
+        cyclic.add(id + '>' + ing.id);
+      } else if (!state[ing.id]) visit(ing.id);
+    }
+    state[id] = 2;
+    order.push(id);
+  };
+
+  const demand = {};
+  for (const t of targets) {
+    if (!items[t.id]) warn('unknown:' + t.id);
+    if (expandable(t.id)) {
+      add(demand, t.id, t.qty);
+      if (!state[t.id]) visit(t.id);
+    } else add(materials, t.id, t.qty);
+  }
+
+  // 2) propaga la domanda dall'alto verso il basso
+  const steps = [];
+  let gold = 0;
+  for (const id of order.reverse()) {
+    const craft = recipe(id);
+    const times = Math.ceil(demand[id] / (craft.yield || 1));
+    steps.push({ id, times, craft });
+    gold += (craft.gold || 0) * times;
+    for (const ing of craft.ingredients) {
+      if (!items[ing.id]) warn('unknown:' + ing.id);
+      if (items[ing.id] && expandable(ing.id) && !cyclic.has(id + '>' + ing.id)) add(demand, ing.id, ing.qty * times);
+      else add(materials, ing.id, ing.qty * times);
+    }
+  }
+  return { materials, steps, gold, warnings };
+}
+
+// ---- progressi dell'utente ----
+// Progress = {v:1, targets:[{id,qty}], have:{id:qty}, expandIntermediates:boolean}
+function emptyProgress() {
+  return { v: 1, targets: [], have: {}, expandIntermediates: true };
+}
+
+function serializeProgress(p) {
+  return JSON.stringify(p);
+}
+
+// Restituisce null se il testo non è un Progress v1 valido; scarta singole quantità non valide.
+function parseProgress(text) {
+  let raw;
+  try { raw = JSON.parse(text); } catch (e) { return null; }
+  if (!raw || raw.v !== 1 || !Array.isArray(raw.targets) || typeof raw.expandIntermediates !== 'boolean') return null;
+  if (!raw.have || typeof raw.have !== 'object' || Array.isArray(raw.have)) return null;
+  const targets = raw.targets.filter((t) => t && typeof t.id === 'string' && Number.isInteger(t.qty) && t.qty > 0)
+    .map((t) => ({ id: t.id, qty: t.qty }));
+  const have = {};
+  for (const [id, qty] of Object.entries(raw.have)) if (Number.isInteger(qty) && qty >= 0) have[id] = qty;
+  return { v: 1, targets, have, expandIntermediates: raw.expandIntermediates };
+}
+
+// Dopo una patch alcuni oggetti possono sparire: li toglie dal progresso e li elenca in dropped.
+function reconcile(p, items) {
+  const dropped = [];
+  const keep = (id) => (id in items) || (dropped.includes(id) ? false : (dropped.push(id), false));
+  const targets = p.targets.filter((t) => keep(t.id));
+  const have = {};
+  for (const [id, qty] of Object.entries(p.have)) if (keep(id)) have[id] = qty;
+  return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates }, dropped };
+}
+
+// ---- caricamento dati con cache ----
+// Cache in localStorage. // ponytail: ~5 MB di tetto; passare a IndexedDB se items.json lo supera
+async function loadData(baseUrl, deps) {
+  const d = deps || {};
+  const fetchFn = d.fetchFn || fetch;
+  let storage = d.storage;
+  if (!storage) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
+  const base = baseUrl.replace(/\/*$/, '/');
+  const KEY = 'aa-farm-data-v1';
+  const readCache = () => { try { const t = storage && storage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } };
+  const writeCache = (c) => { try { if (storage) storage.setItem(KEY, JSON.stringify(c)); } catch (e) { /* cache opzionale */ } };
+  const getJson = async (name) => {
+    const r = await fetchFn(base + name);
+    if (!r.ok) throw new Error(name + ' -> HTTP ' + r.status);
+    return r.json();
+  };
+
+  const cache = readCache();
+  try {
+    const meta = await getJson('meta.json');
+    if (cache && cache.meta && cache.meta.updatedAt === meta.updatedAt) return { items: cache.items, meta, offline: false };
+    const items = await getJson('items.json');
+    writeCache({ meta, items });
+    return { items, meta, offline: false };
+  } catch (e) {
+    if (cache && cache.items) return { items: cache.items, meta: cache.meta, offline: true };
+    throw new Error('NO_DATA: ' + base + ' (' + (e && e.message) + ')');
+  }
+}
+
+// ---- testi dell'interfaccia: inglese di base, italiano selezionabile ----
+const STRINGS = {
+  en: {
+    loading: 'Loading data…', status_ok: 'Data updated {date} · {n} items', badge_offline: 'offline', status_offline: 'data from {date}',
+    err_title: 'Data unavailable', err_hint: 'Check your connection. The first launch needs the data online; afterwards it stays cached.', retry: 'Retry',
+    h_targets: 'What do you want to craft', h_add: 'Add an item', filter_ph: 'Type to filter (e.g. hood)', filter_label: 'Filter items',
+    qty: 'Quantity', qty_of: 'Quantity of {name}', remove: 'Remove {name}', sections: 'Sections', types: 'Types',
+    all: 'All', all_types: 'All types', pick_count: '{n} items', pick_count_one: '{n} item', no_results: 'No results',
+    sec_weapons: 'Weapons', sec_armor: 'Armor', sec_accessories: 'Accessories', sec_bags: 'Bags', sec_gliders: 'Gliders',
+    sec_consumables: 'Consumables', sec_tools: 'Tools', sec_materials: 'Materials',
+    h_farm: 'What you need to farm', farm_empty: 'Add an item above to see the materials you need.',
+    intermediates: 'Intermediates:', mode_craft: 'craft them', mode_farm: 'farm them',
+    progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
+    col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
+    dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
+    h_steps: 'Crafting steps', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
+    dropped: 'Removed because they are no longer in the database:',
+    h_progress: 'Progress', export: 'Export', import: 'Import',
+    progress_note: 'Your progress stays in this browser. Export it to move it to another device.',
+    import_bad: 'Invalid file: it is not an export from this tool.', import_ok: 'Progress imported.',
+    footer: "Data from {link} (collected automatically). Unofficial project, not affiliated with the game's developers.",
+  },
+  it: {
+    loading: 'Caricamento dati…', status_ok: 'Dati aggiornati al {date} · {n} oggetti', badge_offline: 'offline', status_offline: 'dati del {date}',
+    err_title: 'Dati non disponibili', err_hint: 'Controlla la connessione. Al primo avvio servono i dati online; poi restano in cache.', retry: 'Riprova',
+    h_targets: 'Cosa vuoi craftare', h_add: 'Aggiungi un oggetto', filter_ph: 'Scrivi per filtrare (es. hood)', filter_label: 'Filtra gli oggetti',
+    qty: 'Quantità', qty_of: 'Quantità di {name}', remove: 'Rimuovi {name}', sections: 'Sezioni', types: 'Tipi',
+    all: 'Tutte', all_types: 'Tutti i tipi', pick_count: '{n} oggetti', pick_count_one: '{n} oggetto', no_results: 'Nessun risultato',
+    sec_weapons: 'Armi', sec_armor: 'Armature', sec_accessories: 'Accessori', sec_bags: 'Borse', sec_gliders: 'Glider',
+    sec_consumables: 'Consumabili', sec_tools: 'Strumenti', sec_materials: 'Materiali',
+    h_farm: 'Cosa devi farmare', farm_empty: 'Aggiungi un oggetto qui sopra per vedere i materiali necessari.',
+    intermediates: 'Intermedi:', mode_craft: 'da craftare', mode_farm: 'da farmare',
+    progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
+    col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
+    dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
+    h_steps: 'Passi di crafting', level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
+    dropped: 'Rimossi perché non più nel database:',
+    h_progress: 'Progressi', export: 'Esporta', import: 'Importa',
+    progress_note: 'I progressi restano in questo browser. Esportali per spostarli su un altro dispositivo.',
+    import_bad: 'File non valido: non è un export di questo tool.', import_ok: 'Progressi importati.',
+    footer: 'Dati da {link} (raccolti automaticamente). Progetto non ufficiale, non affiliato agli sviluppatori del gioco.',
+  },
+};
+
+// translator('it')('remove', {name}) -> stringa; lingua o chiave mancante -> inglese, poi la chiave stessa.
+// Con vars.n === 1 usa la chiave "<chiave>_one" se esiste.
+function translator(lang) {
+  const dict = STRINGS[lang] || STRINGS.en;
+  return (key, vars) => {
+    const k = vars && vars.n === 1 && (key + '_one') in dict ? key + '_one' : key;
+    const s = k in dict ? dict[k] : (k in STRINGS.en ? STRINGS.en[k] : key);
+    return vars ? s.replace(/\{(\w+)\}/g, (m, v) => (v in vars ? vars[v] : m)) : s;
+  };
+}
+
+Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, STRINGS, translator });
+</script>
+<script id="ui">
+(function () {
+  'use strict';
+  const C = globalThis.__core;
+  const KEY = 'aa-farm-progress-v1';
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const LANG_KEY = 'aa-farm-lang';
+  const LOCALE = { en: 'en-US', it: 'it-IT' };
+  // lingua: ?lang= > scelta salvata > inglese (di base, indipendente dal browser)
+  function initialLang() {
+    const ok = (l) => (l === 'en' || l === 'it' ? l : '');
+    let saved = '';
+    try { saved = localStorage.getItem(LANG_KEY); } catch (e) { /* ignora */ }
+    return ok(new URLSearchParams(location.search).get('lang')) || ok(saved) || 'en';
+  }
+  let lang = initialLang();
+  let t = C.translator(lang);
+  const fmt = (n) => Number(n).toLocaleString(LOCALE[lang], { useGrouping: 'always' });
+  const byName = (a, b) => a.name.localeCompare(b.name);
+
+  let items = {};
+  let dropped = [];
+  let progress = C.emptyProgress();
+
+  function dataUrl() {
+    const q = new URLSearchParams(location.search).get('data');
+    if (q) return q;
+    if (/^https?:$/.test(location.protocol) && /github\.io$/.test(location.hostname)) return './data/';
+    return DATA_BASE_URL;
+  }
+
+  function loadSaved() {
+    try {
+      const t = localStorage.getItem(KEY);
+      const p = t && C.parseProgress(t);
+      if (p) progress = p;
+    } catch (e) { /* storage non disponibile: si parte da zero */ }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, C.serializeProgress(progress)); } catch (e) { /* ignora */ }
+  }
+  const name = (id) => (items[id] ? items[id].name : id);
+  const icon = (id) => (items[id] && items[id].icon
+    ? `<img class="ico" src="${esc(ICON_BASE + items[id].icon)}" alt="" width="32" height="32" loading="lazy" referrerpolicy="no-referrer">`
+    : '');
+  // icona non caricabile (offline, bloccata): nascondila senza rompere il layout
+  document.addEventListener('error', (e) => {
+    if (e.target.classList && e.target.classList.contains('ico')) e.target.style.visibility = 'hidden';
+  }, true);
+
+  // ---- obiettivi: selettore con sezioni, tipi e filtro testuale ----
+  const sectionLabel = (c) => (('sec_' + c) in C.STRINGS.en ? t('sec_' + c) : c.charAt(0).toUpperCase() + c.slice(1));
+  let craftable = []; // [id, item] di tutti gli oggetti che hanno una ricetta
+  const browse = { cat: '', type: '' };
+
+  function renderPicker() {
+    const q = $('#search').value.trim().toLowerCase();
+    const cats = [...new Set(craftable.map(([, it]) => it.category))]
+      .sort((a, b) => sectionLabel(a).localeCompare(sectionLabel(b)));
+    const inCat = craftable.filter(([, it]) => !browse.cat || it.category === browse.cat);
+    const types = browse.cat ? [...new Set(inCat.map(([, it]) => it.type).filter(Boolean))].sort() : [];
+    const chip = (action, v, label, n, on) =>
+      `<button type="button" class="chip${on ? ' on' : ''}" data-action="${action}" data-v="${esc(v)}" aria-pressed="${on}">${esc(label)}<small>${n}</small></button>`;
+    $('#catChips').innerHTML = chip('cat', '', t('all'), craftable.length, !browse.cat) +
+      cats.map((c) => chip('cat', c, sectionLabel(c), craftable.filter(([, it]) => it.category === c).length, browse.cat === c)).join('');
+    $('#typeChips').innerHTML = types.length > 1
+      ? chip('type', '', t('all_types'), inCat.length, !browse.type) +
+        types.map((t) => chip('type', t, t, inCat.filter(([, it]) => it.type === t).length, browse.type === t)).join('')
+      : '';
+    const hits = inCat
+      .filter(([, it]) => (!browse.type || it.type === browse.type) && (!q || it.name.toLowerCase().includes(q)))
+      .sort((a, b) => byName(a[1], b[1]));
+    $('#pickCount').textContent = t('pick_count', { n: hits.length });
+    $('#suggestions').innerHTML = hits.map(([id, it]) =>
+      `<li><button type="button" data-action="add" data-id="${esc(id)}">${icon(id)}<span>${esc(it.name)} ` +
+      `<small class="r-${esc((it.rarity || '').toLowerCase())}">${esc(it.rarity || '')}</small>` +
+      `${it.type ? ` <small>· ${esc(it.type)}</small>` : ''}</span></button></li>`
+    ).join('') || `<li class="muted">${esc(t('no_results'))}</li>`;
+  }
+
+  function addTarget(id) {
+    const qty = Math.max(1, parseInt($('#addQty').value, 10) || 1);
+    const t = progress.targets.find((x) => x.id === id);
+    if (t) t.qty += qty; else progress.targets.push({ id, qty });
+    save(); render();
+  }
+
+  function renderTargets() {
+    $('#targets').innerHTML = progress.targets.map((x) =>
+      `<li class="line" style="grid-template-columns:1fr auto auto"><span class="nm">${icon(x.id)}${esc(name(x.id))}</span>` +
+      `<input type="number" min="1" value="${x.qty}" data-action="target-qty" data-id="${esc(x.id)}" aria-label="${esc(t('qty_of', { name: name(x.id) }))}">` +
+      `<button type="button" data-action="target-del" data-id="${esc(x.id)}" aria-label="${esc(t('remove', { name: name(x.id) }))}">✕</button></li>`
+    ).join('');
+  }
+
+  // ---- risultati ----
+  function renderResults() {
+    const box = $('#results');
+    const toggle = `<label>${esc(t('intermediates'))} <select data-action="mode">
+      <option value="craft"${progress.expandIntermediates ? ' selected' : ''}>${esc(t('mode_craft'))}</option>
+      <option value="farm"${progress.expandIntermediates ? '' : ' selected'}>${esc(t('mode_farm'))}</option></select></label>`;
+    if (!progress.targets.length) {
+      box.innerHTML = `<h2>${esc(t('h_farm'))}</h2><p class="muted">${esc(t('farm_empty'))}</p>${toggle}`;
+      return;
+    }
+    const r = C.computeNeeds(items, progress.targets, { expandIntermediates: progress.expandIntermediates });
+    const ids = Object.keys(r.materials);
+    const have = (id) => progress.have[id] || 0;
+    const totalNeed = ids.reduce((s, id) => s + r.materials[id], 0);
+    const totalHave = ids.reduce((s, id) => s + Math.min(have(id), r.materials[id]), 0);
+    const allDone = ids.length > 0 && totalHave === totalNeed;
+
+    const groups = {};
+    for (const id of ids) (groups[(items[id] && items[id].type) || t('other')] ||= []).push(id);
+    const matHtml = Object.keys(groups).sort().map((g) =>
+      `<h3>${esc(g)}</h3>` + groups[g].sort((a, b) => name(a).localeCompare(name(b))).map((id) => {
+        const need = r.materials[id], missing = Math.max(0, need - have(id));
+        return `<div class="line"><span class="nm">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
+          `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
+          `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
+          `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
+          `<span class="num${missing ? '' : ' done'}">${missing ? fmt(missing) : '✓'}</span></div>`;
+      }).join('')
+    ).join('');
+
+    const byProf = {};
+    for (const s of r.steps) (byProf[s.craft.profession] ||= []).push(s);
+    const stepHtml = Object.keys(byProf).sort().map((p) =>
+      `<h3>${esc(p)}</h3>` + byProf[p].sort((a, b) => a.craft.level - b.craft.level || name(a.id).localeCompare(name(b.id))).map((s) =>
+        `<div class="step nm">${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} <small>· ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
+      ).join('')
+    ).join('');
+
+    box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${toggle}
+      <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
+      <div class="line head"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span>${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
+      ${matHtml}
+      <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2>${stepHtml}
+      <p>${esc(t('total_cost'))} <strong>${fmt(r.gold)} Gold</strong></p>
+      ${r.warnings.length ? `<p class="warn">${esc(t('warnings'))} ${r.warnings.map(esc).join(', ')}</p>` : ''}
+      ${dropped.length ? `<p class="warn">${esc(t('dropped'))} ${dropped.map(esc).join(', ')}</p>` : ''}`;
+  }
+
+  function render() { renderTargets(); renderResults(); }
+
+  // ---- eventi ----
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-action]');
+    if (!b) return;
+    const id = b.dataset.id;
+    switch (b.dataset.action) {
+      case 'add': addTarget(id); break;
+      case 'cat': browse.cat = b.dataset.v; browse.type = ''; renderPicker(); break;
+      case 'type': browse.type = b.dataset.v; renderPicker(); break;
+      case 'target-del': progress.targets = progress.targets.filter((t) => t.id !== id); save(); render(); break;
+      case 'have-inc': progress.have[id] = (progress.have[id] || 0) + 1; save(); renderResults(); break;
+      case 'have-dec': progress.have[id] = Math.max(0, (progress.have[id] || 0) - 1); save(); renderResults(); break;
+      case 'export': {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([C.serializeProgress(progress)], { type: 'application/json' }));
+        a.download = 'archeage-farm-progress.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        break;
+      }
+      case 'retry': start(); break;
+      case 'lang': setLang(b.dataset.v); break;
+    }
+  });
+  document.addEventListener('change', (e) => {
+    const el = e.target;
+    const v = Math.max(0, parseInt(el.value, 10) || 0);
+    switch (el.dataset.action) {
+      case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
+      case 'have-set': progress.have[el.dataset.id] = v; save(); renderResults(); break;
+      case 'mode': progress.expandIntermediates = el.value === 'craft'; save(); renderResults(); break;
+    }
+    if (el.id === 'importFile' && el.files[0]) {
+      el.files[0].text().then((text) => {
+        const p = C.parseProgress(text);
+        if (!p) { $('#msg').textContent = t('import_bad'); return; }
+        const r = C.reconcile(p, items);
+        progress = r.progress; dropped = r.dropped;
+        $('#msg').textContent = t('import_ok');
+        save(); render();
+      });
+      el.value = '';
+    }
+  });
+  $('#search').addEventListener('input', renderPicker);
+  $('#search').addEventListener('keydown', (e) => { // Invio aggiunge il primo candidato
+    if (e.key !== 'Enter') return;
+    const first = $('#suggestions [data-action=add]');
+    if (first) addTarget(first.dataset.id);
+  });
+
+  // ---- lingua, stato e avvio ----
+  let meta = null;
+  let offline = false;
+  let loadState = 'loading'; // loading | ok | error
+  let lastErr = '';
+
+  function applyStatic() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
+    document.querySelectorAll('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+    document.querySelector('footer').innerHTML = t('footer', {
+      link: '<a href="https://metaforge.app/archeage-chronicles/database" target="_blank" rel="noopener">MetaForge</a>',
+    });
+    document.querySelectorAll('[data-action=lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === lang)));
+  }
+  function renderStatus() {
+    if (loadState !== 'ok') { $('#status').textContent = loadState === 'loading' ? t('loading') : ''; return; }
+    const date = new Date(meta.updatedAt).toLocaleDateString(LOCALE[lang], { day: 'numeric', month: 'short', year: 'numeric' });
+    $('#status').innerHTML = offline
+      ? `<span class="badge">${esc(t('badge_offline'))}</span> ${esc(t('status_offline', { date }))}`
+      : esc(t('status_ok', { date, n: fmt(Object.keys(items).length) }));
+  }
+  function renderError() {
+    $('#error').innerHTML = `<h2>${esc(t('err_title'))}</h2><p>${esc(lastErr)}</p><p class="muted">${esc(t('err_hint'))}</p>` +
+      `<button type="button" class="primary" data-action="retry">${esc(t('retry'))}</button>`;
+  }
+  function setLang(l) {
+    lang = l; t = C.translator(l);
+    try { localStorage.setItem(LANG_KEY, l); } catch (e) { /* ignora */ }
+    applyStatic(); renderStatus();
+    if (loadState === 'ok') { render(); renderPicker(); } else if (loadState === 'error') renderError();
+  }
+
+  async function start() {
+    loadState = 'loading'; renderStatus();
+    try {
+      const d = await C.loadData(dataUrl());
+      items = d.items; meta = d.meta; offline = d.offline;
+      craftable = Object.entries(items).filter(([, it]) => it.crafts.length);
+      loadSaved();
+      const r = C.reconcile(progress, items);
+      progress = r.progress; dropped = r.dropped;
+      loadState = 'ok'; renderStatus();
+      $('#error').hidden = true; $('#app').hidden = false;
+      render();
+      renderPicker();
+    } catch (err) {
+      loadState = 'error'; lastErr = err.message; renderStatus();
+      $('#app').hidden = true; $('#error').hidden = false;
+      renderError();
+    }
+  }
+  applyStatic();
+  start();
+})();
+</script>
+</body>
+</html>

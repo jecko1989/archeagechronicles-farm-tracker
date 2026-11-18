@@ -1,0 +1,38 @@
+name: Scrape MetaForge
+
+on:
+  # Pianificazione DISATTIVATA finché MetaForge non risponde alla richiesta di permesso.
+  # Per riattivarla: togliere i commenti qui sotto (ogni lunedì alle 06:00 UTC).
+  # schedule:
+  #   - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+      - name: Install scraper
+        working-directory: scraper
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Scrape (fails without writing if the guards trip)
+        run: node scraper/run.mjs
+      - name: Commit data if changed
+        run: |
+          if [ -z "$(git status --porcelain data)" ]; then echo "no changes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "data: update from MetaForge"
+          git push

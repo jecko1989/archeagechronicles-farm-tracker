@@ -1,0 +1,36 @@
+{
+  "bulk": {
+    "name": "Bulk Item", "category": "materials", "rarity": "Common", "type": "Refined Materials",
+    "crafts": [{"profession": "Handicrafts", "level": 1, "stations": ["Workbench"], "gold": 10, "yield": 5,
+      "ingredients": [{"id": "rag", "qty": 10}]}]
+  },
+  "fiber": {"name": "Wild Fiber", "category": "materials", "rarity": "Common", "type": "Raw Materials", "crafts": []},
+  "hood": {
+    "name": "Cultist Hood", "category": "armor", "rarity": "Uncommon", "type": "Cloth",
+    "crafts": [{"profession": "Tailoring", "level": 1, "stations": ["Armor Workbench"], "gold": 3000,
+      "ingredients": [{"id": "textile", "qty": 2}, {"id": "rag", "qty": 20}, {"id": "mask", "qty": 8}]}]
+  },
+  "loop-a": {
+    "name": "Loop A", "category": "materials", "rarity": "Common", "type": "Refined Materials",
+    "crafts": [{"profession": "Handicrafts", "level": 1, "stations": ["Workbench"], "gold": 1,
+      "ingredients": [{"id": "loop-b", "qty": 1}]}]
+  },
+  "loop-b": {
+    "name": "Loop B", "category": "materials", "rarity": "Common", "type": "Refined Materials",
+    "crafts": [{"profession": "Handicrafts", "level": 1, "stations": ["Workbench"], "gold": 1,
+      "ingredients": [{"id": "loop-a", "qty": 1}]}]
+  },
+  "mask": {"name": "Cultist Ritual Mask", "category": "materials", "rarity": "Common", "type": "Raw Materials", "crafts": []},
+  "powder": {"name": "Sweetgrass Powder", "category": "materials", "rarity": "Common", "type": "Raw Materials", "crafts": []},
+  "rag": {"name": "Rag Scrap", "category": "materials", "rarity": "Common", "type": "Raw Materials", "crafts": []},
+  "robe": {
+    "name": "Cultist Robe", "category": "armor", "rarity": "Uncommon", "type": "Cloth",
+    "crafts": [{"profession": "Tailoring", "level": 1, "stations": ["Armor Workbench"], "gold": 3500,
+      "ingredients": [{"id": "textile", "qty": 3}, {"id": "rag", "qty": 30}]}]
+  },
+  "textile": {
+    "name": "Standard Textile", "category": "materials", "rarity": "Uncommon", "type": "Refined Materials",
+    "crafts": [{"profession": "Cloth", "level": 1, "stations": ["Atelier"], "gold": 100,
+      "ingredients": [{"id": "fiber", "qty": 3}, {"id": "powder", "qty": 5}, {"id": "rag", "qty": 5}]}]
+  }
+}
