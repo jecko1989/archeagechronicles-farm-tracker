@@ -8,6 +8,7 @@ Pick the items you want to craft in **ArcheAge Chronicles** and find out which m
 
 ## How to use it
 1. **Pick what to craft.** Browse the sections (Weapons, Armor, Accessories, …) and types, or type to filter the list. The list is sorted by rarity, from the weakest to the strongest (Common → Uncommon → Rare → Epic → Legendary), and alphabetically within each rarity. Click an item to add it, or press Enter to add the first one in the list.
+   **Hover over any item** (or focus it with the keyboard, or tap it on a touch screen) to see its details as on MetaForge: level, slot, set, weight, durability, sell price, stats, random options, description and the crafting recipe.
 2. **Read the materials** you need to farm: *Needed / Have / Missing*. Use the −/+ buttons to mark how many you already have.
 3. **Follow the crafting steps** from top to bottom: they are numbered and split into stages, from the most basic items (raw materials only) up to the item you want to craft.
 4. **Intermediates** lets you choose whether materials such as *Standard Textile* are crafted (the tool goes down to the raw materials) or farmed.
@@ -48,6 +49,12 @@ The current file holds 17 processed-goods recipes changed by the November 17, 20
 {
   "cultist-hood": {
     "name": "Cultist Hood", "category": "armor", "rarity": "Uncommon", "type": "Cloth", "icon": "UI_Item_….webp",
+    "info": {
+      "rows": [["Item Level", "10"], ["Slot", "Helmet"], ["Weight", "3.045"], ["Sell Price", "50 Gold"]],
+      "stats": [["Physical DEF", "12"], ["Magic DEF", "23"]],
+      "random": [["SP Regen", "5-6"]],
+      "description": "A hood crafted using techniques…"
+    },
     "crafts": [{
       "profession": "Tailoring", "level": 1, "stations": ["Armor Workbench", "Light Armor Workbench"], "gold": 3000,
       "ingredients": [{ "id": "standard-textile", "qty": 2 }, { "id": "rag-scrap", "qty": 20 }]
@@ -55,7 +62,7 @@ The current file holds 17 processed-goods recipes changed by the November 17, 20
   }
 }
 ```
-An empty `crafts` means a raw material. `yield` (optional, default 1) is how many items one craft produces.
+`info` (tooltip data, shown at its "Untempered" values) is present for craftable items and optional. An empty `crafts` means a raw material. `yield` (optional, default 1) is how many items one craft produces.
 
 ## Development
 ```

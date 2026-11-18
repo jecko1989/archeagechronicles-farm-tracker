@@ -8,6 +8,7 @@ Scegli gli oggetti che vuoi craftare in **ArcheAge Chronicles** e scopri quali m
 
 ## Come si usa
 1. **Scegli cosa craftare.** Sfoglia le sezioni (Armi, Armature, Accessori, …) e i tipi, oppure scrivi per filtrare la lista. La lista è ordinata per rarità, dalla più scarsa alla più forte (Common → Uncommon → Rare → Epic → Legendary), e in ordine alfabetico dentro ogni rarità. Clicca un oggetto per aggiungerlo, oppure premi Invio per aggiungere il primo della lista.
+   **Passa il mouse su un oggetto** (o selezionalo con la tastiera, o toccalo su uno schermo touch) per vederne i dettagli come su MetaForge: livello, slot, set, peso, durabilità, prezzo di vendita, statistiche, opzioni casuali, descrizione e ricetta di crafting.
 2. **Leggi i materiali** da farmare: *Servono / Hai / Mancano*. Con i pulsanti −/+ segni quanti ne hai già.
 3. **Segui i passi di crafting** dall'alto in basso: sono numerati e divisi in fasi, dagli oggetti più basilari (solo materiali grezzi) fino all'oggetto che vuoi craftare.
 4. Con **Intermedi** scegli se materiali come *Standard Textile* sono da craftare (si scende fino ai grezzi) o da farmare.
@@ -48,6 +49,12 @@ Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch d
 {
   "cultist-hood": {
     "name": "Cultist Hood", "category": "armor", "rarity": "Uncommon", "type": "Cloth", "icon": "UI_Item_….webp",
+    "info": {
+      "rows": [["Item Level", "10"], ["Slot", "Helmet"], ["Weight", "3.045"], ["Sell Price", "50 Gold"]],
+      "stats": [["Physical DEF", "12"], ["Magic DEF", "23"]],
+      "random": [["SP Regen", "5-6"]],
+      "description": "A hood crafted using techniques…"
+    },
     "crafts": [{
       "profession": "Tailoring", "level": 1, "stations": ["Armor Workbench", "Light Armor Workbench"], "gold": 3000,
       "ingredients": [{ "id": "standard-textile", "qty": 2 }, { "id": "rag-scrap", "qty": 20 }]
@@ -55,7 +62,7 @@ Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch d
   }
 }
 ```
-`crafts` vuoto = materiale grezzo. `yield` (opzionale, default 1) indica quanti pezzi produce un craft.
+`info` (dati del tooltip, con i valori "Untempered") c'è per gli oggetti craftabili ed è facoltativo. `crafts` vuoto = materiale grezzo. `yield` (opzionale, default 1) indica quanti pezzi produce un craft.
 
 ## Sviluppo
 ```

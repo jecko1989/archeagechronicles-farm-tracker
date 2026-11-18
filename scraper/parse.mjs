@@ -47,14 +47,50 @@ function parseCrafts($) {
   return { crafts, refs };
 }
 
+// Dati per il tooltip, come nel pannello di MetaForge: righe di dettaglio (livello, slot, set, peso, durabilità,
+// prezzo…), statistiche (a "Untempered"), opzioni casuali e descrizione. Omette ciò che la pagina non ha.
+function parseInfo($, typeLabel) {
+  const skip = new Set(['Category', 'Rarity', typeLabel]); // già nei campi dell'oggetto
+  const rows = [];
+  $('dl').first().find('> div').each((_, d) => {
+    const k = norm($(d).find('dt').first().text());
+    const v = norm($(d).find('dd').first().text());
+    if (k && v && !skip.has(k)) rows.push([k, v]);
+  });
+  const section = (title) => $('h2').filter((_, e) => new RegExp('^' + title).test(norm($(e).text()))).first().parent();
+  // righe "etichetta ... valore": hanno bordo tratteggiato (la barra del tempering +0/+10 no)
+  const pairs = (sec) => {
+    const out = [];
+    sec.find('div[class*="border-dashed"]').each((_, d) => {
+      const s = $(d).find('> span');
+      if (s.length === 2) out.push([norm(s.first().text()), norm(s.last().text())]);
+    });
+    return out;
+  };
+  const info = {};
+  const stats = pairs(section('Stats'));
+  const random = pairs(section('Random Options'));
+  const description = norm(section('Description').find('p').first().text());
+  if (rows.length) info.rows = rows;
+  if (stats.length) info.stats = stats;
+  if (random.length) info.random = random;
+  if (description) info.description = description;
+  return Object.keys(info).length ? info : undefined;
+}
+
 // html: pagina oggetto di MetaForge. ctx.category: cartella dell'URL (armor, materials, ...).
 export function parseItemPage(html, ctx) {
   const $ = cheerio.load(html);
   const { crafts, refs } = parseCrafts($);
-  const type = label($, ['Type', 'Armor Type']) ||
-    norm($('dt').filter((_, e) => /Type$/.test(norm($(e).text()))).first().next().text()) || ctx.category;
+  const labels = $('dt').map((_, e) => norm($(e).text())).get();
+  const typeLabel = ['Type', 'Armor Type'].find((n) => labels.includes(n)) || labels.find((n) => /Type$/.test(n)) || '';
+  const type = (typeLabel && label($, [typeLabel])) || ctx.category;
+  const info = parseInfo($, typeLabel);
   return {
-    item: { name: norm($('h1').first().text()), category: ctx.category, rarity: label($, ['Rarity']), type, crafts },
+    item: {
+      name: norm($('h1').first().text()), category: ctx.category, rarity: label($, ['Rarity']), type, crafts,
+      ...(info ? { info } : {}),
+    },
     refs,
   };
 }

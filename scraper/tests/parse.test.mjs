@@ -55,6 +55,48 @@ test('senza la frase "You\'ll receive N per craft" il campo yield non c\'è', ne
   assert.equal('yield' in item.crafts[0], false);
 });
 
+// ---- info per il tooltip: righe di dettaglio, statistiche, opzioni casuali, descrizione ----
+test('cultist-hood: info con righe, statistiche a "Untempered", opzioni casuali e descrizione', needs('cultist-hood'), () => {
+  const { item } = parseItemPage(fx('cultist-hood'), { slug: 'cultist-hood', category: 'armor' });
+  assert.deepEqual(item.info, {
+    rows: [['Item Level', '10'], ['Slot', 'Helmet'], ['Set', 'Cultist'], ['Weight', '3.045'],
+      ['Durability', '10,000'], ['Sell Price', '50 Gold'], ['Full Repair Cost', '150 Gold']],
+    stats: [['Physical DEF', '12'], ['Magic DEF', '23'], ['Magic PEN', '1']],
+    random: [['SP Regen', '5-6']],
+    description: 'A hood crafted using techniques passed down by the ancient worshippers of Akasch, prized for its magic defense.',
+  });
+});
+
+test('city-guard-longsword: un\'arma ha righe e statistiche diverse dall\'armatura', needs('city-guard-longsword'), () => {
+  const { item } = parseItemPage(fx('city-guard-longsword'), { slug: 'city-guard-longsword', category: 'weapons' });
+  assert.equal(item.type, 'Longsword');
+  assert.deepEqual(item.info.rows, [['Item Level', '10'], ['Slot', 'Weapon #1'], ['Class', 'Warrior'], ['Weight', '1.575'],
+    ['Durability', '10,000'], ['Sell Price', '200 Gold'], ['Full Repair Cost', '500 Gold']]);
+  assert.deepEqual(item.info.stats, [['Physical ATK', '41'], ['Magic ATK', '18'], ['Stagger Trigger', '100'], ['Exhaust Trigger', '100']]);
+  assert.deepEqual(item.info.random, [['Physical Crit Chance ↑', '53-61']]);
+});
+
+test('lifeflow-potion: solo prezzo e descrizione, nessuna statistica', needs('lifeflow-potion'), () => {
+  const { item } = parseItemPage(fx('lifeflow-potion'), { slug: 'lifeflow-potion', category: 'consumables' });
+  assert.deepEqual(item.info.rows, [['Sell Price', '5 Gold']]);
+  assert.equal(item.info.description, 'A potion infused with gentle life energy that restores health.');
+  assert.equal('stats' in item.info, false);
+  assert.equal('random' in item.info, false);
+});
+
+test('la barra del tempering (+0 / +10) non finisce tra le statistiche', () => {
+  const html = '<main><h1>X</h1><section><h2>Stats</h2><div class="mt-1 flex justify-between"><span>+0</span><span>+10</span></div>' +
+    '<div class="flex justify-between border-t border-dashed"><span>Physical DEF</span><span>12</span></div></section></main>';
+  const { item } = parseItemPage(html, { slug: 'x', category: 'armor' });
+  assert.deepEqual(item.info.stats, [['Physical DEF', '12']]);
+});
+
+test('pagina con solo categoria, rarità e tipo: nessun campo info', () => {
+  const html = '<main><h1>Rag</h1><dl><div><dt>Category</dt><dd>Materials</dd></div><div><dt>Type</dt><dd>Raw</dd></div><div><dt>Rarity</dt><dd>Common</dd></div></dl></main>';
+  const { item } = parseItemPage(html, { slug: 'rag', category: 'materials' });
+  assert.equal('info' in item, false);
+});
+
 test('senza riga Costs il gold vale 0', needs('no-gold'), () => {
   const { item } = parseItemPage(fx('no-gold'), { slug: 'cultist-hood', category: 'armor' });
   assert.equal(item.crafts[0].gold, 0);

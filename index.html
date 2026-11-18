@@ -50,6 +50,19 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 #suggestions li button:hover { background: rgba(237, 126, 29, .08); }
 #suggestions li button { display: flex; align-items: center; gap: 10px; }
 .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* tooltip dell'oggetto, nello stile del pannello di MetaForge */
+#tip { position: fixed; z-index: 1000; width: 300px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px);
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 12px 14px; font-size: .82rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .55); }
+#tip .th { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+#tip .tn { font-size: 1rem; font-weight: 600; color: var(--strong); }
+#tip h4 { margin: 10px 0 2px; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#tip .tr { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; border-top: 1px dashed var(--divider); }
+#tip .tr:first-child { border-top: 0; }
+#tip .tr span:first-child { color: var(--muted); }
+#tip .tr span:last-child { color: var(--strong); text-align: right; font-variant-numeric: tabular-nums; }
+#tip .td { margin: 8px 0 0; color: var(--text); }
 .no { flex: none; min-width: 1.6em; text-align: right; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 .ico { width: 32px; height: 32px; object-fit: contain; flex: none; background: var(--field); border-radius: 6px; }
 .picker { max-height: 320px; overflow-y: auto; border: 1px solid var(--divider); border-radius: 8px; padding: 0 8px; }
@@ -117,6 +130,7 @@ a { color: var(--accent); }
   Data from <a href="https://metaforge.app/archeage-chronicles/database" target="_blank" rel="noopener">MetaForge</a>
   (collected automatically). Unofficial project, not affiliated with the game's developers.
 </footer>
+<div id="tip" role="tooltip" hidden></div>
 <script id="config">
 // URL della cartella data/ della repo; la pagina servita da GitHub Pages usa ./data/; override con ?data=<url>
 const DATA_BASE_URL = 'https://raw.githubusercontent.com/jecko1989/archeagechronicles-farm-tracker/main/data/';
@@ -338,6 +352,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
+    tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
     h_steps: 'Crafting steps', stage: 'Stage {n}', patch_badge: 'patch',
     steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above.', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
     dropped: 'Removed because they are no longer in the database:',
@@ -359,6 +374,7 @@ const STRINGS = {
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
+    tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
     h_steps: 'Passi di crafting', stage: 'Fase {n}', patch_badge: 'patch',
     steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra.", level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
     dropped: 'Rimossi perché non più nel database:',
@@ -438,6 +454,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   const browse = { cat: '', type: '' };
 
   function renderPicker() {
+    hideTip();
     const q = $('#search').value.trim().toLowerCase();
     const cats = [...new Set(craftable.map(([, it]) => it.category))]
       .sort((a, b) => sectionLabel(a).localeCompare(sectionLabel(b)));
@@ -455,7 +472,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       .filter(([, it]) => (!browse.type || it.type === browse.type) && (!q || it.name.toLowerCase().includes(q))));
     $('#pickCount').textContent = t('pick_count', { n: hits.length });
     $('#suggestions').innerHTML = hits.map(([id, it]) =>
-      `<li><button type="button" data-action="add" data-id="${esc(id)}">${icon(id)}<span>${esc(it.name)} ` +
+      `<li><button type="button" data-action="add" data-id="${esc(id)}" data-tip="${esc(id)}">${icon(id)}<span>${esc(it.name)} ` +
       `<small class="r-${esc((it.rarity || '').toLowerCase())}">${esc(it.rarity || '')}</small>` +
       `${it.type ? ` <small>· ${esc(it.type)}</small>` : ''}</span></button></li>`
     ).join('') || `<li class="muted">${esc(t('no_results'))}</li>`;
@@ -470,7 +487,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
 
   function renderTargets() {
     $('#targets').innerHTML = progress.targets.map((x) =>
-      `<li class="line" style="grid-template-columns:1fr auto auto"><span class="nm">${icon(x.id)}${esc(name(x.id))}</span>` +
+      `<li class="line" style="grid-template-columns:1fr auto auto"><span class="nm" data-tip="${esc(x.id)}" tabindex="0">${icon(x.id)}${esc(name(x.id))}</span>` +
       `<input type="number" min="1" value="${x.qty}" data-action="target-qty" data-id="${esc(x.id)}" aria-label="${esc(t('qty_of', { name: name(x.id) }))}">` +
       `<button type="button" data-action="target-del" data-id="${esc(x.id)}" aria-label="${esc(t('remove', { name: name(x.id) }))}">✕</button></li>`
     ).join('');
@@ -498,7 +515,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     const matHtml = Object.keys(groups).sort().map((g) =>
       `<h3>${esc(g)}</h3>` + groups[g].sort((a, b) => name(a).localeCompare(name(b))).map((id) => {
         const need = r.materials[id], missing = Math.max(0, need - have(id));
-        return `<div class="line"><span class="nm">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
+        return `<div class="line"><span class="nm" data-tip="${esc(id)}" tabindex="0">${icon(id)}${esc(name(id))}</span><span class="num">${fmt(need)}</span>` +
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
@@ -514,7 +531,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       `<h3>${esc(t('stage', { n: d + 1 }))}</h3>` + byStage[d]
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
-          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} ` +
+          `<div class="step nm" data-tip="${esc(s.id)}" tabindex="0"><span class="no">${++n}</span>${icon(s.id)}<span>${esc(name(s.id))} ×${fmt(s.times)} ` +
           `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
           `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
         ).join('')
@@ -530,7 +547,67 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       ${dropped.length ? `<p class="warn">${esc(t('dropped'))} ${dropped.map(esc).join(', ')}</p>` : ''}`;
   }
 
-  function render() { renderTargets(); renderResults(); }
+  function render() { hideTip(); renderTargets(); renderResults(); }
+
+  // ---- tooltip dell'oggetto (al passaggio del mouse, alla tastiera e al tocco) ----
+  const tip = $('#tip');
+  let tipFor = '';
+  function tipHtml(id) {
+    const it = items[id];
+    const info = it.info || {};
+    const c = it.crafts && it.crafts[0];
+    const rows = (arr) => `<div class="tb">${arr.map(([k, v]) => `<div class="tr"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join('')}</div>`;
+    const sub = [it.rarity, it.type].filter(Boolean).join(' · ');
+    return `<div class="th">${icon(id)}<div><div class="tn r-${esc((it.rarity || '').toLowerCase())}">${esc(it.name)}</div><div class="muted">${esc(sub)}</div></div></div>` +
+      (info.rows ? rows(info.rows) : '') +
+      (info.stats ? `<h4>${esc(t('tip_stats'))}</h4>${rows(info.stats)}` : '') +
+      (info.random ? `<h4>${esc(t('tip_random'))}</h4>${rows(info.random)}` : '') +
+      (info.description ? `<p class="td">${esc(info.description)}</p>` : '') +
+      (c ? `<h4>${esc(t('tip_craft'))}</h4>${rows([
+        [`${c.profession} · ${t('tip_level', { n: c.level })}`, `${fmt(c.gold)} Gold`],
+        ...((c.stations && c.stations.length) || c.yield > 1
+          ? [[(c.stations || []).join(' / '), c.yield > 1 ? t('tip_yield', { n: c.yield }) : '']] : []),
+      ])}` : '');
+  }
+  function placeTip(x, y) {
+    const pad = 14;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let left = x + pad, top = y + pad;
+    if (left + w > innerWidth - 8) left = Math.max(8, x - w - pad); // a destra non c'è posto: a sinistra del puntatore
+    if (top + h > innerHeight - 8) top = Math.max(8, innerHeight - h - 8);
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+  // Il tooltip si ferma dove compare (non segue il mouse) e resta aperto mentre ci si passa sopra: così si può
+  // leggere e scorrere. Quando il mouse esce sia dall'oggetto sia dal tooltip sparisce dopo TIP_DELAY ms.
+  const TIP_DELAY = 250;
+  let tipTimer = 0;
+  function showTip(id, x, y) {
+    if (!items[id]) return;
+    clearTimeout(tipTimer);
+    tip.innerHTML = tipHtml(id);
+    tip.scrollTop = 0;
+    tipFor = id;
+    tip.hidden = false;
+    placeTip(x, y);
+  }
+  function hideTip() { clearTimeout(tipTimer); tip.hidden = true; tipFor = ''; }
+  function scheduleHide() { clearTimeout(tipTimer); tipTimer = setTimeout(hideTip, TIP_DELAY); }
+  document.addEventListener('mouseover', (e) => {
+    if (tip.contains(e.target)) { clearTimeout(tipTimer); return; } // sopra il tooltip: resta
+    const el = e.target.closest('[data-tip]');
+    if (!el) { if (!tip.hidden) scheduleHide(); return; }
+    clearTimeout(tipTimer);
+    // stesso oggetto (anche passando da un elemento figlio all'altro): non si ricrea né si sposta
+    if (tip.hidden || tipFor !== el.dataset.tip) showTip(el.dataset.tip, e.clientX, e.clientY);
+  });
+  document.documentElement.addEventListener('mouseleave', scheduleHide);
+  document.addEventListener('focusin', (e) => {
+    const el = e.target.closest('[data-tip]');
+    if (el) { const r = el.getBoundingClientRect(); showTip(el.dataset.tip, r.right, r.top); }
+  });
+  document.addEventListener('focusout', hideTip);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
 
   // ---- eventi ----
   document.addEventListener('click', (e) => {
@@ -613,7 +690,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   function setLang(l) {
     lang = l; t = C.translator(l);
     try { localStorage.setItem(LANG_KEY, l); } catch (e) { /* ignora */ }
-    applyStatic(); renderStatus();
+    hideTip(); applyStatic(); renderStatus();
     if (loadState === 'ok') { render(); renderPicker(); } else if (loadState === 'error') renderError();
   }
 
