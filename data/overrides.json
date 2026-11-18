@@ -13,7 +13,7 @@
     ]
   },
   "fine-archeum": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Orc Fang) removed from Fine-tier processed goods. Confirmed in game (18 Standard + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-archeum",
@@ -39,7 +39,7 @@
     ]
   },
   "fine-ingot": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Twisted Scale) removed from Fine-tier processed goods. Confirmed in game (18 Standard + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-ingot",
@@ -52,7 +52,7 @@
     ]
   },
   "fine-leather": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Crude Gnoll Fur) removed from Fine-tier processed goods. Confirmed in game (18 Standard + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-leather",
@@ -65,7 +65,7 @@
     ]
   },
   "fine-lumber": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Lingering Soul Fragment) removed from Fine-tier processed goods. Confirmed in game (18 Standard + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-lumber",
@@ -91,7 +91,7 @@
     ]
   },
   "fine-textile": {
-    "note": "Patch 2026-11-17: loot removed from Fine-tier processed goods. Derived by analogy with Fine Additive (confirmed in game); quantities unchanged. Verify in game.",
+    "note": "Patch 2026-11-17: loot (Crude Gnoll Fur) removed from Fine-tier processed goods. Confirmed in game (18 Standard + 9 Standard Additive); quantities unchanged.",
     "ingredients": [
       {
         "id": "standard-textile",

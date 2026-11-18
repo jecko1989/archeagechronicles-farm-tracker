@@ -42,7 +42,7 @@ When a patch changes recipes before MetaForge updates its database, they can be 
 ```
 Allowed fields (all refer to the first recipe): `ingredients` (replaces the list), `gold`, `yield`, `note`. An invalid correction is ignored. Once MetaForge catches up, the entry should be removed.
 
-The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. Twelve are **confirmed in game**: all 9 base recipes (Rough Meat and the 8 "Standard …"; the Standard tier costs 125 gold) plus Fine Additive, Fine Bonecraft and Fine Stone. The other 5 (Fine Archeum, Ingot, Leather, Lumber and Textile) are derived by analogy and still need checking. The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
+The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. All 17 are **confirmed in game**: the 9 base recipes (Rough Meat and the 8 "Standard …"; the Standard tier costs 125 gold) and the 8 "Fine …" ones (300 gold). The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
 
 ### `data/items.json` format
 ```json
