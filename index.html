@@ -53,7 +53,7 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
 /* tooltip dell'oggetto, nello stile del pannello di MetaForge */
 #tip { position: fixed; z-index: 1000; width: 300px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px);
-  overflow-y: auto; overscroll-behavior: contain;
+  overflow: hidden; pointer-events: none; /* non intercetta il mouse: lo segue senza coprire ciò che c'è sotto */
   background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 12px 14px; font-size: .82rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .55); }
 #tip .th { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
@@ -255,20 +255,12 @@ function directIngredients(items, targets) {
   return out;
 }
 
-// Posizione del tooltip (px, coordinate dello schermo). x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo;
-// anchor = rettangolo dell'elemento; clear = rettangolo del pannello da non coprire (la colonna di sinistra con la lista).
-// Con clear e posto a destra il tooltip sta accanto al pannello, allineato all'elemento; altrimenti vicino al puntatore.
-function tipPosition({ x, y, w, h, vw, vh, anchor, clear }) {
-  const pad = 14, gap = 12, edge = 8;
-  let left, top;
-  if (clear && clear.right + gap + w <= vw - edge) {
-    left = clear.right + gap;
-    top = anchor ? anchor.top : y;
-  } else {
-    left = x + pad;
-    top = y + pad;
-    if (left + w > vw - edge) left = Math.max(edge, x - w - pad); // a destra non c'è posto: a sinistra del puntatore
-  }
+// Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
+// x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
+function tipPosition({ x, y, w, h, vw, vh }) {
+  const pad = 14, edge = 8;
+  let left = x + pad, top = y + pad;
+  if (left + w > vw - edge) left = Math.max(edge, x - w - pad); // a destra non c'è posto: a sinistra del puntatore
   if (top + h > vh - edge) top = vh - h - edge;
   return { left, top: Math.max(edge, top) };
 }
@@ -653,44 +645,34 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
           ? [[(c.stations || []).join(' / '), c.yield > 1 ? t('tip_yield', { n: c.yield }) : '']] : []),
       ])}` : '');
   }
-  // Per gli oggetti della colonna di sinistra (lista e obiettivi) il tooltip va accanto al pannello, non sopra la lista:
-  // così si passa da un oggetto all'altro senza dover prima uscire dal tooltip.
-  function placeTip(x, y, el) {
-    const panel = el && el.closest('.a-targets');
-    const { left, top } = C.tipPosition({
-      x, y, w: tip.offsetWidth, h: tip.offsetHeight, vw: innerWidth, vh: innerHeight,
-      anchor: el && el.getBoundingClientRect(), clear: panel && panel.getBoundingClientRect(),
-    });
+  function placeTip(x, y) {
+    const { left, top } = C.tipPosition({ x, y, w: tip.offsetWidth, h: tip.offsetHeight, vw: innerWidth, vh: innerHeight });
     tip.style.left = left + 'px';
     tip.style.top = top + 'px';
   }
-  // Il tooltip si ferma dove compare (non segue il mouse) e resta aperto mentre ci si passa sopra: così si può
-  // leggere e scorrere. Quando il mouse esce sia dall'oggetto sia dal tooltip sparisce dopo TIP_DELAY ms.
-  const TIP_DELAY = 250;
-  let tipTimer = 0;
-  function showTip(id, x, y, el) {
+  // Il tooltip segue il mouse mentre è sopra l'oggetto e sparisce subito quando esce. Non intercetta il puntatore
+  // (pointer-events: none), quindi non copre mai ciò che sta sotto il mouse: si passa da un oggetto all'altro senza intralci.
+  function showTip(id, x, y) {
     if (!items[id]) return;
-    clearTimeout(tipTimer);
     tip.innerHTML = tipHtml(id);
-    tip.scrollTop = 0;
     tipFor = id;
     tip.hidden = false;
-    placeTip(x, y, el);
+    placeTip(x, y);
   }
-  function hideTip() { clearTimeout(tipTimer); tip.hidden = true; tipFor = ''; }
-  function scheduleHide() { clearTimeout(tipTimer); tipTimer = setTimeout(hideTip, TIP_DELAY); }
+  function hideTip() { tip.hidden = true; tipFor = ''; }
   document.addEventListener('mouseover', (e) => {
-    if (tip.contains(e.target)) { clearTimeout(tipTimer); return; } // sopra il tooltip: resta
     const el = e.target.closest('[data-tip]');
-    if (!el) { if (!tip.hidden) scheduleHide(); return; }
-    clearTimeout(tipTimer);
-    // stesso oggetto (anche passando da un elemento figlio all'altro): non si ricrea né si sposta
-    if (tip.hidden || tipFor !== el.dataset.tip) showTip(el.dataset.tip, e.clientX, e.clientY, el);
+    if (!el) { if (!tip.hidden) hideTip(); return; }
+    // stesso oggetto (anche passando da un elemento figlio all'altro): non si ricrea
+    if (tip.hidden || tipFor !== el.dataset.tip) showTip(el.dataset.tip, e.clientX, e.clientY);
   });
-  document.documentElement.addEventListener('mouseleave', scheduleHide);
+  document.addEventListener('mousemove', (e) => {
+    if (!tip.hidden && e.target.closest('[data-tip]')) placeTip(e.clientX, e.clientY);
+  });
+  document.documentElement.addEventListener('mouseleave', hideTip);
   document.addEventListener('focusin', (e) => {
     const el = e.target.closest('[data-tip]');
-    if (el) { const r = el.getBoundingClientRect(); showTip(el.dataset.tip, r.right, r.top, el); }
+    if (el) { const r = el.getBoundingClientRect(); showTip(el.dataset.tip, r.right, r.top); }
   });
   document.addEventListener('focusout', hideTip);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
