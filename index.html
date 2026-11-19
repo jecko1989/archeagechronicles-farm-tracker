@@ -96,6 +96,8 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .step .have { flex: none; margin-left: auto; }
 .step .of { color: var(--muted); min-width: 4.5em; white-space: nowrap; }
 .step.covered .st { color: var(--muted); }
+.recipes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
+.recipe h3 { margin-top: 0; }
 .rec { padding: 4px 0; color: var(--strong); }
 .rec .num { min-width: 2.6em; }
 footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
@@ -109,6 +111,7 @@ a { color: var(--accent); }
   .line.mat > :first-child { grid-column: 1 / -1; }
   .line.head.mat > :first-child { display: none; }
   .line.mat .num { text-align: right; }
+  .recipes { grid-template-columns: minmax(0, 1fr); }
 }
 </style>
 </head>
@@ -557,10 +560,11 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, empty
     }
     const r = C.computeNeeds(items, progress.targets, { have: progress.have });
     // cosa serve direttamente per costruire ogni oggetto scelto (un livello, in ordine di ricetta)
-    const recipeHtml = C.directIngredients(items, progress.targets).map((x) =>
-      `<h3>${esc(t('h_recipe', { name: name(x.id) + (x.qty > 1 ? ' ×' + fmt(x.qty) : '') }))}</h3>` +
-      x.ingredients.map((i) => `<div class="rec nm">${icon(i.id, true)}<span class="num">${fmt(i.qty)} ×</span><span>${link(i.id)}</span></div>`).join('')
-    ).join('');
+    // più oggetti: un blocco ciascuno, affiancati in al massimo due colonne
+    const recipeHtml = `<div class="recipes">` + C.directIngredients(items, progress.targets).map((x) =>
+      `<div class="recipe"><h3>${esc(t('h_recipe', { name: name(x.id) + (x.qty > 1 ? ' ×' + fmt(x.qty) : '') }))}</h3>` +
+      x.ingredients.map((i) => `<div class="rec nm">${icon(i.id, true)}<span class="num">${fmt(i.qty)} ×</span><span>${link(i.id)}</span></div>`).join('') + `</div>`
+    ).join('') + `</div>`;
     const ids = Object.keys(r.materials);
     const have = (id) => progress.have[id] || 0;
     const totalNeed = ids.reduce((s, id) => s + r.materials[id], 0);
