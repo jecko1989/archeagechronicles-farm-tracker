@@ -12,7 +12,7 @@ L'interfaccia è in **inglese** di base; i testi di questa checklist sono quelli
 | 3 | Passi di crafting | Standard Textile ×2 (Cloth, livello 1, Atelier) e Cultist Hood ×1 (Tailoring, livello 1, Armor Workbench) |
 | 4 | Metti "Hai" di Rag Scrap a 30 | Mancano di Rag Scrap = ✓ |
 | 5 | Ricarica la pagina | Obiettivi e quantità possedute ancora presenti |
-| 6 | Intermedi → "da farmare" | Compare Standard Textile 2 come materiale; scompaiono fiber e powder |
+| 6 | Con "hood" ×1 guarda sotto il titolo "Cosa devi farmare" | Blocco "Per craftare Cultist Hood servono": 2 × Standard Textile, 20 × Rag Scrap, 8 × Cultist Ritual Mask (un solo livello, non i grezzi di Standard Textile); non esiste più il menu "Intermedi"; con quantità 3 i numeri triplicano e il titolo riporta "×3" |
 | 7 | Premi + su Standard Textile | Mancano 1 |
 | 8 | Rimuovi l'obiettivo (✕) | Messaggio "Aggiungi un oggetto…" |
 | 9 | Apri `?data=/nope/` con cache presente | Badge "offline" con la data dei dati in cache |

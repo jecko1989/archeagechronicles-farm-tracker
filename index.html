@@ -96,6 +96,8 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .step .have { flex: none; margin-left: auto; }
 .step .of { color: var(--muted); min-width: 4.5em; white-space: nowrap; }
 .step.covered .st { color: var(--muted); }
+.rec { padding: 4px 0; color: var(--strong); }
+.rec .num { min-width: 2.6em; }
 footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
 a { color: var(--accent); }
 @media (max-width: 520px) {
@@ -235,6 +237,19 @@ function computeNeeds(items, targets, opts) {
   // ordine di crafting: dal più basilare all'oggetto finale (ogni ingrediente ha profondità minore del suo uso)
   steps.sort((a, b) => a.depth - b.depth || a.craft.profession.localeCompare(b.craft.profession) || (a.id < b.id ? -1 : 1));
   return { materials, steps, gold, warnings };
+}
+
+// Ricetta diretta di ogni obiettivo (un solo livello, senza scendere nei lavorati), per la quantità richiesta.
+// -> [{id, qty, times, ingredients:[{id, qty}]}]; gli obiettivi grezzi o sconosciuti vengono saltati.
+function directIngredients(items, targets) {
+  const out = [];
+  for (const t of targets) {
+    const craft = items[t.id] && items[t.id].crafts && items[t.id].crafts[0];
+    if (!craft) continue;
+    const times = Math.ceil(t.qty / (craft.yield || 1));
+    out.push({ id: t.id, qty: t.qty, times, ingredients: craft.ingredients.map((i) => ({ id: i.id, qty: i.qty * times })) });
+  }
+  return out;
 }
 
 // ---- progressi dell'utente ----
@@ -381,7 +396,7 @@ const STRINGS = {
     sec_weapons: 'Weapons', sec_armor: 'Armor', sec_accessories: 'Accessories', sec_bags: 'Bags', sec_gliders: 'Gliders',
     sec_consumables: 'Consumables', sec_tools: 'Tools', sec_materials: 'Materials', sec_housing: 'Housing',
     h_farm: 'What you need to farm', farm_empty: 'Add an item above to see the materials you need.',
-    intermediates: 'Intermediates:', mode_craft: 'craft them', mode_farm: 'farm them',
+    h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
@@ -403,7 +418,7 @@ const STRINGS = {
     sec_weapons: 'Armi', sec_armor: 'Armature', sec_accessories: 'Accessori', sec_bags: 'Borse', sec_gliders: 'Glider',
     sec_consumables: 'Consumabili', sec_tools: 'Strumenti', sec_materials: 'Materiali', sec_housing: 'Case e postazioni',
     h_farm: 'Cosa devi farmare', farm_empty: 'Aggiungi un oggetto qui sopra per vedere i materiali necessari.',
-    intermediates: 'Intermedi:', mode_craft: 'da craftare', mode_farm: 'da farmare',
+    h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
@@ -429,7 +444,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -536,14 +551,16 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
   // ---- risultati ----
   function renderResults() {
     const box = $('#results');
-    const toggle = `<label>${esc(t('intermediates'))} <select data-action="mode">
-      <option value="craft"${progress.expandIntermediates ? ' selected' : ''}>${esc(t('mode_craft'))}</option>
-      <option value="farm"${progress.expandIntermediates ? '' : ' selected'}>${esc(t('mode_farm'))}</option></select></label>`;
     if (!progress.targets.length) {
-      box.innerHTML = `<h2>${esc(t('h_farm'))}</h2><p class="muted">${esc(t('farm_empty'))}</p>${toggle}`;
+      box.innerHTML = `<h2>${esc(t('h_farm'))}</h2><p class="muted">${esc(t('farm_empty'))}</p>`;
       return;
     }
-    const r = C.computeNeeds(items, progress.targets, { expandIntermediates: progress.expandIntermediates, have: progress.have });
+    const r = C.computeNeeds(items, progress.targets, { have: progress.have });
+    // cosa serve direttamente per costruire ogni oggetto scelto (un livello, in ordine di ricetta)
+    const recipeHtml = C.directIngredients(items, progress.targets).map((x) =>
+      `<h3>${esc(t('h_recipe', { name: name(x.id) + (x.qty > 1 ? ' ×' + fmt(x.qty) : '') }))}</h3>` +
+      x.ingredients.map((i) => `<div class="rec nm">${icon(i.id, true)}<span class="num">${fmt(i.qty)} ×</span><span>${link(i.id)}</span></div>`).join('')
+    ).join('');
     const ids = Object.keys(r.materials);
     const have = (id) => progress.have[id] || 0;
     const totalNeed = ids.reduce((s, id) => s + r.materials[id], 0);
@@ -582,7 +599,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
         ).join('')
     ).join('');
 
-    box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${toggle}
+    box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${recipeHtml}
       <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
       <div class="line head mat"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span class="ctr">${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
       ${matHtml}
@@ -684,7 +701,6 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
     switch (el.dataset.action) {
       case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
       case 'have-set': progress.have[el.dataset.id] = v; save(); renderResults(); break;
-      case 'mode': progress.expandIntermediates = el.value === 'craft'; save(); renderResults(); break;
     }
     if (el.id === 'importFile' && el.files[0]) {
       el.files[0].text().then((text) => {
