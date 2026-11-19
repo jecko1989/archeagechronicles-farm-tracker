@@ -91,7 +91,11 @@ a.ext:hover, a.ext:focus-visible { color: var(--accent); text-decoration: underl
 .done { color: var(--ok); font-weight: 600; }
 progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .warn { color: var(--warn); }
-.step { padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); }
+.step { padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); flex-wrap: wrap; row-gap: 6px; }
+.step .st { flex: 1 1 14rem; min-width: 0; }
+.step .have { flex: none; margin-left: auto; }
+.step .of { color: var(--muted); min-width: 4.5em; white-space: nowrap; }
+.step.covered .st { color: var(--muted); }
 footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
 a { color: var(--accent); }
 @media (max-width: 520px) {
@@ -159,7 +163,7 @@ const ICON_BASE = 'https://static.metaforge.app/archeage-chronicles/icons/';
 
 // Espande gli obiettivi fino ai materiali grezzi.
 // items: {id: {crafts:[{ingredients:[{id,qty}], yield?, gold, ...}], ...}}
-// targets: [{id, qty}]; opts.expandIntermediates (default true).
+// targets: [{id, qty}]; opts.expandIntermediates (default true); opts.have: {id: quantità} di oggetti lavorati già posseduti.
 // Si usa sempre crafts[0]. La domanda per oggetto è aggregata prima di arrotondare per yield.
 function computeNeeds(items, targets, opts) {
   const expand = !opts || opts.expandIntermediates !== false;
@@ -198,17 +202,22 @@ function computeNeeds(items, targets, opts) {
   }
 
   // 2) propaga la domanda dall'alto verso il basso
+  //    Gli oggetti già posseduti (have) coprono parte della domanda prima di arrotondare per yield:
+  //    step = {need: richiesti, covered: coperti dai posseduti, times: craft da fare}. Un passo con times 0 resta nell'elenco.
+  const have = (opts && opts.have) || {};
   const steps = [];
   let gold = 0;
   for (const id of [...order].reverse()) {
     const craft = recipe(id);
-    const times = Math.ceil(demand[id] / (craft.yield || 1));
-    steps.push({ id, times, craft, depth: 0 });
+    const need = demand[id] || 0;
+    const covered = Math.min(have[id] || 0, need);
+    const times = Math.ceil((need - covered) / (craft.yield || 1));
+    steps.push({ id, times, craft, depth: 0, need, covered });
     gold += (craft.gold || 0) * times;
     for (const ing of craft.ingredients) {
       if (!items[ing.id]) warn('unknown:' + ing.id);
       if (items[ing.id] && expandable(ing.id) && !cyclic.has(id + '>' + ing.id)) add(demand, ing.id, ing.qty * times);
-      else add(materials, ing.id, ing.qty * times);
+      else if (times > 0) add(materials, ing.id, ing.qty * times);
     }
   }
 
@@ -378,7 +387,7 @@ const STRINGS = {
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
     open_mf: 'Open on MetaForge', tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
     h_steps: 'Crafting steps', stage: 'Stage {n}', patch_badge: 'patch',
-    steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above.', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
+    steps_hint: 'Craft from top to bottom: each step only needs raw materials or items from the steps above. Already own some of these items? Enter how many on the right: the materials above adjust.', of_need: 'of {n}', level: 'level {n}', total_cost: 'Total crafting cost:', warnings: 'Warnings:',
     dropped: 'Removed because they are no longer in the database:',
     h_progress: 'Progress', export: 'Export', import: 'Import',
     progress_note: 'Your progress stays in this browser. Export it to move it to another device.',
@@ -400,7 +409,7 @@ const STRINGS = {
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
     open_mf: 'Apri su MetaForge', tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
     h_steps: 'Passi di crafting', stage: 'Fase {n}', patch_badge: 'patch',
-    steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra.", level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
+    steps_hint: "Crafta dall'alto in basso: ogni passo richiede solo materiali grezzi o oggetti dei passi sopra. Hai già alcuni di questi oggetti? Scrivi quanti a destra: i materiali qui sopra si aggiornano.", of_need: 'su {n}', level: 'livello {n}', total_cost: 'Costo totale dei craft:', warnings: 'Avvisi:',
     dropped: 'Rimossi perché non più nel database:',
     h_progress: 'Progressi', export: 'Esporta', import: 'Importa',
     progress_note: 'I progressi restano in questo browser. Esportali per spostarli su un altro dispositivo.',
@@ -534,7 +543,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       box.innerHTML = `<h2>${esc(t('h_farm'))}</h2><p class="muted">${esc(t('farm_empty'))}</p>${toggle}`;
       return;
     }
-    const r = C.computeNeeds(items, progress.targets, { expandIntermediates: progress.expandIntermediates });
+    const r = C.computeNeeds(items, progress.targets, { expandIntermediates: progress.expandIntermediates, have: progress.have });
     const ids = Object.keys(r.materials);
     const have = (id) => progress.have[id] || 0;
     const totalNeed = ids.reduce((s, id) => s + r.materials[id], 0);
@@ -562,9 +571,14 @@ Object.assign((globalThis.__core = {}), { computeNeeds, emptyProgress, serialize
       `<h3>${esc(t('stage', { n: d + 1 }))}</h3>` + byStage[d]
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
-          `<div class="step nm"><span class="no">${++n}</span>${icon(s.id, true)}<span>${link(s.id)} ×${fmt(s.times)} ` +
+          // a destra: quanti ne hai già (stessa mappa `have` dei materiali); con times 0 il passo è coperto e resta visibile per poterlo correggere
+          `<div class="step nm${s.times ? '' : ' covered'}"><span class="no">${++n}</span>${icon(s.id, true)}<span class="st">${link(s.id)} ${s.times ? '×' + fmt(s.times) : '<span class="done">✓</span>'} ` +
           `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
-          `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span></div>`
+          `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span>` +
+          `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(s.id)}" aria-label="${esc(t('dec', { name: name(s.id) }))}">−</button>` +
+          `<input type="number" min="0" value="${have(s.id)}" data-action="have-set" data-id="${esc(s.id)}" aria-label="${esc(t('have_of', { name: name(s.id) }))}">` +
+          `<button type="button" data-action="have-inc" data-id="${esc(s.id)}" aria-label="${esc(t('inc', { name: name(s.id) }))}">+</button>` +
+          `<small class="of">${esc(t('of_need', { n: fmt(s.need) }))}</small></span></div>`
         ).join('')
     ).join('');
 
