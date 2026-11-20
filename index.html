@@ -324,6 +324,46 @@ function effectiveRatio(trade, deliveries, family, tier) {
   return { ratio: r === undefined ? null : r, source: 'estimate', n: 0 };
 }
 
+// Piano di commercio. steps = passi di computeNeeds ({id, need, covered, ...}); per ogni materiale commerciabile ancora da ottenere
+// (need - covered > 0) calcola casse, materiali da mettere, gold e, per avamposto, i viaggi (un viaggio va a una sola destinazione).
+// I giorni si ricavano dal totale dei viaggi. Rapporto nullo o 0 = dato mancante: la riga non entra nei totali.
+// notTradeable: materiali di livello (standard-/fine-/superior-) che non si commerciano, es. le ossa. Gli altri passi (l'oggetto finale) si ignorano.
+function tradePlan(trade, steps, deliveries, opts) {
+  const tripsPerDay = (opts && opts.tripsPerDay) || trade.limits.tripsPerDay.peace;
+  const byPost = {};
+  const notTradeable = [];
+  for (const s of steps) {
+    const units = (s.need || 0) - (s.covered || 0);
+    if (units <= 0) continue;
+    const info = tradeInfo(trade, s.id);
+    if (!info) {
+      if (/^(standard|fine|superior)-/.test(s.id)) notTradeable.push({ id: s.id, units });
+      continue;
+    }
+    const er = effectiveRatio(trade, deliveries, info.family, info.tier);
+    const pack = trade.packs[info.tier];
+    const line = {
+      id: s.id, tier: info.tier, family: info.family, units, ratio: er.ratio, source: er.source, n: er.n,
+      missing: !(er.ratio > 0), packs: null, input: null, gold: null,
+    };
+    if (!line.missing) {
+      line.packs = Math.ceil(units / (er.ratio * pack.input) - 1e-9); // 1e-9: i decimali non devono aggiungere una cassa
+      line.input = line.packs * pack.input;
+      line.gold = line.packs * pack.gold;
+    }
+    (byPost[info.post] ||= []).push(line);
+  }
+  const groups = Object.keys(trade.posts).filter((p) => byPost[p]).map((p) => {
+    const lines = byPost[p];
+    const packs = lines.reduce((n, l) => n + (l.packs || 0), 0);
+    return { post: p, name: trade.posts[p].name, lines, packs, trips: Math.ceil(packs / trade.limits.perTrip) };
+  });
+  const sum = (f) => groups.reduce((n, g) => n + f(g), 0);
+  const totals = { packs: sum((g) => g.packs), trips: sum((g) => g.trips), gold: sum((g) => g.lines.reduce((n, l) => n + (l.gold || 0), 0)), days: 0 };
+  totals.days = totals.trips ? Math.ceil(totals.trips / tripsPerDay) : 0;
+  return { groups, notTradeable, totals };
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -537,7 +577,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {

@@ -118,3 +118,79 @@ test('consegne con input 0 e altre famiglie/livelli sono ignorate', () => {
   const log = [delivery({ input: 0, received: 5 }), delivery({ family: 'lumber' }), delivery({ tier: 'standard' })];
   assert.deepEqual(effectiveRatio(fixture(), log, 'additive', 'fine'), { ratio: 1.1, source: 'estimate', n: 0 });
 });
+
+// ---- Task 3: piano di commercio ----
+const tradePlan = (...a) => plain(core.tradePlan(...a));
+const step = (id, need, covered = 0) => ({ id, need, covered, times: need - covered });
+const plan = (steps, deliveries = [], tripsPerDay = 3) => tradePlan(fixture(), steps, deliveries, { tripsPerDay });
+
+test('Standard Ingot ×810 → Water Drift: 74 casse, 666 materiali, 5.920 gold, 11 viaggi', () => {
+  const r = plan([step('standard-ingot', 810)]);
+  assert.equal(r.groups.length, 1);
+  assert.equal(r.groups[0].post, 'water-drift');
+  const l = r.groups[0].lines[0];
+  assert.deepEqual([l.units, l.packs, l.input, l.gold, l.source], [810, 74, 666, 5920, 'estimate']);
+  assert.equal(r.groups[0].trips, 11);
+  assert.deepEqual(r.totals, { packs: 74, trips: 11, days: 4, gold: 5920 });
+  assert.equal(plan([step('standard-ingot', 810)], [], 6).totals.days, 2);
+});
+
+test('più livelli allo stesso avamposto condividono i viaggi', () => {
+  const r = plan([step('standard-ingot', 810), step('fine-ingot', 45)]);
+  assert.equal(r.groups.length, 1);
+  const fine = r.groups[0].lines[1];
+  assert.deepEqual([fine.packs, fine.gold], [14, 2800]);
+  assert.deepEqual([r.groups[0].packs, r.groups[0].trips, r.totals.days], [88, 13, 5]);
+});
+
+test('archeum e stone di Shadow Path condividono i viaggi, con rapporti diversi', () => {
+  const r = plan([step('standard-archeum', 100), step('standard-stone', 100)]);
+  assert.equal(r.groups.length, 1);
+  assert.equal(r.groups[0].post, 'shadow-path');
+  assert.deepEqual(r.groups[0].lines.map((l) => l.packs), [10, 13]);
+  assert.equal(r.groups[0].lines[1].ratio, 0.9);
+  assert.deepEqual([r.groups[0].packs, r.groups[0].trips], [23, 4]);
+});
+
+test('rapporto null: riga missing, fuori dai totali, nessun NaN', () => {
+  const r = plan([step('superior-additive', 5)]);
+  const l = r.groups[0].lines[0];
+  assert.deepEqual([l.missing, l.packs, l.input, l.gold], [true, null, null, null]);
+  assert.equal(r.groups[0].packs, 0);
+  for (const v of Object.values(r.totals)) assert.ok(Number.isFinite(v));
+});
+
+test('rapporto 0 (consegna con 0 ricevuti) è dato mancante, non infinite casse', () => {
+  const r = plan([step('fine-ingot', 10)], [delivery({ family: 'ingot', input: 21, received: 0 })]);
+  const l = r.groups[0].lines[0];
+  assert.deepEqual([l.missing, l.packs], [true, null]);
+  for (const v of Object.values(r.totals)) assert.ok(Number.isFinite(v));
+});
+
+test('unità esatte non aggiungono una cassa per colpa dei decimali', () => {
+  // standard stone: 9 materiali × 0.9 = 8,1 per cassa → 81 unità = esattamente 10 casse
+  assert.equal(plan([step('standard-stone', 81)]).groups[0].lines[0].packs, 10);
+});
+
+test('unità già coperte da have: nessuna riga', () => {
+  const r = plan([step('standard-ingot', 100, 100)]);
+  assert.deepEqual(r.groups, []);
+  assert.deepEqual(r.totals, { packs: 0, trips: 0, days: 0, gold: 0 });
+});
+
+test('le ossa vanno in notTradeable, l oggetto finale è ignorato', () => {
+  const r = plan([step('standard-bonecraft', 729), step('gyldenlords-cleaver', 1)]);
+  assert.deepEqual(r.notTradeable, [{ id: 'standard-bonecraft', units: 729 }]);
+  assert.deepEqual(r.groups, []);
+});
+
+test('usa il rapporto del registro quando c è', () => {
+  const r = plan([step('fine-ingot', 45)], [delivery({ family: 'ingot', input: 21, received: 42 })]);
+  const l = r.groups[0].lines[0];
+  assert.deepEqual([l.ratio, l.source, l.n, l.packs], [2, 'log', 1, 8]); // ceil(45 / (2 × 3))
+});
+
+test('gli avamposti seguono l ordine di trade.posts', () => {
+  const r = plan([step('standard-ingot', 10), step('standard-additive', 10)]); // ingot (Water Drift) prima nei passi
+  assert.deepEqual(r.groups.map((g) => g.post), ['watchers', 'water-drift']);
+});
