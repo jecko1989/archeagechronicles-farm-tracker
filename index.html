@@ -106,6 +106,8 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .tab[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
 .tline { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); }
 .tline .nm { flex: 1 1 15rem; }
+.tline .badge { flex: none; }
+.badge.dim { background: var(--field); color: var(--muted); border: 1px solid var(--border); }
 .tline .tnums { color: var(--text); font-variant-numeric: tabular-nums; }
 .tline .ratio { flex: 1 0 100%; padding-left: 42px; } /* sotto il nome, allineata dopo l'icona (32px + gap) */
 .logform { align-items: flex-end; margin-top: 8px; }
@@ -772,6 +774,17 @@ const STRINGS = {
     tier_standard: 'Standard', tier_fine: 'Fine', tier_superior: 'Superior',
     family_additive: 'Additive', family_archeum: 'Archeum', family_ingot: 'Ingot', family_leather: 'Leather', family_lumber: 'Lumber',
     family_stone: 'Stone', family_textile: 'Textile',
+    // piano consigliato
+    reco_h: 'Recommended plan', reco_goal: 'Goal:', obj_farm: 'Farm less', obj_gold: 'Gold spent',
+    reco_craft: 'CRAFT', reco_trade: 'TRADE',
+    reco_trade_detail: '{post} · {crates} crates · put in {qty} × {input} · trips: {trips} · days: {days}',
+    reco_why_cost: 'crafting is cheaper', reco_why_nodata: 'no ratio data yet: log a delivery',
+    reco_why_noinput: 'no material available to fill the crates', reco_why_fallback: 'with these quantities crafting is better',
+    reco_why_input: 'used as crate material for another item',
+    reco_result: 'Result: {farm} raw to farm · {gold} Gold · trips: {trips} · days: {days}',
+    reco_baseline: 'Craft only: {farm} raw to farm · {gold} Gold',
+    reco_fallback: 'With these quantities crafting everything is at least as good.',
+    reco_empty: 'Nothing here is worth trading: craft everything.', reco_raw_h: 'Raw materials of the plan', alt_h: 'Alternatives per line',
   },
   it: {
     loading: 'Caricamento dati…', status_ok: 'Dati aggiornati al {date} · {n} oggetti', badge_offline: 'offline', status_offline: 'dati del {date}',
@@ -808,6 +821,17 @@ const STRINGS = {
     tier_standard: 'Standard', tier_fine: 'Fine', tier_superior: 'Superior',
     family_additive: 'Additivo', family_archeum: 'Archeum', family_ingot: 'Lingotto', family_leather: 'Pelle', family_lumber: 'Legno',
     family_stone: 'Pietra', family_textile: 'Tessuto',
+    // piano consigliato
+    reco_h: 'Piano consigliato', reco_goal: 'Obiettivo:', obj_farm: 'Farmare meno', obj_gold: 'Gold spesi',
+    reco_craft: 'CRAFTA', reco_trade: 'COMMERCIO',
+    reco_trade_detail: '{post} · {crates} casse · metti {qty} × {input} · viaggi: {trips} · giorni: {days}',
+    reco_why_cost: 'craftare costa meno', reco_why_nodata: 'nessun dato sul rapporto: registra una consegna',
+    reco_why_noinput: 'nessun materiale disponibile per riempire le casse', reco_why_fallback: 'con queste quantità conviene craftare',
+    reco_why_input: 'serve come materiale per le casse di un altro oggetto',
+    reco_result: 'Risultato: {farm} grezzi da farmare · {gold} Gold · viaggi: {trips} · giorni: {days}',
+    reco_baseline: 'Solo craft: {farm} grezzi da farmare · {gold} Gold',
+    reco_fallback: 'Con queste quantità craftare tutto è almeno altrettanto buono.',
+    reco_empty: 'Qui non conviene commerciare niente: crafta tutto.', reco_raw_h: 'Materiali grezzi del piano', alt_h: 'Alternative per riga',
   },
 };
 
@@ -850,6 +874,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
   let trade = null; // data/trade.json normalizzato (null = non disponibile)
   let tab = 'craft'; // craft | trade
   let tripsMode = 'peace'; // peace = solo viaggi in pace; both = pace + conflitto (non salvato)
+  let objective = 'farm'; // obiettivo del piano consigliato: farm = farmare meno, gold = gold spesi (non salvato)
 
   function dataUrl() {
     const q = new URLSearchParams(location.search).get('data');
@@ -1006,6 +1031,32 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
     const plan = C.tradePlan(trade, r.steps, progress.deliveries, { tripsPerDay: tripsMode === 'both' ? both : L.tripsPerDay.peace });
 
     const modeBtn = (mode, n, key) => `<button type="button" class="chip${tripsMode === mode ? ' on' : ''}" data-action="trips" data-v="${mode}" aria-pressed="${tripsMode === mode}">${esc(t(key, { n }))}</button>`;
+
+    // piano consigliato: per ogni materiale commerciabile ancora richiesto, craft o commercio (obiettivo scelto dall'utente)
+    const reco = C.recommendPlan(items, trade, progress.targets, progress.have, progress.deliveries,
+      { objective, tripsPerDay: tripsMode === 'both' ? both : L.tripsPerDay.peace });
+    const objBtn = (v, key) => `<button type="button" class="chip${objective === v ? ' on' : ''}" data-action="objective" data-v="${v}" aria-pressed="${objective === v}">${esc(t(key))}</button>`;
+    const whyKey = { cost: 'reco_why_cost', nodata: 'reco_why_nodata', noinput: 'reco_why_noinput', fallback: 'reco_why_fallback', input: 'reco_why_input' };
+    const needed = reco.decisions.filter((d) => d.needed);
+    const decHtml = needed.map((d) => {
+      const isTrade = d.choice === 'trade';
+      const detail = isTrade
+        ? t('reco_trade_detail', { post: trade.posts[d.post].name, crates: fmt(d.crates), qty: fmt(d.crates * trade.packs[d.tier].input), input: name(d.inputId), trips: fmt(d.trips), days: fmt(d.days) })
+        : t(whyKey[d.why] || 'reco_why_cost');
+      const ratioLabel = isTrade ? (d.ratioSource === 'log' ? t('ratio_log', { n: d.ratioN, r: fmtRatio(d.ratio) }) : t('ratio_estimate', { r: fmtRatio(d.ratio) })) : '';
+      return `<div class="tline"><span class="nm">${icon(d.id, true)}<span>${link(d.id)} ×${fmt(d.units)}</span></span>` +
+        `<span class="badge${isTrade ? '' : ' dim'}">${esc(t(isTrade ? 'reco_trade' : 'reco_craft'))}</span>` +
+        `<span class="tnums">${esc(detail)}</span>` + (ratioLabel ? `<small class="ratio">${esc(ratioLabel)}</small>` : '') + `</div>`;
+    }).join('');
+    const P = reco.plan, B = reco.baseline;
+    const rawHtml = Object.keys(P.rawMaterials).sort((a, b) => name(a).localeCompare(name(b))).map((id) =>
+      `<div class="rec nm">${icon(id, true)}<span class="num">${fmt(P.rawMaterials[id])} ×</span><span>${link(id)}</span></div>`).join('');
+    const recoHtml = `<div class="row">${esc(t('reco_goal'))} ${objBtn('farm', 'obj_farm')} ${objBtn('gold', 'obj_gold')}</div>` +
+      `<h3>${esc(t('reco_h'))}</h3>` + (needed.length ? decHtml : `<p class="muted">${esc(t('reco_empty'))}</p>`) +
+      `<p><strong>${esc(t('reco_result', { farm: fmt(P.farm), gold: fmt(P.gold), trips: fmt(P.trips), days: fmt(P.days) }))}</strong></p>` +
+      `<p class="muted">${esc(t('reco_baseline', { farm: fmt(B.farm), gold: fmt(B.gold) }))}</p>` +
+      (reco.fallback ? `<p class="muted">${esc(t('reco_fallback'))}</p>` : '') +
+      `<h3>${esc(t('reco_raw_h'))}</h3>${rawHtml}`;
     const groupsHtml = plan.groups.map((g) => {
       const post = trade.posts[g.post];
       return `<h3>${esc(g.name)} <small>· ${esc(post.families.map(familyLabel).join(' / '))}${post.seed ? ' · ' + esc(post.seed) : ''}</small></h3>` +
@@ -1037,7 +1088,8 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
           `<button type="button" data-action="log-del" data-i="${i}" aria-label="${esc(t('log_remove'))}">✕</button></li>`).join('') + `</ul>`
         : `<p class="muted">${esc(t('log_empty'))}</p>`);
 
-    box.innerHTML = head +
+    box.innerHTML = head + recoHtml +
+      `<h3 style="margin-top:18px">${esc(t('alt_h'))}</h3>` +
       `<div class="row">${esc(t('trips_day'))} ${modeBtn('peace', L.tripsPerDay.peace, 'trips_peace')} ${modeBtn('both', both, 'trips_both')}</div>` +
       `<p class="muted">${esc(t('trade_overlap_hint'))}</p>` + groupsHtml + notHtml + logHtml;
   }
@@ -1141,6 +1193,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
       case 'lang': setLang(b.dataset.v); break;
       case 'tab': setTab(b.dataset.v); break;
       case 'trips': tripsMode = b.dataset.v === 'both' ? 'both' : 'peace'; renderTrade(); break;
+      case 'objective': objective = b.dataset.v === 'gold' ? 'gold' : 'farm'; renderTrade(); break;
       case 'log-add': addDelivery(); break;
       case 'log-del': progress.deliveries.splice(parseInt(b.dataset.i, 10), 1); save(); renderTrade(); break;
     }
