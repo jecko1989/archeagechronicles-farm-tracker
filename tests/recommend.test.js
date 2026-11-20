@@ -120,3 +120,114 @@ test('cicli di ricette e id sconosciuti non lanciano e non danno NaN', () => {
     for (const d of Object.values(r)) for (const n of [...d.unitCraft, ...(d.unitTrade || [])]) assert.ok(Number.isFinite(n), objective + ' ' + d.id);
   }
 });
+
+// ---- Task 3: recommendPlan ----
+const recommendPlan = (it, targets, have, deliveries, objective) =>
+  plain(core.recommendPlan(it, trade, targets, have, deliveries, { objective, tripsPerDay: 3 }));
+const byId = (r, id) => r.decisions.find((d) => d.id === id);
+// weapon <- fine-ingot x1 <- 18 standard-ingot <- 3 r1 ciascuno; il Fine Lumber (3 r? da r2) può riempire le casse del Fine
+const nested = () => ({
+  r1: raw(), r2: raw(),
+  weapon: rec(0, [{ id: 'fine-ingot', qty: 1 }]),
+  'fine-ingot': rec(10, [{ id: 'standard-ingot', qty: 18 }]),
+  'standard-ingot': rec(5, [{ id: 'r1', qty: 3 }]),
+  'fine-lumber': rec(0, [{ id: 'r2', qty: 1 }]),
+});
+// due materiali che si servirebbero a vicenda come materiale di partenza
+const mutual = () => ({
+  r1: raw(),
+  weapon: rec(0, [{ id: 'standard-ingot', qty: 100 }, { id: 'standard-lumber', qty: 100 }]),
+  'standard-ingot': rec(5, [{ id: 'r1', qty: 10 }]),
+  'standard-lumber': rec(5, [{ id: 'r1', qty: 10 }]),
+});
+
+test('annidamento: il commercio del Fine toglie lo Standard che serviva solo a lui', () => {
+  const r = recommendPlan(nested(), W, {}, [], 'farm');
+  const fine = byId(r, 'fine-ingot');
+  assert.deepEqual([fine.choice, fine.crates, fine.needed], ['trade', 1, true]);
+  assert.equal(byId(r, 'standard-ingot').needed, false);
+  assert.deepEqual(r.plan.rawMaterials, { r2: 3 }); // nessun r1
+  assert.deepEqual(r.plan.crateInputs, [{ id: 'fine-lumber', qty: 3 }]);
+  assert.deepEqual([r.plan.farm, r.plan.gold], [3, 200]);
+  assert.deepEqual(r.baseline, { farm: 54, gold: 100 });
+  assert.equal(r.fallback, false);
+});
+
+test('guardia: con quantità piccole il consiglio non è peggiore del solo craft', () => {
+  const r = recommendPlan(nested(), W, {}, [], 'gold'); // una sola cassa costa 200 gold, il craft 100
+  assert.equal(r.fallback, true);
+  assert.deepEqual([r.plan.farm, r.plan.gold, r.plan.crates], [54, 100, 0]);
+  assert.ok(r.decisions.every((d) => d.choice === 'craft'));
+  assert.equal(byId(r, 'fine-ingot').why, 'fallback');
+});
+
+test('conflitto: un materiale scelto per il commercio non è anche il materiale di partenza di un altro', () => {
+  const r = recommendPlan(mutual(), W, {}, [], 'farm');
+  const picks = ['standard-ingot', 'standard-lumber'].map((id) => byId(r, id));
+  assert.deepEqual(picks.map((d) => d.choice).sort(), ['craft', 'trade']); // esattamente uno torna a craft
+  assert.equal(picks.find((d) => d.choice === 'trade').crates, 10);
+  for (const input of r.plan.crateInputs) {
+    const d = byId(r, input.id);
+    assert.ok(!(d.choice === 'trade' && d.crates > 0), input.id + ' è sia ottenuto col commercio sia materiale di partenza');
+  }
+  assert.deepEqual([r.plan.farm, r.plan.gold], [1900, 1750]); // 950 di craft + 800 di casse
+  assert.deepEqual(r.baseline, { farm: 2000, gold: 1000 });
+});
+
+test('obiettivo gold sugli stessi dati del conflitto: mai peggiore del solo craft sul gold', () => {
+  const r = recommendPlan(mutual(), W, {}, [], 'gold');
+  assert.ok(r.plan.gold <= r.baseline.gold + 1e-9);
+});
+
+test('i materiali di partenza che richiedono oggetti ottenuti col commercio sono contati nelle casse', () => {
+  // le casse del Fine si riempiono con 3 fine-lumber, ognuno dei quali richiede 18 standard-lumber: questi non possono
+  // sparire dal conto se anche lo standard-lumber è scelto per il commercio (ricalcolo finché le quantità non si stabilizzano)
+  const it = {
+    r1: raw(), r2: raw(),
+    weapon: rec(0, [{ id: 'fine-ingot', qty: 100 }, { id: 'standard-lumber', qty: 5 }]),
+    'fine-ingot': rec(10, [{ id: 'r1', qty: 50 }]),
+    'fine-lumber': rec(0, [{ id: 'standard-lumber', qty: 18 }]),
+    'standard-lumber': rec(0, [{ id: 'r2', qty: 1 }]),
+    'standard-ingot': rec(0, [{ id: 'r1', qty: 1 }]),
+  };
+  const r = recommendPlan(it, W, {}, [], 'farm');
+  const fine = byId(r, 'fine-ingot'), lumber = byId(r, 'standard-lumber');
+  assert.deepEqual([fine.choice, fine.units, fine.crates], ['trade', 100, 31]); // ceil(100 / (1.1 × 3))
+  // 5 per l'arma + 93 fine-lumber × 18 standard-lumber ciascuno: senza il ricalcolo ripetuto sarebbero solo 5
+  assert.deepEqual([lumber.choice, lumber.units, lumber.crates], ['trade', 5 + 93 * 18, 153]);
+  assert.deepEqual(r.plan.crateInputs, [{ id: 'fine-lumber', qty: 93 }, { id: 'standard-ingot', qty: 153 * 9 }]);
+  assert.deepEqual([r.plan.farm, r.plan.gold, r.plan.crates], [1377, 31 * 200 + 153 * 80, 184]);
+  assert.deepEqual(r.plan.rawMaterials, { r1: 1377 });
+  assert.deepEqual(r.baseline, { farm: 5005, gold: 1000 });
+});
+
+test('oggetti già posseduti: niente casse e niente ingressi', () => {
+  const r = recommendPlan(nested(), W, { 'fine-ingot': 1 }, [], 'farm');
+  assert.deepEqual([r.plan.crates, r.plan.crateInputs, r.plan.farm], [0, [], 0]);
+});
+
+test('nessun obiettivo: raccomandazione vuota senza errori', () => {
+  const r = recommendPlan(nested(), [], {}, [], 'farm');
+  assert.deepEqual([r.decisions, r.plan.farm, r.plan.gold, r.fallback], [[], 0, 0, false]);
+});
+
+test('obiettivo sconosciuto o ricette cicliche non lanciano', () => {
+  const cyc = {
+    weapon: rec(0, [{ id: 'standard-ingot', qty: 1 }]),
+    'standard-ingot': rec(1, [{ id: 'standard-lumber', qty: 1 }]),
+    'standard-lumber': rec(1, [{ id: 'standard-ingot', qty: 1 }]),
+  };
+  for (const objective of ['farm', 'gold']) {
+    const r = recommendPlan(cyc, [{ id: 'weapon', qty: 1 }, { id: 'ghost', qty: 1 }], {}, [], objective);
+    for (const n of [r.plan.farm, r.plan.gold, r.plan.crates, r.plan.days]) assert.ok(Number.isFinite(n), objective);
+  }
+});
+
+test('il consiglio non è mai peggiore del solo craft sull obiettivo scelto', () => {
+  for (const make of [nested, mutual]) {
+    const farm = recommendPlan(make(), W, {}, [], 'farm');
+    assert.ok(farm.plan.farm <= farm.baseline.farm + 1e-9, 'farm ' + make.name);
+    const gold = recommendPlan(make(), W, {}, [], 'gold');
+    assert.ok(gold.plan.gold <= gold.baseline.gold + 1e-9, 'gold ' + make.name);
+  }
+});

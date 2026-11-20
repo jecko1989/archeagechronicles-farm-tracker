@@ -469,6 +469,96 @@ function decideItems(items, trade, targets, deliveries, objective) {
   return out;
 }
 
+// Piano consigliato. Parte dalle decisioni di decideItems e le valuta in modo ESATTO con il motore esistente:
+// gli oggetti scelti per il commercio sono "ottenuti" (non espansi), si calcolano le casse con tradePlan e i materiali di
+// partenza richiesti si aggiungono come obiettivi da craftare. Si ripete finché le quantità non si stabilizzano (i materiali di
+// partenza si espandono e possono richiedere a loro volta oggetti ottenuti col commercio). Un oggetto ottenuto col commercio
+// che serve anche come materiale di partenza di un'altra cassa torna a craft ('input'). Guardia: se il piano è peggiore del
+// solo craft sull'obiettivo scelto, il consiglio è il solo craft ('fallback').
+// opts = {objective: 'farm'|'gold', tripsPerDay?}. Restituisce {objective, decisions, plan, baseline, fallback}:
+//   decisions: Decision di decideItems con choice finale, why ('trade'|'cost'|'nodata'|'noinput'|'input'|'fallback'),
+//              units (da ottenere nel piano), needed (units > 0), crates/trips/days (null se non è un commercio con units > 0);
+//   plan: {farm, gold, crates, trips, days, rawMaterials, crateInputs}; baseline: {farm, gold} del solo craft.
+function recommendPlan(items, trade, targets, have, deliveries, opts) {
+  const objective = opts && opts.objective === 'gold' ? 'gold' : 'farm';
+  const tripsPerDay = (opts && opts.tripsPerDay) || trade.limits.tripsPerDay.peace;
+  const owned = have || {};
+  const EPS = 1e-9;
+  const total = (o, skip) => { let n = 0; for (const [id, q] of Object.entries(o)) if (!skip || !skip.has(id)) n += q; return n; };
+
+  const baseline = computeNeeds(items, targets, { have: owned });
+  const base = { farm: total(baseline.materials), gold: baseline.gold };
+  const decided = decideItems(items, trade, targets, deliveries, objective);
+  const traded = new Set(Object.keys(decided).filter((id) => decided[id].choice === 'trade'));
+  const flipped = new Set(); // tornati a craft perché servono come materiale di partenza di un'altra cassa
+
+  let inputs = {}, needs = baseline, lines = [];
+  for (let iter = 0; ; iter++) {
+    if (iter > 25) { traded.clear(); inputs = {}; needs = baseline; lines = []; break; } // non converge: solo craft
+    const extra = Object.entries(inputs).map(([id, qty]) => ({ id, qty }));
+    needs = computeNeeds(items, [...targets, ...extra], { have: owned, obtained: traded });
+    const steps = [...traded].filter((id) => needs.materials[id] > 0)
+      .map((id) => ({ id, need: Math.max(0, needs.materials[id] - (owned[id] || 0)), covered: 0 }));
+    const tp = tradePlan(trade, steps, deliveries, { tripsPerDay });
+    lines = tp.groups.flatMap((g) => g.lines.map((l) => ({ ...l, post: g.post })));
+    const next = {};
+    let conflict = null;
+    for (const l of lines) {
+      if (!(l.packs > 0)) continue;
+      const inputId = decided[l.id].inputId;
+      if (traded.has(inputId)) { conflict = inputId; break; }
+      next[inputId] = (next[inputId] || 0) + l.input;
+    }
+    if (conflict !== null) { traded.delete(conflict); flipped.add(conflict); inputs = {}; continue; }
+    const same = Object.keys(next).length === Object.keys(inputs).length && Object.keys(next).every((k) => inputs[k] === next[k]);
+    inputs = next;
+    if (same) break;
+  }
+
+  const crates = lines.reduce((n, l) => n + (l.packs > 0 ? l.packs : 0), 0);
+  const packsByPost = {};
+  for (const l of lines) if (l.packs > 0) packsByPost[l.post] = (packsByPost[l.post] || 0) + l.packs;
+  const trips = Object.values(packsByPost).reduce((n, p) => n + Math.ceil(p / trade.limits.perTrip), 0);
+  const rawMaterials = {};
+  for (const [id, q] of Object.entries(needs.materials)) if (!traded.has(id)) rawMaterials[id] = q;
+  let plan = {
+    farm: total(rawMaterials), gold: needs.gold + lines.reduce((n, l) => n + (l.gold || 0), 0), crates, trips,
+    days: trips ? Math.ceil(trips / tripsPerDay) : 0, rawMaterials,
+    crateInputs: Object.keys(inputs).sort().map((id) => ({ id, qty: inputs[id] })),
+  };
+
+  // guardia: mai peggiore del solo craft sull'obiettivo scelto (primario, poi secondario)
+  const [pp, pb, sp, sb] = objective === 'farm' ? [plan.farm, base.farm, plan.gold, base.gold] : [plan.gold, base.gold, plan.farm, base.farm];
+  const fallback = pp > pb + EPS || (Math.abs(pp - pb) <= EPS && sp > sb + EPS);
+  const wasTraded = new Set(traded);
+  if (fallback) {
+    traded.clear();
+    lines = [];
+    needs = baseline;
+    plan = { farm: base.farm, gold: base.gold, crates: 0, trips: 0, days: 0, rawMaterials: { ...baseline.materials }, crateInputs: [] };
+  }
+
+  const lineOf = (id) => lines.find((l) => l.id === id);
+  const order = [...baseline.steps.map((s) => s.id).filter((id) => decided[id]), ...Object.keys(decided).filter((id) => !baseline.steps.some((s) => s.id === id))];
+  const decisions = order.map((id) => {
+    const d = decided[id];
+    const choice = traded.has(id) ? 'trade' : 'craft';
+    const line = choice === 'trade' ? lineOf(id) : null;
+    const step = needs.steps.find((s) => s.id === id);
+    const units = choice === 'trade' ? (line ? line.units : 0) : step ? step.need - step.covered : 0;
+    let why = d.why;
+    if (choice === 'trade') why = 'trade';
+    else if (fallback && wasTraded.has(id)) why = 'fallback';
+    else if (flipped.has(id)) why = 'input';
+    const hasCrates = !!(line && line.packs > 0);
+    return {
+      ...d, choice, why, units, needed: units > 0,
+      crates: hasCrates ? line.packs : null, trips: hasCrates ? line.trips : null, days: hasCrates ? line.days : null,
+    };
+  });
+  return { objective, decisions, plan, baseline: base, fallback };
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -732,7 +822,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
