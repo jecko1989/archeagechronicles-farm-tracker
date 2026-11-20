@@ -498,7 +498,12 @@ function recommendPlan(items, trade, targets, have, deliveries, opts) {
   for (let iter = 0; ; iter++) {
     if (iter > 25) { traded.clear(); inputs = {}; needs = baseline; lines = []; break; } // non converge: solo craft
     const extra = Object.entries(inputs).map(([id, qty]) => ({ id, qty }));
-    needs = computeNeeds(items, [...targets, ...extra], { have: owned, obtained: traded });
+    // computeNeeds espande sempre gli obiettivi espliciti: quelli scelti per il commercio non vanno passati come obiettivi,
+    // la loro quantità si somma agli oggetti ottenuti (insieme alla domanda che arriva dagli altri oggetti)
+    const direct = {}, rest = [];
+    for (const t of targets) { if (traded.has(t.id)) direct[t.id] = (direct[t.id] || 0) + t.qty; else rest.push(t); }
+    needs = computeNeeds(items, [...rest, ...extra], { have: owned, obtained: traded });
+    for (const [id, qty] of Object.entries(direct)) needs.materials[id] = (needs.materials[id] || 0) + qty;
     const steps = [...traded].filter((id) => needs.materials[id] > 0)
       .map((id) => ({ id, need: Math.max(0, needs.materials[id] - (owned[id] || 0)), covered: 0 }));
     const tp = tradePlan(trade, steps, deliveries, { tripsPerDay });

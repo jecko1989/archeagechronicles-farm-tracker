@@ -231,3 +231,45 @@ test('il consiglio non è mai peggiore del solo craft sull obiettivo scelto', ()
     assert.ok(gold.plan.gold <= gold.baseline.gold + 1e-9, 'gold ' + make.name);
   }
 });
+
+// ---- correzione dopo la revisione finale: un materiale commerciabile scelto come obiettivo ----
+const direct = () => ({
+  r1: raw(),
+  weapon: rec(0, [{ id: 'standard-ingot', qty: 100 }]),
+  'standard-ingot': rec(5, [{ id: 'r1', qty: 10 }]),
+  'standard-lumber': rec(5, [{ id: 'r1', qty: 10 }]), // serve come materiale di partenza delle casse di lingotti
+});
+
+test('un materiale commerciabile scelto come obiettivo viene commerciato come tutti gli altri', () => {
+  const r = recommendPlan(direct(), [{ id: 'standard-ingot', qty: 100 }], {}, [], 'farm');
+  const d = byId(r, 'standard-ingot');
+  assert.deepEqual([d.choice, d.units, d.crates, d.needed], ['trade', 100, 10, true]);
+  assert.deepEqual(r.plan.crateInputs, [{ id: 'standard-lumber', qty: 90 }]);
+  assert.deepEqual([r.plan.farm, r.plan.gold], [900, 450 + 800]); // 90 lumber da craftare + 10 casse
+  assert.deepEqual(r.baseline, { farm: 1000, gold: 500 });
+  assert.equal(r.fallback, false);
+});
+
+test('obiettivo esplicito e domanda dell arma si sommano: 200 lingotti ottenuti col commercio', () => {
+  const r = recommendPlan(direct(), [{ id: 'weapon', qty: 1 }, { id: 'standard-ingot', qty: 100 }], {}, [], 'farm');
+  const d = byId(r, 'standard-ingot');
+  assert.deepEqual([d.choice, d.units, d.crates], ['trade', 200, 19]); // ceil(200 / (1.22 × 9))
+  assert.deepEqual([r.plan.farm, r.plan.gold], [1710, 855 + 1520]);
+  assert.deepEqual(r.baseline, { farm: 2000, gold: 1000 });
+});
+
+test('oggetti posseduti si sottraggono anche dall obiettivo commerciato', () => {
+  const r = recommendPlan(direct(), [{ id: 'standard-ingot', qty: 100 }], { 'standard-ingot': 50 }, [], 'farm');
+  const d = byId(r, 'standard-ingot');
+  assert.deepEqual([d.units, d.crates], [50, 5]); // ceil(50 / 10.98)
+});
+
+test('se l obiettivo commerciabile torna a craft per un conflitto, si crafta come obiettivo normale', () => {
+  const it = { ...mutual(), weapon: rec(0, []) };
+  const r = recommendPlan(it, [{ id: 'standard-ingot', qty: 100 }, { id: 'standard-lumber', qty: 100 }], {}, [], 'farm');
+  for (const input of r.plan.crateInputs) {
+    const d = byId(r, input.id);
+    assert.ok(!(d.choice === 'trade' && d.crates > 0), input.id);
+  }
+  assert.deepEqual([r.plan.farm, r.plan.gold], [1900, 1750]); // stessi numeri del conflitto con l'arma
+});
