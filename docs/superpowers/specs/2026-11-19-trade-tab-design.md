@@ -15,7 +15,7 @@ Successo = per il Gyldenlord's Cleaver la tab dice "Standard Ingot ×810 → Wat
 - Funziona anche nel file unico offline, come il resto.
 
 **Non obiettivi (per ora)**
-- Ottimizzatore che sceglie cosa convertire in base alle scorte dell'utente (serve un inventario).
+- Ottimizzatore che sceglie cosa convertire in base alle scorte dell'utente (serve un inventario). Il consiglio "craft o commercio" **senza scorte** è descritto in `2026-11-20-trade-recommender-design.md`; le scorte restano rimandate.
 - Rischio PvP, tempi di percorso, prezzi di mercato, profitto in gold.
 - Le ~280 combinazioni merce/avamposto del gioco: si parte dalle famiglie di materiali.
 - Le merci speciali (semi come l'anguria, pietre di tempra, oro): ci si può tornare dopo, con una seconda tabella di "ricompense speciali" per avamposto.
