@@ -384,6 +384,91 @@ function tradePlan(trade, steps, deliveries, opts) {
   return { groups, notTradeable };
 }
 
+// ---- consiglio "craft o commercio" ----
+// Costi unitari come coppie [primario, secondario] confrontate in ordine lessicografico (tolleranza 1e-9).
+//   objective 'farm': grezzo [1,0], commissione di g gold [0,g]   (meno grezzi da farmare, a parità meno gold)
+//   objective 'gold': grezzo [0,1], commissione di g gold [g,0]   (meno gold spesi, a parità meno grezzi)
+// Per ogni materiale commerciabile raggiungibile dagli obiettivi confronta il craft (commissione + ingredienti al loro costo
+// migliore) con il commercio: una cassa costa `input` materiali dello stesso livello (il più economico, solo craft, di una
+// famiglia DIVERSA da quella dell'oggetto) più la commissione, e dà `ratio × input` unità. A parità vince il craft.
+// Restituisce {id: Decision}: {id, tier, family, post, choice, unitCraft, unitTrade|null, ratio|null, ratioSource, ratioN, inputId|null,
+// why: 'trade'|'cost'|'nodata'|'noinput'}. Oggetti senza ricetta = grezzi (fuori dal risultato); l'arco che chiude un ciclo vale come grezzo.
+function decideItems(items, trade, targets, deliveries, objective) {
+  const farm = objective !== 'gold';
+  const RAW = farm ? [1, 0] : [0, 1];
+  const fee = (g) => (farm ? [0, g] : [g, 0]);
+  const plus = (a, b) => [a[0] + b[0], a[1] + b[1]];
+  const times = (a, k) => [a[0] * k, a[1] * k];
+  const EPS = 1e-9;
+  const less = (a, b) => a[0] < b[0] - EPS || (Math.abs(a[0] - b[0]) <= EPS && a[1] < b[1] - EPS);
+  const recipe = (id) => (items[id] && items[id].crafts && items[id].crafts[0]) || null;
+  const families = [...new Set(Object.values(trade.posts).flatMap((p) => p.families))]; // nell'ordine degli avamposti
+  const craftMemo = new Map(), evalMemo = new Map(), visiting = new Set();
+
+  // costo del solo craft: commissione + ingredienti al loro costo migliore (craft o commercio)
+  const craftCost = (id) => {
+    const r = recipe(id);
+    if (!r || visiting.has(id)) return RAW;
+    if (craftMemo.has(id)) return craftMemo.get(id);
+    visiting.add(id);
+    let c = fee(r.gold || 0);
+    for (const ing of r.ingredients) c = plus(c, times(bestCost(ing.id), ing.qty));
+    c = times(c, 1 / (r.yield || 1));
+    visiting.delete(id);
+    craftMemo.set(id, c);
+    return c;
+  };
+  const bestCost = (id) => {
+    if (!recipe(id) || visiting.has(id)) return RAW;
+    const d = evaluate(id);
+    return d && d.unitTrade && less(d.unitTrade, d.unitCraft) ? d.unitTrade : d ? d.unitCraft : craftCost(id);
+  };
+  const evaluate = (id) => {
+    if (evalMemo.has(id)) return evalMemo.get(id);
+    const info = tradeInfo(trade, id);
+    const unitCraft = craftCost(id);
+    if (!info) { evalMemo.set(id, null); return null; }
+    const er = effectiveRatio(trade, deliveries, info.family, info.tier);
+    const d = {
+      id, tier: info.tier, family: info.family, post: info.post, choice: 'craft', unitCraft, unitTrade: null,
+      ratio: er.ratio, ratioSource: er.source, ratioN: er.n, inputId: null, why: 'nodata',
+    };
+    if (er.ratio > 0) {
+      let cIn = null;
+      for (const f of families) {
+        const cand = info.tier + '-' + f;
+        if (f === info.family || !items[cand]) continue; // famiglia diversa e materiale esistente
+        const c = craftCost(cand);
+        if (cIn === null || less(c, cIn)) { cIn = c; d.inputId = cand; }
+      }
+      if (cIn === null) d.why = 'noinput';
+      else {
+        const pack = trade.packs[info.tier];
+        d.unitTrade = plus(times(cIn, 1 / er.ratio), times(fee(pack.gold), 1 / (er.ratio * pack.input)));
+        d.choice = less(d.unitTrade, unitCraft) ? 'trade' : 'craft';
+        d.why = d.choice === 'trade' ? 'trade' : 'cost';
+      }
+    }
+    evalMemo.set(id, d);
+    return d;
+  };
+
+  // solo gli id raggiungibili dagli obiettivi seguendo le ricette
+  const seen = new Set();
+  const out = {};
+  const walk = (id) => {
+    if (seen.has(id)) return;
+    seen.add(id);
+    const r = recipe(id);
+    if (!r) return;
+    for (const ing of r.ingredients) walk(ing.id);
+    const d = evaluate(id);
+    if (d) out[id] = d;
+  };
+  for (const t of targets) walk(t.id);
+  return out;
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -647,7 +732,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
