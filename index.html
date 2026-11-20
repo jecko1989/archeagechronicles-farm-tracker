@@ -100,6 +100,19 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .recipe h3 { margin-top: 0; }
 .rec { padding: 4px 0; color: var(--strong); }
 .rec .num { min-width: 2.6em; }
+/* tab Crafting / Trade */
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--divider); }
+.tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 14px; color: var(--muted); font-weight: 600; }
+.tab[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
+.tline { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); }
+.tline .nm { flex: 1 1 15rem; }
+.tline .tnums { color: var(--text); font-variant-numeric: tabular-nums; }
+.tline .ratio { flex: 1 0 100%; padding-left: 42px; } /* sotto il nome, allineata dopo l'icona (32px + gap) */
+.logform { align-items: flex-end; margin-top: 8px; }
+.logform label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; color: var(--muted); }
+.logform input { width: 6rem; }
+.loglist li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--divider); }
+.loglist li span { flex: 1; }
 footer { padding: 8px 24px 32px; color: var(--muted); font-size: .85rem; }
 a { color: var(--accent); }
 @media (max-width: 520px) {
@@ -140,7 +153,14 @@ a { color: var(--accent); }
       <p id="pickCount" class="muted"></p>
       <ul id="suggestions" class="picker"></ul>
     </section>
-    <section class="card a-results" id="results"></section>
+    <section class="card a-results" id="results">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" class="tab" data-action="tab" data-v="craft" aria-selected="true" data-i18n="tab_craft">Crafting</button>
+        <button type="button" role="tab" class="tab" data-action="tab" data-v="trade" aria-selected="false" data-i18n="tab_trade">Trade</button>
+      </div>
+      <div id="craftView"></div>
+      <div id="tradeView" hidden></div>
+    </section>
     <section class="card a-progress">
       <h2 data-i18n="h_progress">Progress</h2>
       <div class="row">
@@ -563,6 +583,20 @@ const STRINGS = {
     progress_note: 'Your progress stays in this browser. Export it to move it to another device.',
     import_bad: 'Invalid file: it is not an export from this tool.', import_ok: 'Progress imported.',
     footer: "Data from {link} (collected automatically). Unofficial project, not affiliated with the game's developers.",
+    // tab Trade
+    tab_craft: 'Crafting', tab_trade: 'Trade', h_trade: 'Get materials by trading',
+    trade_empty: 'Add an item on the left to plan its trade runs.', trade_unavailable: 'Trade data unavailable.',
+    trips_day: 'Trips per day:', trips_peace: '{n} (peace only)', trips_both: '{n} (peace + conflict)',
+    trade_overlap_hint: 'Each line is an alternative to crafting that material. Materials made from each other overlap (for example Fine Ingot uses Standard Ingot).',
+    trade_line: '→ {packs} crates · {input} materials · {gold} Gold', trade_group: '{packs} crates · {trips} trips',
+    ratio_estimate: 'estimate {r}×', ratio_log: 'from your log ({n}) {r}×', trade_missing_ratio: 'No data yet: log a delivery.',
+    trade_not_tradeable: 'Cannot be traded (farm them):', trade_total: 'Total: {packs} crates · {trips} trips · {days} days · {gold} Gold',
+    h_log: 'Delivery log', log_family: 'Material received', log_tier: 'Level', log_packs: 'Crates', log_input: 'Materials put in',
+    log_received: 'Materials received', log_add: 'Add', log_entry: '{family} · {tier}: {input} → {received} ({r}×)', log_remove: 'Remove delivery',
+    log_invalid: 'Enter whole numbers (materials put in must be at least 1).', log_empty: 'No deliveries logged yet.',
+    tier_standard: 'Standard', tier_fine: 'Fine', tier_superior: 'Superior',
+    family_additive: 'Additive', family_archeum: 'Archeum', family_ingot: 'Ingot', family_leather: 'Leather', family_lumber: 'Lumber',
+    family_stone: 'Stone', family_textile: 'Textile',
   },
   it: {
     loading: 'Caricamento dati…', status_ok: 'Dati aggiornati al {date} · {n} oggetti', badge_offline: 'offline', status_offline: 'dati del {date}',
@@ -585,6 +619,20 @@ const STRINGS = {
     progress_note: 'I progressi restano in questo browser. Esportali per spostarli su un altro dispositivo.',
     import_bad: 'File non valido: non è un export di questo tool.', import_ok: 'Progressi importati.',
     footer: 'Dati da {link} (raccolti automaticamente). Progetto non ufficiale, non affiliato agli sviluppatori del gioco.',
+    // tab Trade
+    tab_craft: 'Crafting', tab_trade: 'Commercio', h_trade: 'Ottieni materiali col commercio',
+    trade_empty: 'Aggiungi un oggetto a sinistra per pianificare le consegne.', trade_unavailable: 'Dati del commercio non disponibili.',
+    trips_day: 'Viaggi al giorno:', trips_peace: '{n} (solo pace)', trips_both: '{n} (pace + conflitto)',
+    trade_overlap_hint: "Ogni riga è un'alternativa al craft di quel materiale. I materiali che si fanno l'uno dall'altro si sovrappongono (per esempio il Fine Ingot usa lo Standard Ingot).",
+    trade_line: '→ {packs} casse · {input} materiali · {gold} Gold', trade_group: '{packs} casse · {trips} viaggi',
+    ratio_estimate: 'stima {r}×', ratio_log: 'dal tuo registro ({n}) {r}×', trade_missing_ratio: 'Nessun dato: registra una consegna.',
+    trade_not_tradeable: 'Non commerciabili (da farmare):', trade_total: 'Totale: {packs} casse · {trips} viaggi · {days} giorni · {gold} Gold',
+    h_log: 'Registro consegne', log_family: 'Materiale ricevuto', log_tier: 'Livello', log_packs: 'Casse', log_input: 'Materiali messi',
+    log_received: 'Materiali ricevuti', log_add: 'Aggiungi', log_entry: '{family} · {tier}: {input} → {received} ({r}×)', log_remove: 'Rimuovi consegna',
+    log_invalid: 'Inserisci numeri interi (i materiali messi devono essere almeno 1).', log_empty: 'Nessuna consegna registrata.',
+    tier_standard: 'Standard', tier_fine: 'Fine', tier_superior: 'Superior',
+    family_additive: 'Additivo', family_archeum: 'Archeum', family_ingot: 'Lingotto', family_leather: 'Pelle', family_lumber: 'Legno',
+    family_stone: 'Pietra', family_textile: 'Tessuto',
   },
 };
 
@@ -599,7 +647,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, loadTrade, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -624,6 +672,9 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
   let items = {};
   let dropped = [];
   let progress = C.emptyProgress();
+  let trade = null; // data/trade.json normalizzato (null = non disponibile)
+  let tab = 'craft'; // craft | trade
+  let tripsMode = 'peace'; // peace = solo viaggi in pace; both = pace + conflitto (non salvato)
 
   function dataUrl() {
     const q = new URLSearchParams(location.search).get('data');
@@ -705,7 +756,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
 
   // ---- risultati ----
   function renderResults() {
-    const box = $('#results');
+    const box = $('#craftView');
     if (!progress.targets.length) {
       box.innerHTML = `<h2>${esc(t('h_farm'))}</h2><p class="muted">${esc(t('farm_empty'))}</p>`;
       return;
@@ -765,7 +816,82 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
       ${dropped.length ? `<p class="warn">${esc(t('dropped'))} ${dropped.map(esc).join(', ')}</p>` : ''}`;
   }
 
-  function render() { hideTip(); renderTargets(); renderResults(); }
+  // ---- tab Trade: piano di commercio e registro consegne ----
+  const fmtRatio = (r) => r.toLocaleString(LOCALE[lang], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const tierLabel = (x) => (('tier_' + x) in C.STRINGS.en ? t('tier_' + x) : x);
+  const familyLabel = (x) => (('family_' + x) in C.STRINGS.en ? t('family_' + x) : x);
+  function renderTrade() {
+    const box = $('#tradeView');
+    const head = `<h2>${esc(t('h_trade'))}</h2>`;
+    if (!progress.targets.length) { box.innerHTML = head + `<p class="muted">${esc(t('trade_empty'))}</p>`; return; }
+    if (!trade) { box.innerHTML = head + `<p class="warn">${esc(t('trade_unavailable'))}</p>`; return; }
+    const L = trade.limits;
+    const both = L.tripsPerDay.peace + L.tripsPerDay.conflict;
+    const r = C.computeNeeds(items, progress.targets, { have: progress.have });
+    const plan = C.tradePlan(trade, r.steps, progress.deliveries, { tripsPerDay: tripsMode === 'both' ? both : L.tripsPerDay.peace });
+
+    const modeBtn = (mode, n, key) => `<button type="button" class="chip${tripsMode === mode ? ' on' : ''}" data-action="trips" data-v="${mode}" aria-pressed="${tripsMode === mode}">${esc(t(key, { n }))}</button>`;
+    const groupsHtml = plan.groups.map((g) => {
+      const post = trade.posts[g.post];
+      return `<h3>${esc(g.name)} <small>· ${esc(post.families.map(familyLabel).join(' / '))}${post.seed ? ' · ' + esc(post.seed) : ''} · ${esc(t('trade_group', { packs: fmt(g.packs), trips: fmt(g.trips) }))}</small></h3>` +
+        g.lines.map((l) =>
+          `<div class="tline"><span class="nm">${icon(l.id, true)}<span>${link(l.id)} ×${fmt(l.units)}</span></span>` +
+          `<span class="tnums">${l.missing ? `<span class="warn">${esc(t('trade_missing_ratio'))}</span>` : esc(t('trade_line', { packs: fmt(l.packs), input: fmt(l.input), gold: fmt(l.gold) }))}</span>` +
+          `<small class="ratio">${l.ratio !== null ? esc(l.source === 'log' ? t('ratio_log', { n: l.n, r: fmtRatio(l.ratio) }) : t('ratio_estimate', { r: fmtRatio(l.ratio) })) : ''}</small></div>`
+        ).join('');
+    }).join('');
+    const notHtml = plan.notTradeable.length
+      ? `<p class="muted">${esc(t('trade_not_tradeable'))} ${plan.notTradeable.map((x) => `${link(x.id)} ×${fmt(x.units)}`).join(', ')}</p>` : '';
+    const T = plan.totals;
+    const totalHtml = plan.groups.length
+      ? `<p><strong>${esc(t('trade_total', { packs: fmt(T.packs), trips: fmt(T.trips), days: fmt(T.days), gold: fmt(T.gold) }))}</strong></p>` : '';
+
+    // registro consegne: l'utente annota casse, materiali messi e ricevuti; da qui si ricavano i rapporti reali
+    const families = [...new Set(Object.values(trade.posts).flatMap((p) => p.families))];
+    const tiers = ['standard', 'fine', 'superior'];
+    const opt = (v, label) => `<option value="${esc(v)}">${esc(label)}</option>`;
+    const logHtml = `<h2 style="margin-top:18px">${esc(t('h_log'))}</h2>` +
+      `<div class="row logform">` +
+      `<label>${esc(t('log_family'))} <select id="logFamily">${families.map((f) => opt(f, familyLabel(f))).join('')}</select></label>` +
+      `<label>${esc(t('log_tier'))} <select id="logTier">${tiers.map((x) => opt(x, tierLabel(x))).join('')}</select></label>` +
+      `<label>${esc(t('log_packs'))} <input id="logPacks" type="number" min="1" value="${L.perTrip}"></label>` +
+      `<label>${esc(t('log_input'))} <input id="logInput" type="number" min="1" value="${L.perTrip * trade.packs.standard.input}"></label>` +
+      `<label>${esc(t('log_received'))} <input id="logReceived" type="number" min="0"></label>` +
+      `<button type="button" class="primary" data-action="log-add">${esc(t('log_add'))}</button></div>` +
+      `<p id="logMsg" class="warn"></p>` +
+      (progress.deliveries.length
+        ? `<ul class="loglist">` + progress.deliveries.map((d, i) => ({ d, i })).reverse().map(({ d, i }) =>
+          `<li><span>${esc(t('log_entry', { family: familyLabel(d.family), tier: tierLabel(d.tier), input: fmt(d.input), received: fmt(d.received), r: fmtRatio(d.received / d.input) }))}</span>` +
+          `<button type="button" data-action="log-del" data-i="${i}" aria-label="${esc(t('log_remove'))}">✕</button></li>`).join('') + `</ul>`
+        : `<p class="muted">${esc(t('log_empty'))}</p>`);
+
+    box.innerHTML = head +
+      `<div class="row">${esc(t('trips_day'))} ${modeBtn('peace', L.tripsPerDay.peace, 'trips_peace')} ${modeBtn('both', both, 'trips_both')}</div>` +
+      `<p class="muted">${esc(t('trade_overlap_hint'))}</p>` + groupsHtml + notHtml + totalHtml + logHtml;
+  }
+  function setTab(v) {
+    tab = v === 'trade' ? 'trade' : 'craft';
+    document.querySelectorAll('[data-action=tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.v === tab)));
+    $('#craftView').hidden = tab !== 'craft';
+    $('#tradeView').hidden = tab !== 'trade';
+    hideTip();
+    if (tab === 'trade') renderTrade();
+  }
+  // Materiali messi = casse × materiali per cassa del livello scelto (modificabile: il gioco può dare numeri diversi)
+  function fillLogInput() {
+    const packs = parseInt($('#logPacks').value, 10);
+    if (trade && packs > 0) $('#logInput').value = packs * trade.packs[$('#logTier').value].input;
+  }
+  function addDelivery() {
+    const num = (sel) => { const s = $(sel).value.trim(); return /^\d+$/.test(s) ? parseInt(s, 10) : NaN; };
+    const d = { family: $('#logFamily').value, tier: $('#logTier').value, packs: num('#logPacks'), input: num('#logInput'), received: num('#logReceived'), at: new Date().toISOString() };
+    if (!C.isDelivery(d)) { $('#logMsg').textContent = t('log_invalid'); return; }
+    progress.deliveries.push(d);
+    save();
+    renderTrade();
+  }
+
+  function render() { hideTip(); renderTargets(); renderResults(); renderTrade(); }
 
   // ---- tooltip dell'oggetto (al passaggio del mouse, alla tastiera e al tocco) ----
   const tip = $('#tip');
@@ -841,10 +967,16 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
       }
       case 'retry': start(); break;
       case 'lang': setLang(b.dataset.v); break;
+      case 'tab': setTab(b.dataset.v); break;
+      case 'trips': tripsMode = b.dataset.v === 'both' ? 'both' : 'peace'; renderTrade(); break;
+      case 'log-add': addDelivery(); break;
+      case 'log-del': progress.deliveries.splice(parseInt(b.dataset.i, 10), 1); save(); renderTrade(); break;
     }
   });
+  document.addEventListener('input', (e) => { if (e.target.id === 'logPacks') fillLogInput(); });
   document.addEventListener('change', (e) => {
     const el = e.target;
+    if (el.id === 'logTier') fillLogInput();
     const v = Math.max(0, parseInt(el.value, 10) || 0);
     switch (el.dataset.action) {
       case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
@@ -908,9 +1040,15 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
     try {
       // nel file offline i dati sono incorporati: niente rete e niente cache; altrimenti si scaricano da data/
       const emb = document.getElementById('embedded-data');
-      const d = emb
-        ? await C.loadData('embedded/', { fetchFn: C.embeddedFetch(JSON.parse(emb.textContent)), storage: { getItem: () => null, setItem() {} } })
+      const embData = emb ? JSON.parse(emb.textContent) : null;
+      const noStorage = { getItem: () => null, setItem() {} };
+      const d = embData
+        ? await C.loadData('embedded/', { fetchFn: C.embeddedFetch(embData), storage: noStorage })
         : await C.loadData(dataUrl());
+      // dati del commercio: facoltativi, un errore qui non deve fermare il resto dell'app
+      trade = await (embData
+        ? C.loadTrade('embedded/', { fetchFn: C.embeddedFetch(embData), storage: noStorage })
+        : C.loadTrade(dataUrl())).catch(() => null);
       items = d.items; meta = d.meta; offline = d.offline;
       craftable = Object.entries(items).filter(([, it]) => it.crafts.length);
       loadSaved();
