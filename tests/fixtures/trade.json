@@ -1,0 +1,24 @@
+{
+  "posts": {
+    "seaglass-harbor": { "name": "Seaglass Harbor", "families": ["lumber"], "seed": "watermelon" },
+    "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" },
+    "jubilant-village": { "name": "Jubilant Village", "families": ["leather"], "seed": "corn" },
+    "water-drift": { "name": "Water Drift", "families": ["ingot"], "seed": "cabbage" },
+    "stargazer": { "name": "Stargazer Village", "families": ["textile"], "seed": "wheat" },
+    "shadow-path": { "name": "Shadow Path Temple", "families": ["archeum", "stone"], "seed": "melon" }
+  },
+  "packs": {
+    "standard": { "input": 9, "gold": 80 },
+    "fine": { "input": 3, "gold": 200 },
+    "superior": { "input": 1, "gold": 1000 }
+  },
+  "ratios": {
+    "default": { "standard": 1.22, "fine": 1.1, "superior": null },
+    "byFamily": { "stone": { "standard": 0.9 } }
+  },
+  "limits": {
+    "perTrip": 7,
+    "craftedCap": 10,
+    "tripsPerDay": { "peace": 3, "conflict": 3 }
+  }
+}

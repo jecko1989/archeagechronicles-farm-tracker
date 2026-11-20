@@ -255,6 +255,61 @@ function directIngredients(items, targets) {
   return out;
 }
 
+// ---- tab Trade: dati (data/trade.json) ----
+// Trade = {posts:{id:{name, families[], seed?}}, packs:{standard|fine|superior:{input, gold}},
+//          ratios:{default:{tier:number|null}, byFamily:{family:{tier:number|null}}}, limits:{perTrip, craftedCap, tripsPerDay:{peace, conflict}}}
+// normalizeTrade restituisce una copia pulita, oppure null se la struttura non è utilizzabile.
+// Un rapporto non numerico o <= 0 diventa null ("dato mancante"); un `input`/limite non intero positivo rende il file non valido.
+const TRADE_TIERS = ['standard', 'fine', 'superior'];
+function normalizeTrade(raw) {
+  const obj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  const posInt = (n) => Number.isInteger(n) && n > 0;
+  const ratio = (v) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
+  if (!obj(raw) || !obj(raw.posts) || !obj(raw.packs) || !obj(raw.limits)) return null;
+
+  const posts = {};
+  for (const [id, p] of Object.entries(raw.posts)) {
+    if (!obj(p) || typeof p.name !== 'string' || !Array.isArray(p.families)) continue;
+    const families = p.families.filter((f) => typeof f === 'string' && f);
+    if (!families.length) continue;
+    posts[id] = typeof p.seed === 'string' ? { name: p.name, families, seed: p.seed } : { name: p.name, families };
+  }
+  if (!Object.keys(posts).length) return null;
+
+  const packs = {};
+  for (const tier of TRADE_TIERS) {
+    const k = raw.packs[tier];
+    if (!obj(k) || !posInt(k.input) || !Number.isInteger(k.gold) || k.gold < 0) return null;
+    packs[tier] = { input: k.input, gold: k.gold };
+  }
+
+  const L = raw.limits;
+  if (!posInt(L.perTrip) || !posInt(L.craftedCap) || !obj(L.tripsPerDay) || !posInt(L.tripsPerDay.peace) || !posInt(L.tripsPerDay.conflict)) return null;
+
+  const R = obj(raw.ratios) ? raw.ratios : {};
+  const def = {};
+  for (const tier of TRADE_TIERS) def[tier] = ratio(obj(R.default) ? R.default[tier] : null);
+  const byFamily = {};
+  for (const [family, tiers] of Object.entries(obj(R.byFamily) ? R.byFamily : {})) {
+    if (!obj(tiers)) continue;
+    byFamily[family] = {};
+    for (const tier of TRADE_TIERS) if (tier in tiers) byFamily[family][tier] = ratio(tiers[tier]);
+  }
+
+  return {
+    posts, packs, ratios: { default: def, byFamily },
+    limits: { perTrip: L.perTrip, craftedCap: L.craftedCap, tripsPerDay: { peace: L.tripsPerDay.peace, conflict: L.tripsPerDay.conflict } },
+  };
+}
+
+// Livello, famiglia e avamposto di un materiale commerciabile ("fine-lumber" -> fine, lumber, seaglass-harbor); null se non si commercia.
+function tradeInfo(trade, id) {
+  const m = /^(standard|fine|superior)-(.+)$/.exec(String(id));
+  if (!m || !trade) return null;
+  for (const [post, p] of Object.entries(trade.posts)) if (p.families.includes(m[2])) return { tier: m[1], family: m[2], post };
+  return null;
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -457,7 +512,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
