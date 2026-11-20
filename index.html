@@ -188,7 +188,9 @@ const ICON_BASE = 'https://static.metaforge.app/archeage-chronicles/icons/';
 
 // Espande gli obiettivi fino ai materiali grezzi.
 // items: {id: {crafts:[{ingredients:[{id,qty}], yield?, gold, ...}], ...}}
-// targets: [{id, qty}]; opts.expandIntermediates (default true); opts.have: {id: quantità} di oggetti lavorati già posseduti.
+// targets: [{id, qty}]; opts.expandIntermediates (default true); opts.have: {id: quantità} di oggetti lavorati già posseduti;
+// opts.obtained: id (array o Set) che si ottengono altrove (es. col commercio): non si espandono in grezzi, restano in `materials`
+// con la quantità richiesta (opts.have non li tocca: la sottrae chi chiama), a meno che siano obiettivi espliciti.
 // Si usa sempre crafts[0]. La domanda per oggetto è aggregata prima di arrotondare per yield.
 function computeNeeds(items, targets, opts) {
   const expand = !opts || opts.expandIntermediates !== false;
@@ -198,7 +200,8 @@ function computeNeeds(items, targets, opts) {
   const warn = (w) => { if (!warnings.includes(w)) warnings.push(w); };
   const add = (o, id, n) => { o[id] = (o[id] || 0) + n; };
   const recipe = (id) => (items[id] && items[id].crafts && items[id].crafts[0]) || null;
-  const expandable = (id) => !!recipe(id) && (expand || targetIds.has(id));
+  const obtained = new Set((opts && opts.obtained) || []);
+  const expandable = (id) => !!recipe(id) && (targetIds.has(id) || (expand && !obtained.has(id)));
 
   // 1) ordine topologico (genitori prima dei figli); gli archi che chiudono un ciclo sono tagliati
   const state = {};
