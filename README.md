@@ -11,8 +11,9 @@ Pick the items you want to craft in **ArcheAge Chronicles** and find out which m
    **Hover over an item in the list or in your selection, or over the icon of a material or crafting step,** (or focus it with the keyboard, or tap it on a touch screen) to see its details as on MetaForge: level, slot, set, weight, durability, sell price, stats, random options, description and the crafting recipe.
 2. **Read the materials** you need to farm. Right under the title the tool lists what the item needs directly (for example *5 × Superior Ingot, 5 × Superior Archeum, 10 × Void Heart…*); below it, the full list of raw materials: *Needed / Have / Missing*. Use the −/+ buttons to mark how many you already have. Click a material (or a crafting step) to open its MetaForge page in a new tab, for example to see where it drops.
 3. **Follow the crafting steps** from top to bottom: they are numbered and split into stages, from the most basic items (raw materials only) up to the item you want to craft. **Already own some crafted items** (for example Standard or Superior Archeum, Ingots, Additives)? Type how many on the right of each step (or use −/+): fewer crafts are needed, the raw materials above and the total gold cost drop accordingly, and a fully covered step shows ✓. Owning an item also covers everything below it, so the steps that only fed it need no raw materials any more.
-4. The interface is in English by default; the **IT** button at the top right switches it to Italian (your choice is remembered). Item names are always the English ones from MetaForge.
-5. Your progress stays in your browser. Use **Export/Import** to move it to another device.
+4. **Trade tab** (next to Crafting): for the materials that can also be obtained with trade goods (Standard / Fine / Superior Ingot, Additive, Textile, Leather, Lumber, Archeum, Stone) it tells you where to deliver, how many crates, trips and days it takes, and the crafting gold. Every ratio is labelled *estimate* until you note real deliveries in the **delivery log** (crates, materials put in, materials received): from then on the ratio comes from your own last 5 deliveries. Bones cannot be traded, so they stay in the "farm them" list.
+5. The interface is in English by default; the **IT** button at the top right switches it to Italian (your choice is remembered). Item names are always the English ones from MetaForge.
+6. Your progress (including the delivery log) stays in your browser. Use **Export/Import** to move it to another device.
 
 It also works as a local file: download `index.html` and open it. Data is always read from this repository (`data/`), so it stays up to date without downloading anything again. After the first load the latest version is cached and the page works offline.
 
@@ -42,6 +43,17 @@ When a patch changes recipes before MetaForge updates its database, they can be 
 Allowed fields (all refer to the first recipe): `ingredients` (replaces the list), `gold`, `yield`, `note`. An invalid correction is ignored. Once MetaForge catches up, the entry should be removed.
 
 The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. All 17 are **confirmed in game**: the 9 base recipes (Rough Meat and the 8 "Standard …"; the Standard tier costs 125 gold) and the 8 "Fine …" ones (300 gold). The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
+
+### Trade data: `data/trade.json`
+Hand-written (it does not come from MetaForge): the six trading posts with what they give (`families`, plus a special `seed`), the crate recipe per level (materials and gold per crate), the estimated ratios received/put in, and the limits (7 crates per trip, 3 peace + 3 conflict trips a day). The page downloads it every time it opens; if it is missing or broken, the Trade tab shows "Trade data unavailable" and everything else keeps working. To fix a value, edit the file on GitHub. A `null` ratio means "no data yet".
+```json
+{
+  "posts": { "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" } },
+  "packs": { "standard": { "input": 9, "gold": 80 }, "fine": { "input": 3, "gold": 200 }, "superior": { "input": 1, "gold": 1000 } },
+  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": null }, "byFamily": { "stone": { "standard": 0.9 } } },
+  "limits": { "perTrip": 7, "craftedCap": 10, "tripsPerDay": { "peace": 3, "conflict": 3 } }
+}
+```
 
 ### `data/items.json` format
 ```json

@@ -11,8 +11,9 @@ Scegli gli oggetti che vuoi craftare in **ArcheAge Chronicles** e scopri quali m
    **Passa il mouse su un oggetto della lista o della tua selezione, o sull'icona di un materiale o di un passo di crafting,** (o selezionalo con la tastiera, o toccalo su uno schermo touch) per vederne i dettagli come su MetaForge: livello, slot, set, peso, durabilità, prezzo di vendita, statistiche, opzioni casuali, descrizione e ricetta di crafting.
 2. **Leggi i materiali** da farmare. Subito sotto il titolo c'è l'elenco di cosa serve direttamente all'oggetto (per esempio *5 × Superior Ingot, 5 × Superior Archeum, 10 × Void Heart…*); sotto, l'elenco completo dei materiali grezzi: *Servono / Hai / Mancano*. Con i pulsanti −/+ segni quanti ne hai già. Clicca su un materiale (o su un passo di crafting) per aprire la sua pagina su MetaForge in una nuova scheda, per esempio per vedere dove si trova.
 3. **Segui i passi di crafting** dall'alto in basso: sono numerati e divisi in fasi, dagli oggetti più basilari (solo materiali grezzi) fino all'oggetto che vuoi craftare. **Hai già alcuni oggetti lavorati** (per esempio Standard o Superior Archeum, Ingot, Additive)? Scrivi quanti a destra di ogni passo (o usa −/+): servono meno craft, i materiali grezzi qui sopra e il costo totale in gold scendono di conseguenza, e un passo completamente coperto mostra ✓. Possedere un oggetto copre anche tutto ciò che sta sotto: i passi che servivano solo a quello non richiedono più materiali grezzi.
-4. L'interfaccia è in inglese di base; il pulsante **IT** in alto a destra la passa in italiano (la scelta resta salvata). I nomi degli oggetti sono sempre quelli inglesi di MetaForge.
-5. I progressi restano nel tuo browser. **Esporta/Importa** per spostarli su un altro dispositivo.
+4. **Tab Commercio** (accanto a Crafting): per i materiali che si possono ottenere anche con i trade goods (Ingot, Additive, Textile, Leather, Lumber, Archeum, Stone, nei livelli Standard / Fine / Superior) dice dove consegnare, quante casse, quanti viaggi e giorni servono e il gold di crafting. Ogni rapporto è etichettato *stima* finché non annoti consegne vere nel **registro consegne** (casse, materiali messi, materiali ricevuti): da lì il rapporto viene dalle tue ultime 5 consegne. Le ossa non si commerciano e restano nell'elenco "da farmare".
+5. L'interfaccia è in inglese di base; il pulsante **IT** in alto a destra la passa in italiano (la scelta resta salvata). I nomi degli oggetti sono sempre quelli inglesi di MetaForge.
+6. I progressi (registro consegne compreso) restano nel tuo browser. **Esporta/Importa** per spostarli su un altro dispositivo.
 
 Funziona anche da file locale: scarica `index.html` e aprilo. I dati vengono sempre letti da questa repo (`data/`), quindi restano aggiornati senza riscaricare nulla. Dopo il primo caricamento l'ultima versione resta in cache e la pagina funziona anche offline.
 
@@ -42,6 +43,17 @@ Se una patch cambia le ricette prima che MetaForge aggiorni il database, si poss
 Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la lista), `gold`, `yield`, `note`. Una correzione non valida viene ignorata. Quando MetaForge si aggiorna, la voce va tolta.
 
 Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri dai materiali lavorati, come da lettera degli sviluppatori): le 9 ricette "base" (Standard …) e le 8 "Fine …". Tutte e 17 sono **confermate in gioco**: le 9 ricette "base" (Rough Meat e le 8 "Standard …"; il livello Standard costa 125 gold) e le 8 "Fine …" (300 gold). Le ricette "Superior …" non sono cambiate con la patch (Superior Bonecraft richiede ancora i suoi 9 Buffalo Horn in gioco), quindi qui non hanno voci.
+
+### Dati del commercio: `data/trade.json`
+Scritto a mano (non viene da MetaForge): i sei avamposti con ciò che danno (`families`, più un `seed` speciale), la ricetta delle casse per livello (materiali e gold per cassa), i rapporti stimati ricevuti/messi e i limiti (7 casse per viaggio, 3 viaggi in pace + 3 in conflitto al giorno). La pagina lo scarica a ogni apertura; se manca o è rotto, la tab Commercio mostra "Dati del commercio non disponibili" e il resto funziona. Per correggere un valore basta modificare il file su GitHub. Un rapporto `null` significa "nessun dato".
+```json
+{
+  "posts": { "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" } },
+  "packs": { "standard": { "input": 9, "gold": 80 }, "fine": { "input": 3, "gold": 200 }, "superior": { "input": 1, "gold": 1000 } },
+  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": null }, "byFamily": { "stone": { "standard": 0.9 } } },
+  "limits": { "perTrip": 7, "craftedCap": 10, "tripsPerDay": { "peace": 3, "conflict": 3 } }
+}
+```
 
 ### Formato di `data/items.json`
 ```json

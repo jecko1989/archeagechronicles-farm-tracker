@@ -53,17 +53,19 @@ Confermate:
 **Dati** — nuovo file `data/trade.json`, scritto a mano (non viene da MetaForge), scaricato come `overrides.json` (404 = valori di default nel codice; in cache per l'offline; incorporato nel file offline):
 ```json
 {
-  "posts": { "watchers": { "name": "Watcher's Trading Post", "family": "additive", "seed": "pumpkin" }, "...": {} },
+  "posts": { "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" }, "...": {} },
   "packs": { "standard": { "input": 9, "gold": 80 }, "fine": { "input": 3, "gold": 200 }, "superior": { "input": 1, "gold": 1000 } },
   "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": null }, "byFamily": { "stone": { "standard": 0.9 } } },
   "limits": { "perTrip": 7, "craftedCap": 10, "tripsPerDay": { "peace": 3, "conflict": 3 } }
 }
 ```
+Ogni avamposto ha `families` (un elenco: Shadow Path Temple ne ha due, `archeum` e `stone`).
+
 Gli id degli oggetti seguono le regole dei dati: `<livello>-<famiglia>` con livello `standard|fine|superior` e famiglia commerciabile `additive|archeum|ingot|leather|lumber|stone|textile` (`*-bonecraft` esiste ma **non è commerciabile**); il certificato è `blank-trade-certificate`. Il collegamento id→(avamposto, livello) si ricava da questa regola, non da una tabella a mano.
 
 **Calcolo** (funzioni pure nel blocco `core`, testate in Node):
 - `effectiveRatio(trade, deliveries, family, tier)`: media ponderata `ricevuti/messi` delle ultime 5 consegne di quella coppia famiglia+livello (l'avamposto è dedotto dalla famiglia); senza consegne usa `trade.ratios.byFamily[family][tier]` se esiste, altrimenti `trade.ratios.default[tier]`; restituisce anche `{source: 'estimate'|'log', n}`.
-- `tradePlan(items, steps, trade, deliveries, opts)`: per ogni passo di `computeNeeds` il cui id è commerciabile e con `times > 0`: unità mancanti `U = need − covered`; casse `P = ceil(U / (ratio × input))`; materiali da mettere `P × input`; gold `P × gold`; viaggi `ceil(P / 7)` **per destinazione**; giorni `ceil(viaggi / tripsPerDay)` con `tripsPerDay` = 3 (solo pace) o 6 (pace + conflict), scelto dall'utente. Se il livello è superior e la cassa richiede un grado, avviso informativo. Passi non commerciabili → elenco "da farmare".
+- `tradePlan(trade, steps, deliveries, opts)` (non serve `items`: basta l'id del passo): per ogni passo di `computeNeeds` il cui id è commerciabile e con `times > 0`: unità mancanti `U = need − covered`; casse `P = ceil(U / (ratio × input))`; materiali da mettere `P × input`; gold `P × gold`; viaggi `ceil(P / 7)` **per destinazione**; giorni `ceil(viaggi / tripsPerDay)` con `tripsPerDay` = 3 (solo pace) o 6 (pace + conflict), scelto dall'utente. Se il livello è superior e la cassa richiede un grado, avviso informativo. Passi non commerciabili → elenco "da farmare".
 - Se `ratio` è `null` (superior senza dati) il passo mostra "dato mancante: registra una consegna" invece di un numero.
 
 **Progressi** — il registro vive nell'oggetto progress, come campo opzionale `deliveries: [{family, tier, packs, input, received, at}]`; `parseProgress`/`reconcile`/export/import lo conservano (default `[]`, voci non valide scartate, numeri interi ≥ 0). Così Esporta/Importa resta uno solo.
