@@ -345,8 +345,10 @@ function effectiveRatio(trade, deliveries, family, tier) {
 }
 
 // Piano di commercio. steps = passi di computeNeeds ({id, need, covered, ...}); per ogni materiale commerciabile ancora da ottenere
-// (need - covered > 0) calcola casse, materiali da mettere, gold e, per avamposto, i viaggi (un viaggio va a una sola destinazione).
-// I giorni si ricavano dal totale dei viaggi. Rapporto nullo o 0 = dato mancante: la riga non entra nei totali.
+// (need - covered > 0) calcola casse, materiali da mettere, gold, viaggi (ceil(casse / perTrip)) e giorni (ceil(viaggi / tripsPerDay)).
+// Ogni riga è un'ALTERNATIVA al craft di quel materiale e non si somma alle altre: materiali che si fanno l'uno dall'altro
+// (Standard Ingot serve a fare il Fine Ingot) verrebbero contati due volte. Per questo non ci sono totali tra righe.
+// Rapporto nullo o 0 = dato mancante: casse, materiali, gold, viaggi e giorni restano null.
 // notTradeable: materiali di livello (standard-/fine-/superior-) che non si commerciano, es. le ossa. Gli altri passi (l'oggetto finale) si ignorano.
 function tradePlan(trade, steps, deliveries, opts) {
   const tripsPerDay = (opts && opts.tripsPerDay) || trade.limits.tripsPerDay.peace;
@@ -364,24 +366,19 @@ function tradePlan(trade, steps, deliveries, opts) {
     const pack = trade.packs[info.tier];
     const line = {
       id: s.id, tier: info.tier, family: info.family, units, ratio: er.ratio, source: er.source, n: er.n,
-      missing: !(er.ratio > 0), packs: null, input: null, gold: null,
+      missing: !(er.ratio > 0), packs: null, input: null, gold: null, trips: null, days: null,
     };
     if (!line.missing) {
       line.packs = Math.ceil(units / (er.ratio * pack.input) - 1e-9); // 1e-9: i decimali non devono aggiungere una cassa
       line.input = line.packs * pack.input;
       line.gold = line.packs * pack.gold;
+      line.trips = Math.ceil(line.packs / trade.limits.perTrip);
+      line.days = Math.ceil(line.trips / tripsPerDay);
     }
     (byPost[info.post] ||= []).push(line);
   }
-  const groups = Object.keys(trade.posts).filter((p) => byPost[p]).map((p) => {
-    const lines = byPost[p];
-    const packs = lines.reduce((n, l) => n + (l.packs || 0), 0);
-    return { post: p, name: trade.posts[p].name, lines, packs, trips: Math.ceil(packs / trade.limits.perTrip) };
-  });
-  const sum = (f) => groups.reduce((n, g) => n + f(g), 0);
-  const totals = { packs: sum((g) => g.packs), trips: sum((g) => g.trips), gold: sum((g) => g.lines.reduce((n, l) => n + (l.gold || 0), 0)), days: 0 };
-  totals.days = totals.trips ? Math.ceil(totals.trips / tripsPerDay) : 0;
-  return { groups, notTradeable, totals };
+  const groups = Object.keys(trade.posts).filter((p) => byPost[p]).map((p) => ({ post: p, name: trade.posts[p].name, lines: byPost[p] }));
+  return { groups, notTradeable };
 }
 
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
@@ -588,9 +585,9 @@ const STRINGS = {
     trade_empty: 'Add an item on the left to plan its trade runs.', trade_unavailable: 'Trade data unavailable.',
     trips_day: 'Trips per day:', trips_peace: '{n} (peace only)', trips_both: '{n} (peace + conflict)',
     trade_overlap_hint: 'Each line is an alternative to crafting that material. Materials made from each other overlap (for example Fine Ingot uses Standard Ingot).',
-    trade_line: '→ {packs} crates · {input} materials · {gold} Gold', trade_group: '{packs} crates · {trips} trips',
+    trade_line: '→ {packs} crates · {input} materials · {gold} Gold · trips: {trips} · days: {days}',
     ratio_estimate: 'estimate {r}×', ratio_log: 'from your log ({n}) {r}×', trade_missing_ratio: 'No data yet: log a delivery.',
-    trade_not_tradeable: 'Cannot be traded (farm them):', trade_total: 'Total: {packs} crates · {trips} trips · {days} days · {gold} Gold',
+    trade_not_tradeable: 'Cannot be traded (farm them):',
     h_log: 'Delivery log', log_family: 'Material received', log_tier: 'Level', log_packs: 'Crates', log_input: 'Materials put in',
     log_received: 'Materials received', log_add: 'Add', log_entry: '{family} · {tier}: {input} → {received} ({r}×)', log_remove: 'Remove delivery',
     log_invalid: 'Enter whole numbers (materials put in must be at least 1).', log_empty: 'No deliveries logged yet.',
@@ -624,9 +621,9 @@ const STRINGS = {
     trade_empty: 'Aggiungi un oggetto a sinistra per pianificare le consegne.', trade_unavailable: 'Dati del commercio non disponibili.',
     trips_day: 'Viaggi al giorno:', trips_peace: '{n} (solo pace)', trips_both: '{n} (pace + conflitto)',
     trade_overlap_hint: "Ogni riga è un'alternativa al craft di quel materiale. I materiali che si fanno l'uno dall'altro si sovrappongono (per esempio il Fine Ingot usa lo Standard Ingot).",
-    trade_line: '→ {packs} casse · {input} materiali · {gold} Gold', trade_group: '{packs} casse · {trips} viaggi',
+    trade_line: '→ {packs} casse · {input} materiali · {gold} Gold · viaggi: {trips} · giorni: {days}',
     ratio_estimate: 'stima {r}×', ratio_log: 'dal tuo registro ({n}) {r}×', trade_missing_ratio: 'Nessun dato: registra una consegna.',
-    trade_not_tradeable: 'Non commerciabili (da farmare):', trade_total: 'Totale: {packs} casse · {trips} viaggi · {days} giorni · {gold} Gold',
+    trade_not_tradeable: 'Non commerciabili (da farmare):',
     h_log: 'Registro consegne', log_family: 'Materiale ricevuto', log_tier: 'Livello', log_packs: 'Casse', log_input: 'Materiali messi',
     log_received: 'Materiali ricevuti', log_add: 'Aggiungi', log_entry: '{family} · {tier}: {input} → {received} ({r}×)', log_remove: 'Rimuovi consegna',
     log_invalid: 'Inserisci numeri interi (i materiali messi devono essere almeno 1).', log_empty: 'Nessuna consegna registrata.',
@@ -833,18 +830,15 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
     const modeBtn = (mode, n, key) => `<button type="button" class="chip${tripsMode === mode ? ' on' : ''}" data-action="trips" data-v="${mode}" aria-pressed="${tripsMode === mode}">${esc(t(key, { n }))}</button>`;
     const groupsHtml = plan.groups.map((g) => {
       const post = trade.posts[g.post];
-      return `<h3>${esc(g.name)} <small>· ${esc(post.families.map(familyLabel).join(' / '))}${post.seed ? ' · ' + esc(post.seed) : ''} · ${esc(t('trade_group', { packs: fmt(g.packs), trips: fmt(g.trips) }))}</small></h3>` +
+      return `<h3>${esc(g.name)} <small>· ${esc(post.families.map(familyLabel).join(' / '))}${post.seed ? ' · ' + esc(post.seed) : ''}</small></h3>` +
         g.lines.map((l) =>
           `<div class="tline"><span class="nm">${icon(l.id, true)}<span>${link(l.id)} ×${fmt(l.units)}</span></span>` +
-          `<span class="tnums">${l.missing ? `<span class="warn">${esc(t('trade_missing_ratio'))}</span>` : esc(t('trade_line', { packs: fmt(l.packs), input: fmt(l.input), gold: fmt(l.gold) }))}</span>` +
+          `<span class="tnums">${l.missing ? `<span class="warn">${esc(t('trade_missing_ratio'))}</span>` : esc(t('trade_line', { packs: fmt(l.packs), input: fmt(l.input), gold: fmt(l.gold), trips: fmt(l.trips), days: fmt(l.days) }))}</span>` +
           `<small class="ratio">${l.ratio !== null ? esc(l.source === 'log' ? t('ratio_log', { n: l.n, r: fmtRatio(l.ratio) }) : t('ratio_estimate', { r: fmtRatio(l.ratio) })) : ''}</small></div>`
         ).join('');
     }).join('');
     const notHtml = plan.notTradeable.length
       ? `<p class="muted">${esc(t('trade_not_tradeable'))} ${plan.notTradeable.map((x) => `${link(x.id)} ×${fmt(x.units)}`).join(', ')}</p>` : '';
-    const T = plan.totals;
-    const totalHtml = plan.groups.length
-      ? `<p><strong>${esc(t('trade_total', { packs: fmt(T.packs), trips: fmt(T.trips), days: fmt(T.days), gold: fmt(T.gold) }))}</strong></p>` : '';
 
     // registro consegne: l'utente annota casse, materiali messi e ricevuti; da qui si ricavano i rapporti reali
     const families = [...new Set(Object.values(trade.posts).flatMap((p) => p.families))];
@@ -867,7 +861,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
 
     box.innerHTML = head +
       `<div class="row">${esc(t('trips_day'))} ${modeBtn('peace', L.tripsPerDay.peace, 'trips_peace')} ${modeBtn('both', both, 'trips_both')}</div>` +
-      `<p class="muted">${esc(t('trade_overlap_hint'))}</p>` + groupsHtml + notHtml + totalHtml + logHtml;
+      `<p class="muted">${esc(t('trade_overlap_hint'))}</p>` + groupsHtml + notHtml + logHtml;
   }
   function setTab(v) {
     tab = v === 'trade' ? 'trade' : 'craft';

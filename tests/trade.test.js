@@ -130,41 +130,40 @@ test('Standard Ingot ×810 → Water Drift: 74 casse, 666 materiali, 5.920 gold,
   assert.equal(r.groups[0].post, 'water-drift');
   const l = r.groups[0].lines[0];
   assert.deepEqual([l.units, l.packs, l.input, l.gold, l.source], [810, 74, 666, 5920, 'estimate']);
-  assert.equal(r.groups[0].trips, 11);
-  assert.deepEqual(r.totals, { packs: 74, trips: 11, days: 4, gold: 5920 });
-  assert.equal(plan([step('standard-ingot', 810)], [], 6).totals.days, 2);
+  assert.deepEqual([l.trips, l.days], [11, 4]); // ceil(74/7), ceil(11/3)
+  assert.equal(plan([step('standard-ingot', 810)], [], 6).groups[0].lines[0].days, 2);
 });
 
-test('più livelli allo stesso avamposto condividono i viaggi', () => {
+test('le righe sono alternative: viaggi e giorni per riga, nessuna somma tra righe', () => {
+  // Standard Ingot serve proprio a fare il Fine Ingot: sommare le due righe conterebbe lo stesso materiale due volte
   const r = plan([step('standard-ingot', 810), step('fine-ingot', 45)]);
   assert.equal(r.groups.length, 1);
-  const fine = r.groups[0].lines[1];
-  assert.deepEqual([fine.packs, fine.gold], [14, 2800]);
-  assert.deepEqual([r.groups[0].packs, r.groups[0].trips, r.totals.days], [88, 13, 5]);
+  const [std, fine] = r.groups[0].lines;
+  assert.deepEqual([std.packs, std.trips, std.days], [74, 11, 4]);
+  assert.deepEqual([fine.packs, fine.gold, fine.trips, fine.days], [14, 2800, 2, 1]);
+  assert.equal('totals' in r, false);
+  assert.equal('packs' in r.groups[0] || 'trips' in r.groups[0], false);
 });
 
-test('archeum e stone di Shadow Path condividono i viaggi, con rapporti diversi', () => {
+test('archeum e stone di Shadow Path stanno nello stesso gruppo, con rapporti diversi', () => {
   const r = plan([step('standard-archeum', 100), step('standard-stone', 100)]);
   assert.equal(r.groups.length, 1);
   assert.equal(r.groups[0].post, 'shadow-path');
   assert.deepEqual(r.groups[0].lines.map((l) => l.packs), [10, 13]);
+  assert.deepEqual(r.groups[0].lines.map((l) => l.trips), [2, 2]);
   assert.equal(r.groups[0].lines[1].ratio, 0.9);
-  assert.deepEqual([r.groups[0].packs, r.groups[0].trips], [23, 4]);
 });
 
-test('rapporto null: riga missing, fuori dai totali, nessun NaN', () => {
+test('rapporto null: riga missing, nessun NaN, nessuna cifra inventata', () => {
   const r = plan([step('superior-additive', 5)]);
   const l = r.groups[0].lines[0];
-  assert.deepEqual([l.missing, l.packs, l.input, l.gold], [true, null, null, null]);
-  assert.equal(r.groups[0].packs, 0);
-  for (const v of Object.values(r.totals)) assert.ok(Number.isFinite(v));
+  assert.deepEqual([l.missing, l.packs, l.input, l.gold, l.trips, l.days], [true, null, null, null, null, null]);
 });
 
 test('rapporto 0 (consegna con 0 ricevuti) è dato mancante, non infinite casse', () => {
   const r = plan([step('fine-ingot', 10)], [delivery({ family: 'ingot', input: 21, received: 0 })]);
   const l = r.groups[0].lines[0];
-  assert.deepEqual([l.missing, l.packs], [true, null]);
-  for (const v of Object.values(r.totals)) assert.ok(Number.isFinite(v));
+  assert.deepEqual([l.missing, l.packs, l.trips, l.days], [true, null, null, null]);
 });
 
 test('unità esatte non aggiungono una cassa per colpa dei decimali', () => {
@@ -175,7 +174,6 @@ test('unità esatte non aggiungono una cassa per colpa dei decimali', () => {
 test('unità già coperte da have: nessuna riga', () => {
   const r = plan([step('standard-ingot', 100, 100)]);
   assert.deepEqual(r.groups, []);
-  assert.deepEqual(r.totals, { packs: 0, trips: 0, days: 0, gold: 0 });
 });
 
 test('le ossa vanno in notTradeable, l oggetto finale è ignorato', () => {
