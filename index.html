@@ -310,6 +310,20 @@ function tradeInfo(trade, id) {
   return null;
 }
 
+// Rapporto ricevuti/messi di una coppia famiglia+livello. Con consegne registrate: media ponderata delle ultime 5
+// (con input > 0); altrimenti la stima di trade.json (byFamily, poi default). ratio null = dato mancante.
+function effectiveRatio(trade, deliveries, family, tier) {
+  const used = (deliveries || []).filter((d) => d && d.family === family && d.tier === tier && d.input > 0).slice(-5);
+  if (used.length) {
+    const input = used.reduce((s, d) => s + d.input, 0);
+    const received = used.reduce((s, d) => s + d.received, 0);
+    return { ratio: received / input, source: 'log', n: used.length };
+  }
+  const own = trade.ratios.byFamily && trade.ratios.byFamily[family] ? trade.ratios.byFamily[family][tier] : undefined;
+  const r = own !== undefined ? own : trade.ratios.default[tier];
+  return { ratio: r === undefined ? null : r, source: 'estimate', n: 0 };
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -321,9 +335,16 @@ function tipPosition({ x, y, w, h, vw, vh }) {
 }
 
 // ---- progressi dell'utente ----
-// Progress = {v:1, targets:[{id,qty}], have:{id:qty}, expandIntermediates:boolean}
+// Progress = {v:1, targets:[{id,qty}], have:{id:qty}, expandIntermediates:boolean, deliveries:[Delivery]}
+// Delivery = {family, tier, packs, input, received, at}: una consegna di trade goods annotata dall'utente (casse, materiali messi e ricevuti).
 function emptyProgress() {
-  return { v: 1, targets: [], have: {}, expandIntermediates: true };
+  return { v: 1, targets: [], have: {}, expandIntermediates: true, deliveries: [] };
+}
+
+function isDelivery(d) {
+  const text = (s) => typeof s === 'string' && s !== '';
+  return !!d && typeof d === 'object' && text(d.family) && text(d.tier) &&
+    Number.isInteger(d.packs) && d.packs >= 0 && Number.isInteger(d.input) && d.input > 0 && Number.isInteger(d.received) && d.received >= 0;
 }
 
 function serializeProgress(p) {
@@ -340,7 +361,11 @@ function parseProgress(text) {
     .map((t) => ({ id: t.id, qty: t.qty }));
   const have = {};
   for (const [id, qty] of Object.entries(raw.have)) if (Number.isInteger(qty) && qty >= 0) have[id] = qty;
-  return { v: 1, targets, have, expandIntermediates: raw.expandIntermediates };
+  // consegne: facoltative (i file esportati prima della tab Trade non le hanno); le voci non valide si scartano
+  const deliveries = Array.isArray(raw.deliveries) ? raw.deliveries.filter(isDelivery).map((d) => ({
+    family: d.family, tier: d.tier, packs: d.packs, input: d.input, received: d.received, at: typeof d.at === 'string' ? d.at : '',
+  })) : [];
+  return { v: 1, targets, have, expandIntermediates: raw.expandIntermediates, deliveries };
 }
 
 // Dopo una patch alcuni oggetti possono sparire: li toglie dal progresso e li elenca in dropped.
@@ -350,7 +375,7 @@ function reconcile(p, items) {
   const targets = p.targets.filter((t) => keep(t.id));
   const have = {};
   for (const [id, qty] of Object.entries(p.have)) if (keep(id)) have[id] = qty;
-  return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates }, dropped };
+  return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates, deliveries: p.deliveries || [] }, dropped };
 }
 
 // ---- indirizzo della pagina MetaForge di un oggetto: database/<categoria>/<slug> ----
@@ -512,7 +537,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {

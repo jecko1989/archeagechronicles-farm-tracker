@@ -9,13 +9,13 @@ const parseProgress = (t) => plain(core.parseProgress(t));
 const reconcile = (p, items) => plain(core.reconcile(p, items));
 
 test('round trip serialize/parse restituisce lo stesso progresso', () => {
-  const p = { v: 1, targets: [{ id: 'hood', qty: 2 }], have: { rag: 5 }, expandIntermediates: false };
+  const p = { v: 1, targets: [{ id: 'hood', qty: 2 }], have: { rag: 5 }, expandIntermediates: false, deliveries: [] };
   assert.deepEqual(parseProgress(serializeProgress(p)), p);
 });
 
 test('emptyProgress è valido per parseProgress', () => {
   const p = emptyProgress();
-  assert.deepEqual(p, { v: 1, targets: [], have: {}, expandIntermediates: true });
+  assert.deepEqual(p, { v: 1, targets: [], have: {}, expandIntermediates: true, deliveries: [] });
   assert.deepEqual(parseProgress(serializeProgress(p)), p);
 });
 
