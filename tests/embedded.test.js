@@ -16,6 +16,16 @@ test('embeddedFetch serve meta, items e overrides come se arrivassero dalla rete
   assert.ok(items.hood);
 });
 
+test('embeddedFetch serve trade.json quando c è e risponde 404 quando non c è', async () => {
+  const trade = { posts: {}, packs: {} };
+  const ok = await core.embeddedFetch({ meta, items: {}, trade })('embedded/trade.json');
+  assert.equal(ok.ok, true);
+  assert.deepEqual(plain(await ok.json()), trade);
+  const none = await core.embeddedFetch({ meta, items: {} })('embedded/trade.json');
+  assert.equal(none.ok, false);
+  assert.equal(none.status, 404);
+});
+
 test('un file sconosciuto risponde 404', async () => {
   const r = await core.embeddedFetch({ meta, items: {}, overrides: {} })('embedded/altro.json');
   assert.equal(r.ok, false);

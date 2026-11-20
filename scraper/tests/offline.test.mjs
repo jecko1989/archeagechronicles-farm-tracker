@@ -19,6 +19,12 @@ test('inserisce i dati come JSON valido in <script id="embedded-data">', () => {
   assert.deepEqual(embedded(out), data);
 });
 
+test('incorpora anche trade.json quando c è, e la chiave manca quando non c è', () => {
+  const trade = { posts: { a: { name: 'A', families: ['x'] } } };
+  assert.deepEqual(embedded(buildOffline(page, { ...data, trade })).trade, trade);
+  assert.equal('trade' in embedded(buildOffline(page, data)), false);
+});
+
 test('un "</script>" dentro i dati non chiude il tag (viene escapato)', () => {
   const out = buildOffline(page, data);
   const between = out.slice(out.indexOf('id="embedded-data"'), out.indexOf('<script id="config">'));

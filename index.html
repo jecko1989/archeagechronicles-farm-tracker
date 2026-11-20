@@ -426,9 +426,9 @@ function itemUrl(items, id) {
 }
 
 // ---- file offline: i dati stanno dentro la pagina, in un blocco JSON con id "embedded-data" ----
-// embeddedFetch(data) imita fetch(): serve meta.json, items.json e overrides.json dai dati incorporati.
+// embeddedFetch(data) imita fetch(): serve meta.json, items.json, overrides.json e trade.json dai dati incorporati.
 function embeddedFetch(data) {
-  const files = { 'meta.json': data.meta, 'items.json': data.items, 'overrides.json': data.overrides };
+  const files = { 'meta.json': data.meta, 'items.json': data.items, 'overrides.json': data.overrides, 'trade.json': data.trade };
   return async (url) => {
     const body = files[String(url).split('/').pop()];
     return body === undefined
@@ -518,6 +518,28 @@ async function loadData(baseUrl, deps) {
   }
 }
 
+// ---- dati del commercio (data/trade.json) ----
+// Si riscarica a ogni apertura (lo scrive a mano l'autore e può cambiare in qualsiasi momento) e si tiene in cache per l'uso offline.
+// 404 o file malformato/non valido -> null (la tab Trade mostra "dati non disponibili"); rete assente o errore del server -> ultima versione valida in cache.
+async function loadTrade(baseUrl, deps) {
+  const d = deps || {};
+  const fetchFn = d.fetchFn || fetch;
+  let storage = d.storage;
+  if (!storage) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
+  const base = baseUrl.replace(/\/*$/, '/');
+  const KEY = 'aa-farm-trade-v1';
+  const cached = () => { try { const t = storage && storage.getItem(KEY); return t ? normalizeTrade(JSON.parse(t)) : null; } catch (e) { return null; } };
+  let r;
+  try { r = await fetchFn(base + 'trade.json'); } catch (e) { return cached(); }
+  if (r.status === 404) return null;
+  if (!r.ok) return cached();
+  let raw;
+  try { raw = await r.json(); } catch (e) { return null; }
+  const trade = normalizeTrade(raw);
+  if (trade) { try { if (storage) storage.setItem(KEY, JSON.stringify(trade)); } catch (e) { /* cache opzionale */ } }
+  return trade;
+}
+
 // ---- testi dell'interfaccia: inglese di base, italiano selezionabile ----
 const STRINGS = {
   en: {
@@ -577,7 +599,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, loadTrade, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
