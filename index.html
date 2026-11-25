@@ -833,7 +833,7 @@ const STRINGS = {
     h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing', col_price: 'Gold each',
-    tip_where: 'Where to get it',
+    tip_where: 'Where to get it', status_patch: 'latest MetaForge patch notes: {patch}',
     h_plans: 'Saved plans', plan_name_ph: 'Plan name', plan_save: 'Save current', plan_load: 'Load', plans_empty: 'No saved plans yet.',
     plans_note: 'A plan keeps your items, owned amounts and prices; the delivery log is shared. Saving with an existing name replaces it; loading replaces what you have now.',
     plan_items: 'items: {n}', plan_load_aria: 'Load plan {name}', plan_del_aria: 'Delete plan {name}',
@@ -887,7 +887,7 @@ const STRINGS = {
     h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano', col_price: 'Gold cad.',
-    tip_where: 'Dove si trova',
+    tip_where: 'Dove si trova', status_patch: 'ultime patch notes di MetaForge: {patch}',
     h_plans: 'Piani salvati', plan_name_ph: 'Nome del piano', plan_save: 'Salva questo', plan_load: 'Carica', plans_empty: 'Nessun piano salvato.',
     plans_note: 'Un piano conserva oggetti, quantità possedute e prezzi; il registro consegne è condiviso. Salvare con un nome già usato lo sostituisce; caricare sostituisce quello che hai ora.',
     plan_items: 'oggetti: {n}', plan_load_aria: 'Carica il piano {name}', plan_del_aria: 'Elimina il piano {name}',
@@ -1398,9 +1398,12 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   function renderStatus() {
     if (loadState !== 'ok') { $('#status').textContent = loadState === 'loading' ? t('loading') : ''; return; }
     const date = new Date(meta.updatedAt).toLocaleDateString(LOCALE[lang], { day: 'numeric', month: 'short', year: 'numeric' });
+    // data dell'ultima patch note letta su MetaForge al momento dello scraping (facoltativa, YYYY-MM-DD)
+    const patch = /^\d{4}-\d{2}-\d{2}$/.test(meta.patch || '')
+      ? ' · ' + t('status_patch', { patch: new Date(meta.patch + 'T00:00:00Z').toLocaleDateString(LOCALE[lang], { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) }) : '';
     $('#status').innerHTML = offline
-      ? `<span class="badge">${esc(t('badge_offline'))}</span> ${esc(t('status_offline', { date }))}`
-      : esc(t('status_ok', { date, n: fmt(Object.keys(items).length) }));
+      ? `<span class="badge">${esc(t('badge_offline'))}</span> ${esc(t('status_offline', { date }) + patch)}`
+      : esc(t('status_ok', { date, n: fmt(Object.keys(items).length) }) + patch);
   }
   function renderError() {
     $('#error').innerHTML = `<h2>${esc(t('err_title'))}</h2><p>${esc(lastErr)}</p><p class="muted">${esc(t('err_hint'))}</p>` +

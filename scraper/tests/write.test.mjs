@@ -38,6 +38,26 @@ test('oggetti diversi: changed true e updatedAt nuovo', () => {
   assert.equal(meta.count, 2);
 });
 
+test('patch: finisce in meta.json; se cambia solo la patch meta si riscrive e items.json no', () => {
+  const d = dir();
+  writeData(d, { a: raw('A') }, new Date('2026-11-18T00:00:00Z'), '2026-11-17');
+  assert.equal(JSON.parse(read(d, 'meta.json')).patch, '2026-11-17');
+  const itemsBefore = read(d, 'items.json');
+  assert.equal(writeData(d, { a: raw('A') }, new Date('2026-11-19T00:00:00Z'), '2026-11-17').changed, false); // stessa patch: nulla
+  const r = writeData(d, { a: raw('A') }, new Date('2026-11-25T00:00:00Z'), '2026-11-25');
+  assert.equal(r.changed, true);
+  assert.deepEqual(JSON.parse(read(d, 'meta.json')), { updatedAt: '2026-11-25T00:00:00.000Z', count: 1, schema: 1, patch: '2026-11-25' });
+  assert.equal(read(d, 'items.json'), itemsBefore);
+});
+
+test('patch null (pagina non letta): si tiene quella già scritta quando gli oggetti cambiano', () => {
+  const d = dir();
+  writeData(d, { a: raw('A') }, new Date('2026-11-18T00:00:00Z'), '2026-11-17');
+  writeData(d, { a: raw('A'), b: raw('B') }, new Date('2026-12-01T00:00:00Z'), null);
+  assert.equal(JSON.parse(read(d, 'meta.json')).patch, '2026-11-17');
+  assert.equal(writeData(d, { a: raw('A'), b: raw('B') }, new Date(), null).changed, false);
+});
+
 test('items.json esistente con fine riga CRLF (checkout Windows) conta come invariato', () => {
   const d = dir();
   writeData(d, { a: raw('A') }, new Date('2026-11-18T00:00:00Z'));
