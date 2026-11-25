@@ -35,14 +35,14 @@ When a patch changes recipes before MetaForge updates its database, they can be 
 ```json
 {
   "standard-bonecraft": {
-    "note": "Patch 2026-11-17",
-    "ingredients": [{ "id": "bone-chip", "qty": 15 }]
+    "note": "Patch notes 2026-11-25",
+    "ingredients": [{ "id": "bone-chip", "qty": 6 }]
   }
 }
 ```
 Allowed fields (all refer to the first recipe): `ingredients` (replaces the list), `gold`, `yield`, `note`. An invalid correction is ignored. Once MetaForge catches up, the entry should be removed.
 
-The current file holds 17 processed-goods recipes changed by the November 17, 2026 patch (Sweetgrass Powder and monster loot removed from processed goods, as stated in the developers' letter): the 9 "base" recipes (Standard …) and the 8 "Fine …" ones. All 17 are **confirmed in game**: the 9 base recipes (Rough Meat and the 8 "Standard …"; the Standard tier costs 125 gold) and the 8 "Fine …" ones (300 gold). The "Superior …" recipes were not changed by the patch (Superior Bonecraft still needs its 9 Buffalo Horn in game), so they have no entry here.
+The current file holds 2 recipes changed by the items/trade patch notes of November 2026: Standard Leather (Raw Pelt 15 → 6) and Standard Bonecraft (Bone Chip 15 → 6). They come from the patch notes and are **not yet checked in game**; remove them once MetaForge catches up. The 15 processed-goods recipes of the November 17, 2026 patch (Sweetgrass Powder and monster loot removed, confirmed in game) were removed from this file on November 25, 2026, because MetaForge's data already matches them.
 
 ### Trade data: `data/trade.json`
 Hand-written (it does not come from MetaForge): the six trading posts with what they give (`families`, plus a special `seed`), the crate recipe per level (materials and gold per crate), the estimated ratios received/put in, and the limits (7 crates per trip, 3 peace + 3 conflict trips a day). The page downloads it every time it opens; if it is missing or broken, the Trade tab shows "Trade data unavailable" and everything else keeps working. To fix a value, edit the file on GitHub. A `null` ratio means "no data yet".

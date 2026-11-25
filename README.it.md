@@ -35,14 +35,14 @@ Se una patch cambia le ricette prima che MetaForge aggiorni il database, si poss
 ```json
 {
   "standard-bonecraft": {
-    "note": "Patch 2026-11-17",
-    "ingredients": [{ "id": "bone-chip", "qty": 15 }]
+    "note": "Patch notes 2026-11-25",
+    "ingredients": [{ "id": "bone-chip", "qty": 6 }]
   }
 }
 ```
 Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la lista), `gold`, `yield`, `note`. Una correzione non valida viene ignorata. Quando MetaForge si aggiorna, la voce va tolta.
 
-Il file attuale contiene 17 ricette di materiali lavorati cambiate dalla patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri dai materiali lavorati, come da lettera degli sviluppatori): le 9 ricette "base" (Standard …) e le 8 "Fine …". Tutte e 17 sono **confermate in gioco**: le 9 ricette "base" (Rough Meat e le 8 "Standard …"; il livello Standard costa 125 gold) e le 8 "Fine …" (300 gold). Le ricette "Superior …" non sono cambiate con la patch (Superior Bonecraft richiede ancora i suoi 9 Buffalo Horn in gioco), quindi qui non hanno voci.
+Il file attuale contiene 2 ricette cambiate dalle patch notes di oggetti/trade di novembre 2026: Standard Leather (Raw Pelt 15 → 6) e Standard Bonecraft (Bone Chip 15 → 6). Vengono dalle patch notes e **non sono ancora verificate in gioco**; vanno tolte quando MetaForge si aggiorna. Le 15 ricette di materiali lavorati della patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri, confermate in gioco) sono state tolte da questo file il 25 novembre 2026, perché i dati di MetaForge le riportano già.
 
 ### Dati del commercio: `data/trade.json`
 Scritto a mano (non viene da MetaForge): i sei avamposti con ciò che danno (`families`, più un `seed` speciale), la ricetta delle casse per livello (materiali e gold per cassa), i rapporti stimati ricevuti/messi e i limiti (7 casse per viaggio, 3 viaggi in pace + 3 in conflitto al giorno). La pagina lo scarica a ogni apertura; se manca o è rotto, la tab Commercio mostra "Dati del commercio non disponibili" e il resto funziona. Per correggere un valore basta modificare il file su GitHub. Un rapporto `null` significa "nessun dato".
