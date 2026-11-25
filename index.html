@@ -172,6 +172,13 @@ a { color: var(--accent); }
         <span id="msg" class="muted" role="status"></span>
       </div>
       <p class="muted" data-i18n="progress_note">Your progress stays in this browser. Export it to move it to another device.</p>
+      <h3 data-i18n="h_plans">Saved plans</h3>
+      <div class="row">
+        <input id="planName" type="text" maxlength="40" data-i18n-ph="plan_name_ph" placeholder="Plan name" aria-label="Plan name">
+        <button type="button" data-action="plan-save" data-i18n="plan_save">Save current</button>
+      </div>
+      <ul id="plans"></ul>
+      <p class="muted" data-i18n="plans_note">A plan keeps your items, owned amounts and prices; the delivery log is shared. Loading replaces what you have now.</p>
     </section>
   </div>
 </main>
@@ -660,6 +667,36 @@ function parseHash(hash, items) {
   return targets.length ? { tab: m[1], targets } : null;
 }
 
+// ---- piani salvati con nome ----
+// Plans = [{name, at, p}] (salvati come {v:1, plans}); p è un progresso v1 senza consegne: il registro consegne è uno solo per tutta l'app.
+const PLAN_NAME_MAX = 40;
+function parsePlans(text) {
+  let raw;
+  try { raw = JSON.parse(text); } catch (e) { return []; }
+  if (!raw || raw.v !== 1 || !Array.isArray(raw.plans)) return [];
+  const plans = [];
+  for (const x of raw.plans) {
+    const name = x && typeof x.name === 'string' ? x.name.trim() : '';
+    const p = x ? parseProgress(JSON.stringify(x.p)) : null;
+    if (name && name.length <= PLAN_NAME_MAX && p && !plans.some((q) => q.name === name)) plans.push({ name, at: typeof x.at === 'string' ? x.at : '', p });
+  }
+  return plans;
+}
+function serializePlans(plans) { return JSON.stringify({ v: 1, plans }); }
+// Salva il progresso corrente con quel nome (un nome già presente viene sostituito). Nome vuoto o troppo lungo: null.
+function upsertPlan(plans, name, progress, at) {
+  const n = String(name || '').trim();
+  if (!n || n.length > PLAN_NAME_MAX) return null;
+  const plan = { name: n, at, p: parseProgress(serializeProgress({ ...progress, deliveries: [] })) };
+  const i = plans.findIndex((q) => q.name === n);
+  return i < 0 ? [...plans, plan] : plans.map((q, j) => (j === i ? plan : q));
+}
+// Il piano caricato sostituisce selezione, quantità possedute e prezzi; le consegne restano quelle correnti. Oggetti spariti: in dropped.
+function planProgress(plan, current, items) {
+  const r = reconcile(plan.p, items);
+  return { progress: { ...r.progress, deliveries: current.deliveries }, dropped: r.dropped };
+}
+
 // ---- indirizzo della pagina MetaForge di un oggetto: database/<categoria>/<slug> ----
 const METAFORGE_DB = 'https://metaforge.app/archeage-chronicles/database';
 function itemUrl(items, id) {
@@ -796,6 +833,10 @@ const STRINGS = {
     h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing', col_price: 'Gold each',
+    h_plans: 'Saved plans', plan_name_ph: 'Plan name', plan_save: 'Save current', plan_load: 'Load', plans_empty: 'No saved plans yet.',
+    plans_note: 'A plan keeps your items, owned amounts and prices; the delivery log is shared. Saving with an existing name replaces it; loading replaces what you have now.',
+    plan_items: 'items: {n}', plan_load_aria: 'Load plan {name}', plan_del_aria: 'Delete plan {name}',
+    plan_saved: 'Saved “{name}”.', plan_loaded: 'Loaded “{name}”.', plan_invalid: 'Enter a name (up to 40 characters).',
     step_done: 'Mark {name} as done', steps_done: '{n} of {m} steps done',
     price_of: 'Gold price of {name}', materials_cost: 'Materials still to buy:', grand_total: 'Total with materials:',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
@@ -845,6 +886,10 @@ const STRINGS = {
     h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano', col_price: 'Gold cad.',
+    h_plans: 'Piani salvati', plan_name_ph: 'Nome del piano', plan_save: 'Salva questo', plan_load: 'Carica', plans_empty: 'Nessun piano salvato.',
+    plans_note: 'Un piano conserva oggetti, quantità possedute e prezzi; il registro consegne è condiviso. Salvare con un nome già usato lo sostituisce; caricare sostituisce quello che hai ora.',
+    plan_items: 'oggetti: {n}', plan_load_aria: 'Carica il piano {name}', plan_del_aria: 'Elimina il piano {name}',
+    plan_saved: 'Salvato «{name}».', plan_loaded: 'Caricato «{name}».', plan_invalid: 'Scrivi un nome (massimo 40 caratteri).',
     step_done: 'Segna {name} come fatto', steps_done: '{n} di {m} passi fatti',
     price_of: 'Prezzo in gold di {name}', materials_cost: 'Materiali ancora da comprare:', grand_total: 'Totale con materiali:',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
@@ -895,7 +940,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, parsePlans, serializePlans, upsertPlan, planProgress, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -941,6 +986,22 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   }
   function save() {
     try { localStorage.setItem(KEY, C.serializeProgress(progress)); } catch (e) { /* ignora */ }
+  }
+  // piani salvati con nome (chiave separata dal progresso corrente)
+  const PLANS_KEY = 'aa-farm-plans-v1';
+  let plans = [];
+  function loadPlans() {
+    try { plans = C.parsePlans(localStorage.getItem(PLANS_KEY) || ''); } catch (e) { plans = []; }
+  }
+  function savePlans() {
+    try { localStorage.setItem(PLANS_KEY, C.serializePlans(plans)); } catch (e) { /* ignora */ }
+  }
+  function renderPlans() {
+    $('#plans').innerHTML = plans.map((p, i) =>
+      `<li class="line" style="grid-template-columns:1fr auto auto"><span>${esc(p.name)} <small class="muted">· ${esc(t('plan_items', { n: fmt(p.p.targets.length) }))}${p.at ? ' · ' + esc(new Date(p.at).toLocaleDateString(LOCALE[lang])) : ''}</small></span>` +
+      `<button type="button" data-action="plan-load" data-i="${i}" aria-label="${esc(t('plan_load_aria', { name: p.name }))}">${esc(t('plan_load'))}</button>` +
+      `<button type="button" data-action="plan-del" data-i="${i}" aria-label="${esc(t('plan_del_aria', { name: p.name }))}">✕</button></li>`
+    ).join('') || `<li class="muted">${esc(t('plans_empty'))}</li>`;
   }
   const name = (id) => (items[id] ? items[id].name : id);
   // withTip: l'icona apre il tooltip (nella pagina centrale il nome è un link, quindi il tooltip sta solo sull'icona)
@@ -1183,7 +1244,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     renderTrade();
   }
 
-  function render() { hideTip(); renderTargets(); renderResults(); renderTrade(); syncHash(); }
+  function render() { hideTip(); renderTargets(); renderResults(); renderTrade(); renderPlans(); syncHash(); }
 
   // ---- tooltip dell'oggetto (al passaggio del mouse, alla tastiera e al tocco) ----
   const tip = $('#tip');
@@ -1257,6 +1318,24 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
         URL.revokeObjectURL(a.href);
         break;
       }
+      case 'plan-save': {
+        const np = C.upsertPlan(plans, $('#planName').value, progress, new Date().toISOString());
+        if (!np) { $('#msg').textContent = t('plan_invalid'); break; }
+        plans = np; savePlans(); renderPlans();
+        $('#msg').textContent = t('plan_saved', { name: $('#planName').value.trim() });
+        $('#planName').value = '';
+        break;
+      }
+      case 'plan-load': {
+        const plan = plans[parseInt(b.dataset.i, 10)];
+        if (!plan) break;
+        const r = C.planProgress(plan, progress, items);
+        progress = r.progress; dropped = r.dropped;
+        save(); render();
+        $('#msg').textContent = t('plan_loaded', { name: plan.name });
+        break;
+      }
+      case 'plan-del': plans.splice(parseInt(b.dataset.i, 10), 1); savePlans(); renderPlans(); break;
       case 'retry': start(); break;
       case 'lang': setLang(b.dataset.v); break;
       case 'tab': setTab(b.dataset.v); break;
@@ -1289,6 +1368,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       el.value = '';
     }
   });
+  $('#planName').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.querySelector('[data-action=plan-save]').click(); });
   $('#search').addEventListener('input', renderPicker);
   $('#search').addEventListener('keydown', (e) => { // Invio aggiunge il primo candidato
     if (e.key !== 'Enter') return;
@@ -1346,7 +1426,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
         : C.loadTrade(dataUrl())).catch(() => null);
       items = d.items; meta = d.meta; offline = d.offline;
       craftable = Object.entries(items).filter(([, it]) => it.crafts.length);
-      loadSaved();
+      loadSaved(); loadPlans();
       const r = C.reconcile(progress, items);
       progress = r.progress; dropped = r.dropped;
       loadState = 'ok'; renderStatus();
