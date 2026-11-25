@@ -1,3 +1,7 @@
 .superpowers/
 node_modules/
 dist/
+.playwright-mcp/
+# script locali che generano data/routes.json: restano sul disco, non si committano
+scraper/routes.mjs
+scraper/tests/routes.test.mjs

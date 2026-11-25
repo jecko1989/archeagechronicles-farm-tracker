@@ -111,6 +111,17 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .badge.dim { background: var(--field); color: var(--muted); border: 1px solid var(--border); }
 .tline .tnums { color: var(--text); font-variant-numeric: tabular-nums; }
 .tline .ratio { flex: 1 0 100%; padding-left: 42px; } /* sotto il nome, allineata dopo l'icona (32px + gap) */
+/* tab Trade, modo "esplora route": tabelle che scorrono in orizzontale su schermo stretto */
+.rt-wrap { overflow-x: auto; margin: 8px 0 14px; }
+.rt { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.rt th { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.rt td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); vertical-align: top; }
+.rt td.n, .rt th.n { text-align: right; white-space: nowrap; }
+.rt td small { display: block; color: var(--muted); }
+.rtctl { align-items: flex-end; margin: 8px 0; }
+.rtctl label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; color: var(--muted); }
+.rtctl label.chk { flex-direction: row; align-items: center; gap: 6px; padding-bottom: 6px; }
+.rtctl input[type=number] { width: 6rem; }
 .logform { align-items: flex-end; margin-top: 8px; }
 .logform label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; color: var(--muted); }
 .logform input { width: 6rem; }
@@ -584,6 +595,92 @@ function recommendPlan(items, trade, targets, have, deliveries, opts) {
   return { objective, decisions, plan, baseline: base, fallback };
 }
 
+// ---- tab Trade: esplora le route dei pacchi (data/routes.json) ----
+// Raw = {speed (m/s), perLoad, posts:[{id,name,region}], metres:{"da-a": metri} (id delle postazioni), goods:[{id,name,type,origin,company,
+// packingGold, purchased, purchaseGold, inputs:[{item,qty}]}], items:{nome:{price?, fee?, yield?}}, routes:[{from,to,goodId,reward,units}]}.
+// normalizeRoutes restituisce una copia pulita (ogni route con `good` e `metres`) oppure null; scarta le route che non si riconoscono.
+const ROUTE_RENT = 100; // gold di nolo del carro per ogni carico (fino a perLoad pacchi)
+function normalizeRoutes(raw) {
+  const obj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+  if (!obj(raw) || !(raw.speed > 0) || !Array.isArray(raw.posts) || !Array.isArray(raw.goods) || !Array.isArray(raw.routes) || !obj(raw.metres)) return null;
+  const posts = raw.posts.filter((p) => obj(p) && Number.isInteger(p.id) && typeof p.name === 'string')
+    .map((p) => ({ id: p.id, name: p.name, region: typeof p.region === 'string' ? p.region : '' }));
+  const idOf = Object.fromEntries(posts.map((p) => [p.name, p.id]));
+  const nameOf = Object.fromEntries(posts.map((p) => [p.id, p.name]));
+  const goods = {};
+  for (const g of raw.goods) {
+    if (!obj(g) || !Number.isInteger(g.id) || typeof g.name !== 'string' || !Array.isArray(g.inputs)) continue;
+    goods[g.id] = {
+      id: g.id, name: g.name, type: String(g.type || ''), origin: String(g.origin || ''), company: String(g.company || ''),
+      packingGold: num(g.packingGold) || 0, purchased: !!g.purchased, purchaseGold: num(g.purchaseGold) > 0 ? g.purchaseGold : null,
+      inputs: g.inputs.filter((i) => obj(i) && typeof i.item === 'string' && Number.isInteger(i.qty) && i.qty > 0).map((i) => ({ item: i.item, qty: i.qty })),
+    };
+  }
+  const roads = {};
+  for (const [k, m] of Object.entries(raw.metres)) {
+    const [a, b] = k.split('-').map(Number);
+    if (nameOf[a] && nameOf[b] && num(m) > 0) roads[nameOf[a] + '|' + nameOf[b]] = m;
+  }
+  const routes = [];
+  for (const r of raw.routes) {
+    if (!obj(r) || !goods[r.goodId] || !(r.from in idOf) || !(r.to in idOf) || typeof r.reward !== 'string' || !(num(r.units) >= 0)) continue;
+    routes.push({ from: r.from, to: r.to, good: goods[r.goodId], reward: r.reward, units: r.units, metres: roads[r.from + '|' + r.to] || null });
+  }
+  return {
+    source: obj(raw.source) ? raw.source : {}, speed: raw.speed, perLoad: Number.isInteger(raw.perLoad) && raw.perLoad > 0 ? raw.perLoad : 7,
+    posts, goods, items: obj(raw.items) ? raw.items : {}, roads, routes,
+  };
+}
+
+// Secondi di viaggio a vuoto tra due postazioni (metri / velocità massima del carro); null se non c'è strada.
+function driveSeconds(d, from, to) {
+  const m = d.roads[from + '|' + to];
+  return m ? m / d.speed : null;
+}
+
+// Conti di una route. opts = {packs, market (% del pagamento, 100 = quello base), rent (nolo del carro)}.
+// Tempo: andata di ogni carico (perLoad pacchi) + ritorno tra un carico e l'altro. Costo di un pacco: imballaggio più ingredienti
+// (prezzo del venditore, oppure commissione di crafting; i materiali coltivati o raccolti valgono 0). I pacchi da comprare senza
+// prezzo e i premi in oggetti non hanno un valore in gold: ranked false (il tempo c'è comunque).
+function routeEconomics(d, route, opts) {
+  const o = opts || {};
+  const packs = Math.max(1, Math.floor(o.packs) || 1);
+  const market = o.market > 0 ? o.market : 100;
+  const loads = Math.ceil(packs / d.perLoad);
+  const one = route.metres ? route.metres / d.speed : null;
+  const seconds = one === null ? null : (2 * loads - 1) * one;
+  const g = route.good;
+  // costo di un ingrediente: prezzo del venditore; altrimenti commissione della ricetta più i suoi ingredienti, a cascata, divisi per la resa
+  // (ciò che si coltiva, raccoglie o ruba ai mostri non ha ricetta e vale 0). `path` evita i giri a vuoto.
+  const itemCost = (item, path) => {
+    const it = d.items[item] || {};
+    if (typeof it.price === 'number') return it.price;
+    if (typeof it.fee !== 'number' || path.has(item)) return 0;
+    const inner = path.add(item) && (it.inputs || []).reduce((n, i) => n + i.qty * itemCost(i.item, path), 0);
+    path.delete(item);
+    return (it.fee + inner) / (it.yield > 0 ? it.yield : 1);
+  };
+  const ingredients = g.inputs.reduce((n, { item, qty }) => n + qty * itemCost(item, new Set()), 0);
+  const unit = g.purchased ? g.purchaseGold : g.packingGold + ingredients;
+  const ranked = route.reward === 'Gold' && unit !== null && seconds !== null;
+  if (!ranked) return { ranked: false, loads, seconds, payout: null, cost: null, net: null, perMinute: null };
+  const payout = route.units * (market / 100) * packs;
+  const cost = unit * packs + (o.rent ? ROUTE_RENT * loads : 0);
+  const net = payout - cost;
+  return { ranked: true, loads, seconds, payout, cost, net, perMinute: net / (seconds / 60) };
+}
+
+// Classifica delle route che pagano in gold. total = tutte quelle con premio in gold; rows = quelle con costi noti, dalla migliore.
+// opts.by: 'perMinute' (di base) | 'net'.
+function rankRoutes(d, opts) {
+  const by = opts && opts.by === 'net' ? 'net' : 'perMinute';
+  const gold = d.routes.filter((r) => r.reward === 'Gold');
+  const rows = gold.map((route) => ({ route, econ: routeEconomics(d, route, opts) })).filter((x) => x.econ.ranked)
+    .sort((a, b) => b.econ[by] - a.econ[by]);
+  return { total: gold.length, rows };
+}
+
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
 // x,y = puntatore; w,h = misure del tooltip; vw,vh = schermo.
 function tipPosition({ x, y, w, h, vw, vh }) {
@@ -707,7 +804,7 @@ function itemUrl(items, id) {
 // ---- file offline: i dati stanno dentro la pagina, in un blocco JSON con id "embedded-data" ----
 // embeddedFetch(data) imita fetch(): serve meta.json, items.json, overrides.json e trade.json dai dati incorporati.
 function embeddedFetch(data) {
-  const files = { 'meta.json': data.meta, 'items.json': data.items, 'overrides.json': data.overrides, 'trade.json': data.trade };
+  const files = { 'meta.json': data.meta, 'items.json': data.items, 'overrides.json': data.overrides, 'trade.json': data.trade, 'routes.json': data.routes };
   return async (url) => {
     const body = files[String(url).split('/').pop()];
     return body === undefined
@@ -800,23 +897,26 @@ async function loadData(baseUrl, deps) {
 // ---- dati del commercio (data/trade.json) ----
 // Si riscarica a ogni apertura (lo scrive a mano l'autore e può cambiare in qualsiasi momento) e si tiene in cache per l'uso offline.
 // 404 o file malformato/non valido -> null (la tab Trade mostra "dati non disponibili"); rete assente o errore del server -> ultima versione valida in cache.
-async function loadTrade(baseUrl, deps) {
+const loadTrade = (baseUrl, deps) => loadJsonData(baseUrl, deps, 'trade.json', 'aa-farm-trade-v1', normalizeTrade);
+// routes.json (route dei pacchi) segue le stesse regole di trade.json
+const loadRoutes = (baseUrl, deps) => loadJsonData(baseUrl, deps, 'routes.json', 'aa-farm-routes-v1', normalizeRoutes);
+async function loadJsonData(baseUrl, deps, file, KEY, normalize) {
   const d = deps || {};
   const fetchFn = d.fetchFn || fetch;
   let storage = d.storage;
   if (!storage) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
   const base = baseUrl.replace(/\/*$/, '/');
-  const KEY = 'aa-farm-trade-v1';
-  const cached = () => { try { const t = storage && storage.getItem(KEY); return t ? normalizeTrade(JSON.parse(t)) : null; } catch (e) { return null; } };
+  // in cache si tiene il file letto com'è (non il risultato di normalize, che può avere forma diversa) e lo si normalizza ogni volta
+  const cached = () => { try { const t = storage && storage.getItem(KEY); return t ? normalize(JSON.parse(t)) : null; } catch (e) { return null; } };
   let r;
-  try { r = await fetchFn(base + 'trade.json'); } catch (e) { return cached(); }
+  try { r = await fetchFn(base + file); } catch (e) { return cached(); }
   if (r.status === 404) return null;
   if (!r.ok) return cached();
   let raw;
   try { raw = await r.json(); } catch (e) { return null; }
-  const trade = normalizeTrade(raw);
-  if (trade) { try { if (storage) storage.setItem(KEY, JSON.stringify(trade)); } catch (e) { /* cache opzionale */ } }
-  return trade;
+  const data = normalize(raw);
+  if (data) { try { if (storage) storage.setItem(KEY, JSON.stringify(raw)); } catch (e) { /* cache opzionale */ } }
+  return data;
 }
 
 // ---- testi dell'interfaccia: inglese di base, italiano selezionabile ----
@@ -875,6 +975,15 @@ const STRINGS = {
     reco_fallback: 'With these quantities crafting everything is at least as good.',
     reco_empty: 'Nothing here is worth trading: craft everything.', reco_raw_h: 'Raw materials of the plan', alt_h: 'Alternatives per line',
     reco_obtained_h: 'Obtained by trading', reco_crates_h: 'To put in the crates',
+    trade_goal: 'What do you want to do with trade?', mode_items: 'Get the materials for my items', mode_routes: 'Explore trade routes',
+    routes_unavailable: 'Route data unavailable.',
+    rt_packs: 'Packs', rt_market: 'Market (%)', rt_rent: 'Rent a wagon ({gold} gold per load of {n})', rt_rank_by: 'Rank by',
+    rt_by_min: 'Net gold per minute', rt_by_net: 'Net gold',
+    rt_rank_h: 'Gold-paying routes', rt_rank_note: '{shown} of {total} gold-paying routes ranked at {market}% market, travelling at {speed} m/s (the wagon top speed, best case). Farmed and gathered inputs count as 0 gold; crafting fees, packing, the certificate and the wagon are counted. Routes that pay in items, or need a pack bought at an unknown price, are not ranked: find them below.',
+    rt_drive_h: 'Drive times between posts', rt_all_h: 'All routes', rt_search_ph: 'Search packs, materials or posts…', rt_search_label: 'Search routes',
+    rt_count: '{n} of {total} routes', rt_more: 'Showing the first {n}: refine the search to see the rest.', rt_none: 'No routes match.',
+    rt_c_pack: 'Trade pack', rt_c_from: 'From', rt_c_to: 'To', rt_c_dist: 'Distance', rt_c_time: 'Time', rt_c_permin: 'Net gold / min',
+    rt_c_payout: 'Payout', rt_c_cost: 'Cost', rt_c_net: 'Net gold', rt_c_reward: 'Reward', rt_source: 'Game data build {build}, checked {checked}.',
   },
   it: {
     loading: 'Caricamento dati…', status_ok: 'Dati aggiornati al {date} · {n} oggetti', badge_offline: 'offline', status_offline: 'dati del {date}',
@@ -930,6 +1039,15 @@ const STRINGS = {
     reco_fallback: 'Con queste quantità craftare tutto è almeno altrettanto buono.',
     reco_empty: 'Qui non conviene commerciare niente: crafta tutto.', reco_raw_h: 'Materiali grezzi del piano', alt_h: 'Alternative per riga',
     reco_obtained_h: 'Ottenuti con il commercio', reco_crates_h: 'Da mettere nelle casse',
+    trade_goal: 'Cosa vuoi fare col commercio?', mode_items: 'Procurarmi i materiali per i miei oggetti', mode_routes: 'Esplorare le route di commercio',
+    routes_unavailable: 'Dati delle route non disponibili.',
+    rt_packs: 'Pacchi', rt_market: 'Mercato (%)', rt_rent: 'Noleggia un carro ({gold} gold per carico da {n})', rt_rank_by: 'Ordina per',
+    rt_by_min: 'Gold netto al minuto', rt_by_net: 'Gold netto',
+    rt_rank_h: 'Route che pagano in gold', rt_rank_note: '{shown} route su {total} che pagano in gold, con mercato al {market}% e viaggio a {speed} m/s (la velocità massima del carro, caso migliore). Materiali coltivati e raccolti contano 0 gold; contano commissioni di crafting, imballaggio, certificato e carro. Le route che pagano in oggetti, o con un pacco da comprare a prezzo ignoto, non sono in classifica: le trovi qui sotto.',
+    rt_drive_h: 'Tempi di viaggio tra le postazioni', rt_all_h: 'Tutte le route', rt_search_ph: 'Cerca pacchi, materiali o postazioni…', rt_search_label: 'Cerca route',
+    rt_count: '{n} route su {total}', rt_more: 'Mostro le prime {n}: restringi la ricerca per vedere le altre.', rt_none: 'Nessuna route corrisponde.',
+    rt_c_pack: 'Pacco', rt_c_from: 'Da', rt_c_to: 'A', rt_c_dist: 'Distanza', rt_c_time: 'Tempo', rt_c_permin: 'Gold netto / min',
+    rt_c_payout: 'Pagamento', rt_c_cost: 'Costo', rt_c_net: 'Gold netto', rt_c_reward: 'Premio', rt_source: 'Dati di gioco build {build}, controllati il {checked}.',
   },
 };
 
@@ -944,7 +1062,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, parsePlans, serializePlans, upsertPlan, planProgress, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, normalizeRoutes, driveSeconds, routeEconomics, rankRoutes, loadTrade, loadRoutes, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, parsePlans, serializePlans, upsertPlan, planProgress, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -970,6 +1088,9 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   let dropped = [];
   let progress = C.emptyProgress();
   let trade = null; // data/trade.json normalizzato (null = non disponibile)
+  let routes = null; // data/routes.json normalizzato (null = non disponibile)
+  let tradeMode = 'items'; // modo della tab Trade: items = materiali per i miei oggetti, routes = esplora le route (non salvato)
+  const rt = { packs: 1, market: 100, rent: true, by: 'perMinute', q: '' }; // impostazioni della vista route (non salvate)
   let tab = 'craft'; // craft | trade
   let tripsMode = 'peace'; // peace = solo viaggi in pace; both = pace + conflitto (non salvato)
   let objective = 'farm'; // obiettivo del piano consigliato: farm = farmare meno, gold = gold spesi (non salvato)
@@ -1138,9 +1259,56 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   const fmtRatio = (r) => r.toLocaleString(LOCALE[lang], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const tierLabel = (x) => (('tier_' + x) in C.STRINGS.en ? t('tier_' + x) : x);
   const familyLabel = (x) => (('family_' + x) in C.STRINGS.en ? t('family_' + x) : x);
+  // ---- tab Trade, modo "esplora route": classifica dei pacchi che pagano in gold, tempi di viaggio, tutte le route ----
+  const dur = (s) => (s === null ? '–' : `${Math.floor(s / 60)}m ${String(Math.round(s % 60)).padStart(2, '0')}s`);
+  const km = (m) => (m === null ? '–' : (m / 1000).toLocaleString(LOCALE[lang], { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km');
+  const RT_MAX_ROWS = 100;
+  function routesAllHtml() {
+    const q = rt.q.trim().toLowerCase();
+    const hay = (r) => `${r.good.name} ${r.good.company} ${r.from} ${r.to} ${r.reward}`.toLowerCase();
+    const rows = routes.routes.filter((r) => !q || q.split(/\s+/).every((w) => hay(r).includes(w)));
+    const shown = rows.slice(0, RT_MAX_ROWS);
+    const rewardOf = (r) => (r.reward === 'Gold' ? `${fmt(Math.round(r.units * rt.market / 100))} Gold` : `${fmt(r.units)} × ${esc(r.reward)}`);
+    return `<p class="muted">${esc(t('rt_count', { n: fmt(rows.length), total: fmt(routes.routes.length) }))}${rows.length > shown.length ? ' · ' + esc(t('rt_more', { n: RT_MAX_ROWS })) : ''}</p>` +
+      (shown.length
+        ? `<div class="rt-wrap"><table class="rt"><thead><tr><th>${esc(t('rt_c_pack'))}</th><th>${esc(t('rt_c_from'))}</th><th>${esc(t('rt_c_to'))}</th><th>${esc(t('rt_c_reward'))}</th><th class="n">${esc(t('rt_c_dist'))}</th><th class="n">${esc(t('rt_c_time'))}</th></tr></thead><tbody>` +
+          shown.map((r) => `<tr><td>${esc(r.good.name)}<small>${esc(r.good.type)}</small></td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td>${rewardOf(r)}</td><td class="n">${km(r.metres)}</td><td class="n">${dur(r.metres ? r.metres / routes.speed : null)}</td></tr>`).join('') +
+          `</tbody></table></div>`
+        : `<p class="muted">${esc(t('rt_none'))}</p>`);
+  }
+  function routesView() {
+    if (!routes) return `<p class="warn">${esc(t('routes_unavailable'))}</p>`;
+    const opts = { packs: rt.packs, market: rt.market, rent: rt.rent, by: rt.by };
+    const rank = C.rankRoutes(routes, opts);
+    const top = rank.rows.slice(0, 30);
+    const ctl = `<div class="row rtctl">` +
+      `<label>${esc(t('rt_packs'))} <input type="number" min="1" value="${rt.packs}" data-action="rt-set" data-k="packs"></label>` +
+      `<label>${esc(t('rt_market'))} <input type="number" min="1" value="${rt.market}" data-action="rt-set" data-k="market"></label>` +
+      `<label class="chk"><input type="checkbox" data-action="rt-set" data-k="rent"${rt.rent ? ' checked' : ''}> ${esc(t('rt_rent', { gold: fmt(100), n: routes.perLoad }))}</label>` +
+      `<label>${esc(t('rt_rank_by'))} <select data-action="rt-set" data-k="by"><option value="perMinute"${rt.by === 'perMinute' ? ' selected' : ''}>${esc(t('rt_by_min'))}</option><option value="net"${rt.by === 'net' ? ' selected' : ''}>${esc(t('rt_by_net'))}</option></select></label></div>`;
+    const rankHtml = `<h3>${esc(t('rt_rank_h'))}</h3>${ctl}` +
+      `<p class="muted">${esc(t('rt_rank_note', { shown: fmt(rank.rows.length), total: fmt(rank.total), market: fmt(rt.market), speed: routes.speed.toLocaleString(LOCALE[lang]) }))}</p>` +
+      `<div class="rt-wrap"><table class="rt"><thead><tr><th>#</th><th>${esc(t('rt_c_pack'))}</th><th>${esc(t('rt_c_from'))}</th><th>${esc(t('rt_c_to'))}</th><th class="n">${esc(t('rt_c_dist'))}</th><th class="n">${esc(t('rt_c_time'))}</th><th class="n">${esc(t('rt_c_permin'))}</th><th class="n">${esc(t('rt_c_payout'))}</th><th class="n">${esc(t('rt_c_cost'))}</th><th class="n">${esc(t('rt_c_net'))}</th></tr></thead><tbody>` +
+      top.map(({ route: r, econ: e }, i) => `<tr><td>${i + 1}</td><td>${esc(r.good.name)}<small>${esc(r.good.type)}</small></td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td class="n">${km(r.metres)}</td><td class="n">${dur(e.seconds)}</td><td class="n"><strong>${fmt(Math.round(e.perMinute * 10) / 10)}</strong></td><td class="n">${fmt(Math.round(e.payout))}</td><td class="n">${fmt(Math.round(e.cost))}</td><td class="n">${fmt(Math.round(e.net))}</td></tr>`).join('') +
+      `</tbody></table></div>`;
+    // matrice dei tempi: righe = postazione di partenza, colonne = postazione di arrivo
+    const posts = routes.posts;
+    const driveHtml = `<h3>${esc(t('rt_drive_h'))}</h3><div class="rt-wrap"><table class="rt"><thead><tr><th></th>${posts.map((p) => `<th>${esc(p.name)}</th>`).join('')}</tr></thead><tbody>` +
+      posts.map((a) => `<tr><td><strong>${esc(a.name)}</strong></td>${posts.map((b) => {
+        const s = C.driveSeconds(routes, a.name, b.name);
+        return `<td>${a === b || s === null ? '–' : `${dur(s)}<small>${km(routes.roads[a.name + '|' + b.name])}</small>`}</td>`;
+      }).join('')}</tr>`).join('') + `</tbody></table></div>`;
+    const allHtml = `<h3>${esc(t('rt_all_h'))}</h3>` +
+      `<input id="rtSearch" type="search" value="${esc(rt.q)}" placeholder="${esc(t('rt_search_ph'))}" aria-label="${esc(t('rt_search_label'))}" style="width:100%;max-width:28rem">` +
+      `<div id="rtAll">${routesAllHtml()}</div>`;
+    const src = routes.source && routes.source.build ? `<p class="muted">${esc(t('rt_source', { build: routes.source.build, checked: routes.source.checked || '?' }))}</p>` : '';
+    return rankHtml + driveHtml + allHtml + src;
+  }
   function renderTrade() {
     const box = $('#tradeView');
-    const head = `<h2>${esc(t('h_trade'))}</h2>`;
+    const modeBtn2 = (v, key) => `<button type="button" class="chip${tradeMode === v ? ' on' : ''}" data-action="trade-mode" data-v="${v}" aria-pressed="${tradeMode === v}">${esc(t(key))}</button>`;
+    const head = `<h2>${esc(t('h_trade'))}</h2><div class="row">${esc(t('trade_goal'))} ${modeBtn2('items', 'mode_items')} ${modeBtn2('routes', 'mode_routes')}</div>`;
+    if (tradeMode === 'routes') { box.innerHTML = head + routesView(); return; }
     if (!progress.targets.length) { box.innerHTML = head + `<p class="muted">${esc(t('trade_empty'))}</p>`; return; }
     if (!trade) { box.innerHTML = head + `<p class="warn">${esc(t('trade_unavailable'))}</p>`; return; }
     const L = trade.limits;
@@ -1349,13 +1517,17 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       case 'retry': start(); break;
       case 'lang': setLang(b.dataset.v); break;
       case 'tab': setTab(b.dataset.v); break;
+      case 'trade-mode': tradeMode = b.dataset.v === 'routes' ? 'routes' : 'items'; renderTrade(); break;
       case 'trips': tripsMode = b.dataset.v === 'both' ? 'both' : 'peace'; renderTrade(); break;
       case 'objective': objective = b.dataset.v === 'gold' ? 'gold' : 'farm'; renderTrade(); break;
       case 'log-add': addDelivery(); break;
       case 'log-del': progress.deliveries.splice(parseInt(b.dataset.i, 10), 1); save(); renderTrade(); break;
     }
   });
-  document.addEventListener('input', (e) => { if (e.target.id === 'logPacks') fillLogInput(); });
+  document.addEventListener('input', (e) => {
+    if (e.target.id === 'logPacks') fillLogInput();
+    if (e.target.id === 'rtSearch' && routes) { rt.q = e.target.value; $('#rtAll').innerHTML = routesAllHtml(); } // solo la tabella: la casella di ricerca tiene il fuoco
+  });
   document.addEventListener('change', (e) => {
     const el = e.target;
     if (el.id === 'logTier') fillLogInput();
@@ -1364,6 +1536,14 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
       case 'have-set': progress.have[el.dataset.id] = v; save(); renderResults(); break;
       case 'step-done': { const id = el.dataset.id, need = parseInt(el.dataset.need, 10) || 0; progress.have[id] = el.checked ? Math.max(progress.have[id] || 0, need) : 0; save(); renderResults(); break; }
+      case 'rt-set': {
+        const k = el.dataset.k;
+        if (k === 'rent') rt.rent = el.checked;
+        else if (k === 'by') rt.by = el.value === 'net' ? 'net' : 'perMinute';
+        else rt[k] = Math.max(1, v);
+        renderTrade();
+        break;
+      }
       case 'price-set': if (v) progress.prices[el.dataset.id] = v; else delete progress.prices[el.dataset.id]; save(); renderResults(); break;
     }
     if (el.id === 'importFile' && el.files[0]) {
@@ -1437,6 +1617,9 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       trade = await (embData
         ? C.loadTrade('embedded/', { fetchFn: C.embeddedFetch(embData), storage: noStorage })
         : C.loadTrade(dataUrl())).catch(() => null);
+      routes = await (embData
+        ? C.loadRoutes('embedded/', { fetchFn: C.embeddedFetch(embData), storage: noStorage })
+        : C.loadRoutes(dataUrl())).catch(() => null);
       items = d.items; meta = d.meta; offline = d.offline;
       craftable = Object.entries(items).filter(([, it]) => it.crafts.length);
       loadSaved(); loadPlans();
