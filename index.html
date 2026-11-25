@@ -833,6 +833,7 @@ const STRINGS = {
     h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing', col_price: 'Gold each',
+    tip_where: 'Where to get it',
     h_plans: 'Saved plans', plan_name_ph: 'Plan name', plan_save: 'Save current', plan_load: 'Load', plans_empty: 'No saved plans yet.',
     plans_note: 'A plan keeps your items, owned amounts and prices; the delivery log is shared. Saving with an existing name replaces it; loading replaces what you have now.',
     plan_items: 'items: {n}', plan_load_aria: 'Load plan {name}', plan_del_aria: 'Delete plan {name}',
@@ -886,6 +887,7 @@ const STRINGS = {
     h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano', col_price: 'Gold cad.',
+    tip_where: 'Dove si trova',
     h_plans: 'Piani salvati', plan_name_ph: 'Nome del piano', plan_save: 'Salva questo', plan_load: 'Carica', plans_empty: 'Nessun piano salvato.',
     plans_note: 'Un piano conserva oggetti, quantità possedute e prezzi; il registro consegne è condiviso. Salvare con un nome già usato lo sostituisce; caricare sostituisce quello che hai ora.',
     plan_items: 'oggetti: {n}', plan_load_aria: 'Carica il piano {name}', plan_del_aria: 'Elimina il piano {name}',
@@ -1260,6 +1262,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       (info.stats ? `<h4>${esc(t('tip_stats'))}</h4>${rows(info.stats)}` : '') +
       (info.random ? `<h4>${esc(t('tip_random'))}</h4>${rows(info.random)}` : '') +
       (info.description ? `<p class="td">${esc(info.description)}</p>` : '') +
+      (info.where ? `<h4>${esc(t('tip_where'))}</h4><p class="td">${esc(info.where)}</p>` : '') +
       (c ? `<h4>${esc(t('tip_craft'))}</h4>${rows([
         [`${c.profession} · ${t('tip_level', { n: c.level })}`, `${fmt(c.gold)} Gold`],
         ...((c.stations && c.stations.length) || c.yield > 1

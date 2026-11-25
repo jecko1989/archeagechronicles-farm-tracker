@@ -471,7 +471,8 @@
           "2 Gold"
         ]
       ],
-      "description": "An item found on undead bodies. Used in crafting or can be sold for Gold."
+      "description": "An item found on undead bodies. Used in crafting or can be sold for Gold.",
+      "where": "Ancient Soldier's Keepsake can be dropped by Skeleton Archer, Broken Corpse and 52 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_SoldierRelics_01.webp"
   },
@@ -488,7 +489,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A complex device built to hold mechanical anima."
+      "description": "A complex device built to hold mechanical anima.",
+      "where": "Anima Vessel is obtained through engineering merchant."
     },
     "icon": "item_QusetItem_PocketWatch.webp"
   },
@@ -848,7 +850,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A rare stone used for tempering gear. Usable on Rare (+13-14), Epic (+6-10), and Legendary (+3-7) equipment Obtained as loot or purchased from wandering merchants."
+      "description": "A rare stone used for tempering gear. Usable on Rare (+13-14), Epic (+6-10), and Legendary (+3-7) equipment Obtained as loot or purchased from wandering merchants.",
+      "where": "Arcane Tempering Stone can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_MetalArtifact_02.webp"
   },
@@ -865,7 +868,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A residue of the Garden, formed from condensed trace particles. Commonly found in veins across Auroria. Used to craft Archeum at a Refinery."
+      "description": "A residue of the Garden, formed from condensed trace particles. Commonly found in veins across Auroria. Used to craft Archeum at a Refinery.",
+      "where": "Archeum Shard can be gathered from Archeum and found in Hersander's Tower and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Arceaum_01.webp"
   },
@@ -899,7 +903,8 @@
           "100 Gold"
         ]
       ],
-      "description": "A blueprint for a station equipped with an Atelier. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7"
+      "description": "A blueprint for a station equipped with an Atelier. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7",
+      "where": "Atelier can be sold by Station Architect Gyrenn."
     },
     "icon": "UI_Item_Housing_BP_FH_1F_RN_H_01.webp"
   },
@@ -961,7 +966,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain barbecue tools for indoor placement."
+      "description": "Dismantle to obtain barbecue tools for indoor placement.",
+      "where": "Barbeque Tool Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_HardwoodFurniturePack_01.webp"
   },
@@ -978,7 +984,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Barley harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good."
+      "description": "Barley harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good.",
+      "where": "Barley is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Barley.webp"
   },
@@ -995,7 +1002,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a variety of baskets for decorating your house and plot."
+      "description": "Dismantle to obtain a variety of baskets for decorating your house and plot.",
+      "where": "Basket Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_BasketPack_01.webp"
   },
@@ -1092,7 +1100,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A costly organ harvested from bears. It is valued for a wide range of uses."
+      "description": "A costly organ harvested from bears. It is valued for a wide range of uses.",
+      "where": "Bear Gallbladder can be dropped by Great Wild Bear, Bloodsoaked Sloth and 3 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_BearGall_01.webp"
   },
@@ -1109,7 +1118,8 @@
           "2 Gold"
         ]
       ],
-      "description": "An extract made from roseberries."
+      "description": "An extract made from roseberries.",
+      "where": "Berry Extract is obtained through kitchen."
     },
     "icon": "UI_Item_Contents_CraftedItem_RedBerry_02.webp"
   },
@@ -1244,7 +1254,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A fragment broken from a once whole piece of Black Iron. Traces of its mysterious power may yet remain."
+      "description": "A fragment broken from a once whole piece of Black Iron. Traces of its mysterious power may yet remain.",
+      "where": "Black Iron Shard is obtained through gylden ruins."
     },
     "icon": "item_QusetItem_Weapon_Part.webp"
   },
@@ -1261,7 +1272,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A blank certificate required for trading goods at a Trading Post."
+      "description": "A blank certificate required for trading goods at a Trading Post.",
+      "where": "Blank Trade Certificate can be sold by Avon, Roghu and 20 more merchants."
     },
     "icon": "item_QusetItem_OldParchment.webp"
   },
@@ -1324,7 +1336,8 @@
           "100"
         ]
       ],
-      "description": "Bloodfeast is an uncommon axe in ArcheAge Chronicles."
+      "description": "Bloodfeast is an uncommon axe in ArcheAge Chronicles.",
+      "where": "Bloodfeast can be dropped by Malchuk."
     },
     "icon": "Icon_Item_Equipment_Axe_05.webp"
   },
@@ -1434,7 +1447,8 @@
           "5 Gold"
         ]
       ],
-      "description": "Jam made from blue berries. Slightly increases DEF for 10 minutes."
+      "description": "Jam made from blue berries. Slightly increases DEF for 10 minutes.",
+      "where": "Blue Berry Jam can be a reward from Grandmother's Whereabouts."
     },
     "icon": "UI_Item_Contents_CraftedItem_HealPotion_01.webp"
   },
@@ -1499,7 +1513,8 @@
           "5-14"
         ]
       ],
-      "description": "A ceremonial hood worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power."
+      "description": "A ceremonial hood worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power.",
+      "where": "Bluefeather Ritual Hood can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_05.webp"
   },
@@ -1564,7 +1579,8 @@
           "21-60"
         ]
       ],
-      "description": "A ceremonial robe worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power."
+      "description": "A ceremonial robe worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power.",
+      "where": "Bluefeather Ritual Robe can be dropped by Pillager Warrior, Pillager Warbringer and 15 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_05.webp"
   },
@@ -1629,7 +1645,8 @@
           "21-60"
         ]
       ],
-      "description": "Ceremonial shoes worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power."
+      "description": "Ceremonial shoes worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power.",
+      "where": "Bluefeather Ritual Shoes can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_05.webp"
   },
@@ -1690,7 +1707,8 @@
           "5-14"
         ]
       ],
-      "description": "Ceremonial sleeves worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power."
+      "description": "Ceremonial sleeves worn by a non-human priest. Every tribe reveres its own sacred being, and the garments worn by their priests are believed to be imbued with a mysterious power.",
+      "where": "Bluefeather Ritual Sleeves can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_05.webp"
   },
@@ -1773,7 +1791,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A branch from the rare Blushpetal Tree. Its radiant glow captivates all who behold it."
+      "description": "A branch from the rare Blushpetal Tree. Its radiant glow captivates all who behold it.",
+      "where": "Blushpetal Branch can be dropped by Hereafter Gartez, Hereafter Bound Tyrant and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Wood_04.webp"
   },
@@ -1790,7 +1809,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Raw bone obtained from butchering reptiles such as crocodiles and alligator turtles. Can be processed into bonecraft at a Refinery."
+      "description": "Raw bone obtained from butchering reptiles such as crocodiles and alligator turtles. Can be processed into bonecraft at a Refinery.",
+      "where": "Bone Chip can be dropped by Coastal Alligator Turtle, Coastal Alligator and 10 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_BoneChips_01.webp"
   },
@@ -1807,7 +1827,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a collection of books for decorating your house and plot."
+      "description": "Dismantle to obtain a collection of books for decorating your house and plot.",
+      "where": "Bookworm's Bundle is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_BookPack_01.webp"
   },
@@ -1835,7 +1856,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering armor. (Level 3)"
+      "description": "A stone used for tempering armor. (Level 3)",
+      "where": "Brilliant Armor Tempering Stone can be dropped by Rift Rancor, Vanguard of Destruction and 15 more enemies, sold by Black Market Dealer and Trieg and found in Brilliant Armor Box, Compensation Chest III and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_CrystalArtifact_02.webp"
   },
@@ -1863,7 +1885,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering weapons. (Level 3)"
+      "description": "A stone used for tempering weapons. (Level 3)",
+      "where": "Brilliant Weapon Tempering Stone can be dropped by Rift Rancor, Vanguard of Destruction and 15 more enemies, sold by Black Market Dealer and Trieg and found in Brilliant Weapon Box, Compensation Chest III and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_MetalArtifact_02.webp"
   },
@@ -1874,7 +1897,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "An artifact tied to a Nakisian high priest sent across dimensions, now left dormant in the absence of Rancor."
+      "description": "An artifact tied to a Nakisian high priest sent across dimensions, now left dormant in the absence of Rancor.",
+      "where": "Brutal Nightmare can be dropped by Eternal Nightmare Celtak and Enduring Nightmare Celtak."
     },
     "icon": "UI_Item_CraftMaterial_Nightmare_01.webp"
   },
@@ -1891,7 +1915,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Buffalo horns are prized not only as decoration, but for a variety of everyday uses."
+      "description": "Buffalo horns are prized not only as decoration, but for a variety of everyday uses.",
+      "where": "Buffalo Horn can be dropped by Buffalo, Central Wetlands Buffalo and 3 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_BisonHorn_01.webp"
   },
@@ -1938,7 +1963,8 @@
           "2"
         ]
       ],
-      "description": "A pioneer's possession from Burnt Castle in Cinderstone Moor. How it came to rest here remains a mystery."
+      "description": "A pioneer's possession from Burnt Castle in Cinderstone Moor. How it came to rest here remains a mystery.",
+      "where": "Burnt Castle Earrings can be dropped by Pillager Warbringer, Pillager Champion and 9 more enemies, sold by Dhamer, Bakie and 3 more merchants and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Earring02.webp"
   },
@@ -1955,7 +1981,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Cabbage harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good."
+      "description": "Cabbage harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good.",
+      "where": "Cabbage can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Cabbage.webp"
   },
@@ -2034,7 +2061,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A carrot harvested from a cultivated seedling. Can be processed at a Kitchenfor use as a trade good."
+      "description": "A carrot harvested from a cultivated seedling. Can be processed at a Kitchenfor use as a trade good.",
+      "where": "Carrot is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Carrot.webp"
   },
@@ -3069,7 +3097,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A clam found nestled in coastal sands."
+      "description": "A clam found nestled in coastal sands.",
+      "where": "Clam can be gathered from Clam."
     },
     "icon": "UI_Item_Contents_CraftedItem_SM_Clam_01A.webp"
   },
@@ -3232,7 +3261,8 @@
     "type": "Hide & Bone",
     "crafts": [],
     "info": {
-      "description": "A horn once carried by a great Firran who wandered Auroria, guided by the constellations carved upon it."
+      "description": "A horn once carried by a great Firran who wandered Auroria, guided by the constellations carved upon it.",
+      "where": "Constellation Horn can be dropped by Slin, Hereafter High Priest Zudaka and 4 more enemies and sold by Black Market Dealer and Great Raven."
     },
     "icon": "UI_Item_CraftMaterial_StarHorn_01.webp"
   },
@@ -3249,7 +3279,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Corn harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good."
+      "description": "Corn harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good.",
+      "where": "Corn is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Corn.webp"
   },
@@ -3316,7 +3347,8 @@
           "110"
         ]
       ],
-      "description": "Corrupt Meliot's Greatsword is a rare greatsword in ArcheAge Chronicles."
+      "description": "Corrupt Meliot's Greatsword is a rare greatsword in ArcheAge Chronicles.",
+      "where": "Corrupt Meliot's Greatsword can be dropped by Meliot."
     },
     "icon": "Icon_Item_Equipment_GreatSword_06.webp"
   },
@@ -3333,7 +3365,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A crystallized mass of corruption condensed within the body of a powerful monster. Used in crafting or can be sold for Gold."
+      "description": "A crystallized mass of corruption condensed within the body of a powerful monster. Used in crafting or can be sold for Gold.",
+      "where": "Corrupted Heart can be dropped by Vesper the Ruthless, Poldat and 72 more enemies and a reward from Azhra Raid."
     },
     "icon": "UI_Item_CraftMaterial_CorrputHeart_01.webp"
   },
@@ -3696,7 +3729,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A small crab that lives in rocky ocean crevices."
+      "description": "A small crab that lives in rocky ocean crevices.",
+      "where": "Crab can be gathered from Suspicious Rock."
     },
     "icon": "UI_Item_Contents_CraftedItem_SM_CrabHideout_01A.webp"
   },
@@ -3713,7 +3747,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A crude rod imbued with the power of lightning, obtained only from powerful gnolls. Used in crafting or can be sold for Gold."
+      "description": "A crude rod imbued with the power of lightning, obtained only from powerful gnolls. Used in crafting or can be sold for Gold.",
+      "where": "Crackling War Club can be dropped by Impulsive Devourer, Impulsive Butcher and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_ElectricBall_01.webp"
   },
@@ -3730,7 +3765,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Crocodile hide is tough, durable, and highly sought after by all, and commands a high price on the market."
+      "description": "Crocodile hide is tough, durable, and highly sought after by all, and commands a high price on the market.",
+      "where": "Crocodile Hide can be dropped by Coastal Alligator, Fierce Crocodile and 4 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_CrocodileLeather_01.webp"
   },
@@ -3781,7 +3817,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A coarse, wiry mane of a gnoll. Used in crafting or can be sold for Gold."
+      "description": "A coarse, wiry mane of a gnoll. Used in crafting or can be sold for Gold.",
+      "where": "Crude Gnoll Fur can be dropped by Gnoll Thrower, Gnoll Fighter and 42 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_NollFur_01.webp"
   },
@@ -3866,7 +3903,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A metal ore found in amethyst veins, formed under immense pressure and known for its exceptional purity."
+      "description": "A metal ore found in amethyst veins, formed under immense pressure and known for its exceptional purity.",
+      "where": "Crystalline Ore can be dropped by Hereafter Gartez, Hereafter Bound Tyrant and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Iron_04.webp"
   },
@@ -3968,7 +4006,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare mask obtained from the cult that worships an ancient god. Used in crafting or can be sold for Gold."
+      "description": "A rare mask obtained from the cult that worships an ancient god. Used in crafting or can be sold for Gold.",
+      "where": "Cultist Ritual Mask can be dropped by Cult of Eternity Warrior, Cult of Eternity Archer and 23 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_MemorialMask_01.webp"
   },
@@ -4534,7 +4573,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a variety of curtains for indoor placement."
+      "description": "Dismantle to obtain a variety of curtains for indoor placement.",
+      "where": "Curtain Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_BarbecuedToolPack_01.webp"
   },
@@ -4671,7 +4711,8 @@
     "type": "Additives & Catalysts",
     "crafts": [],
     "info": {
-      "description": "A heart corrupted by wicked sorcery through a pact with the Dobavions. Inhuman tendrils grow within, harboring dark thoughts that threaten to erupt into a horrific nightmare."
+      "description": "A heart corrupted by wicked sorcery through a pact with the Dobavions. Inhuman tendrils grow within, harboring dark thoughts that threaten to erupt into a horrific nightmare.",
+      "where": "Dark Sorcery Catalyst can be dropped by Monstrous Tristan, Hereafter High Priest Zudaka and 5 more enemies."
     },
     "icon": "item_CraftMaterial_MagicPauder01.webp"
   },
@@ -4807,7 +4848,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A map that shows the key locations of Diamond Shores."
+      "description": "A map that shows the key locations of Diamond Shores.",
+      "where": "Diamond Shores Map can be a reward from Bluesalt Brotherhood and Valuable Advice."
     },
     "icon": "UI_Item_Content_WorldMap_Open.webp"
   },
@@ -4850,7 +4892,8 @@
           "1"
         ]
       ],
-      "description": "A pair of earrings pirate Dirk once wore."
+      "description": "A pair of earrings pirate Dirk once wore.",
+      "where": "Dirk's Earrings can be dropped by Pirate Dirk."
     },
     "icon": "UI_Item_Equipment_Accessory_Earring01.webp"
   },
@@ -4867,7 +4910,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Baek Ah's Firwood Pencil, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Baek Ah's Firwood Pencil, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Baek Ah's Firwood Pencil is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Nightmare_01.webp"
   },
@@ -4884,7 +4928,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Bellflower Dewdrop, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Bellflower Dewdrop, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Bellflower Dewdrop is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_LangrailSmile_01.webp"
   },
@@ -4901,7 +4946,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Blushpetal Branch, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Blushpetal Branch, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Blushpetal Branch is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Wood_04.webp"
   },
@@ -4918,7 +4964,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Brutal Nightmare its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Brutal Nightmare its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Brutal Nightmare is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Iron_04.webp"
   },
@@ -4935,7 +4982,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Calm of Nemi, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Calm of Nemi, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Calm of Nemi is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Meditation_01.webp"
   },
@@ -4952,7 +5000,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Crystalline Ore, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Crystalline Ore, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Crystalline Ore is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_GoldenKing_01.webp"
   },
@@ -4969,7 +5018,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantled Foundations of Elven Meditation, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "Dismantled Foundations of Elven Meditation, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Foundations of Elven Meditation is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_CaptainArmor_01.webp"
   },
@@ -4986,7 +5036,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Gyldenlord's Curse, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Gyldenlord's Curse, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Gyldenlord's Curse is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_RiverWhirlpool_01.webp"
   },
@@ -5003,7 +5054,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Howling Sandstorm, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Howling Sandstorm, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Howling Sandstorm is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Arceaum_04.webp"
   },
@@ -5020,7 +5072,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Old Gladiator's Legacy, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Old Gladiator's Legacy, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Old Gladiator's Legacy is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_StarHorn_01.webp"
   },
@@ -5037,7 +5090,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Shadowhawk Mask, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Shadowhawk Mask, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Shadowhawk Mask is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_SleepResearch_01.webp"
   },
@@ -5054,7 +5108,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Shatigon's Hammer, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Shatigon's Hammer, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Shatigon's Hammer is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_SandStorm_01.webp"
   },
@@ -5071,7 +5126,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Slumber of Time, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Slumber of Time, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Slumber of Time is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_FirPencil_01.webp"
   },
@@ -5088,7 +5144,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dismantled Star Fragment, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "A dismantled Star Fragment, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Star Fragment is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_ShadowHawkMask_01.webp"
   },
@@ -5105,7 +5162,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantled Vanguard Armor, its volatile energy neutralized. Ready to be crafted into trade goods."
+      "description": "Dismantled Vanguard Armor, its volatile energy neutralized. Ready to be crafted into trade goods.",
+      "where": "Dismantled Vanguard Armor is obtained through dismantle."
     },
     "icon": "UI_Item_CraftMaterial_Disassemble_Petal_04.webp"
   },
@@ -5122,7 +5180,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain plate decorations for indoor placement."
+      "description": "Dismantle to obtain plate decorations for indoor placement.",
+      "where": "Displayed Plate Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_DisplayDishPack_01.webp"
   },
@@ -5242,7 +5301,8 @@
           "30"
         ]
       ],
-      "description": "Boots once worn by those versed in poisons. A faint trace of poison still lingers in the leather."
+      "description": "Boots once worn by those versed in poisons. A faint trace of poison still lingers in the leather.",
+      "where": "Dreadbreath Boots can be dropped by Dreadbreath Champion, Dreadbreath Warrior and 9 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_10.webp"
   },
@@ -5301,7 +5361,8 @@
           "30"
         ]
       ],
-      "description": "Bracers once worn by those versed in poisons. A faint trace of poison still lingers in the leather."
+      "description": "Bracers once worn by those versed in poisons. A faint trace of poison still lingers in the leather.",
+      "where": "Dreadbreath Bracers can be dropped by Dreadbreath Champion, Dreadbreath Warrior and 9 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_10.webp"
   },
@@ -5360,7 +5421,8 @@
           "30"
         ]
       ],
-      "description": "Light armor once worn by those versed in poisons. A faint trace of poison still lingers in the leather."
+      "description": "Light armor once worn by those versed in poisons. A faint trace of poison still lingers in the leather.",
+      "where": "Dreadbreath Light Armor can be dropped by Dreadbreath Champion, Dreadbreath Warrior and 9 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_10.webp"
   },
@@ -5419,7 +5481,8 @@
           "30"
         ]
       ],
-      "description": "A mask once worn by those versed in poisons. A faint trace of poison still lingers in the leather."
+      "description": "A mask once worn by those versed in poisons. A faint trace of poison still lingers in the leather.",
+      "where": "Dreadbreath Mask can be dropped by Dreadbreath Champion, Dreadbreath Warrior and 9 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_10.webp"
   },
@@ -5788,7 +5851,8 @@
           "450 Gold"
         ]
       ],
-      "description": "Can be refined to obtain crafting materials. Acquired from mining Legendary Lunarite."
+      "description": "Can be refined to obtain crafting materials. Acquired from mining Legendary Lunarite.",
+      "where": "Drifting Meteor can be found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_MedicinalRoot.webp"
   },
@@ -5879,7 +5943,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A secondary weapon that can be assigned to the Utility Pouch. Unleashes a powerful shockwave, pushing back nearby enemies."
+      "description": "A secondary weapon that can be assigned to the Utility Pouch. Unleashes a powerful shockwave, pushing back nearby enemies.",
+      "where": "Enhanced Pyrium Orb can be found in Treasure Chest."
     },
     "icon": "item_CraftMaterial_MagicEssence01.webp"
   },
@@ -5981,7 +6046,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A droplet gathered from Evening Dew Bellflowers, a rare flower of Auroria. It is said to form where the land's energy condenses into evening dew."
+      "description": "A droplet gathered from Evening Dew Bellflowers, a rare flower of Auroria. It is said to form where the land's energy condenses into evening dew.",
+      "where": "Evening Dewdrop can be dropped by Hereafter Gartez, Hereafter Bound Tyrant and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Petal_04.webp"
   },
@@ -6220,7 +6286,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering armor. (Level 1)"
+      "description": "A stone used for tempering armor. (Level 1)",
+      "where": "Faint Armor Tempering Stone can be dropped by Dark Blade Worker, Blacksmith Bellum and 393 more enemies, sold by Kaimder and Didie and found in Compensation Chest I and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_CrystalArtifact_01.webp"
   },
@@ -6231,7 +6298,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering weapons. (Level 1)"
+      "description": "A stone used for tempering weapons. (Level 1)",
+      "where": "Faint Weapon Tempering Stone can be dropped by Dark Blade Worker, Blacksmith Bellum and 393 more enemies, sold by Liben and Didie, a reward from A Handsome Reward and found in Compensation Chest I and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_MetalArtifact_01.webp"
   },
@@ -6345,7 +6413,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Used in crafting. Acquired from harvesting plants."
+      "description": "Used in crafting. Acquired from harvesting plants.",
+      "where": "Fibrous Flower Husk can be found in Treasure Chest."
     },
     "icon": "UI_Item_Doodad_Cotton.webp"
   },
@@ -6580,7 +6649,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain fine metal decorations for indoor placement."
+      "description": "Dismantle to obtain fine metal decorations for indoor placement.",
+      "where": "Fine Metal Decor Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_IronDecoration_01.webp"
   },
@@ -6669,7 +6739,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies in an area to increase their Burn gauge."
+      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies in an area to increase their Burn gauge.",
+      "where": "Fire Orb can be dropped by Ironhammer Hunter, Ironhammer Fighter and 62 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_FireGrenade_01.webp"
   },
@@ -6761,7 +6832,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain floral-patterned plates for decorating your house and plot."
+      "description": "Dismantle to obtain floral-patterned plates for decorating your house and plot.",
+      "where": "Floral Plate Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_FlowerSmellDish_01.webp"
   },
@@ -6847,7 +6919,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "A meditation method once practiced by mages to ease mental strain, later formalized by an assistant of the Great Library."
+      "description": "A meditation method once practiced by mages to ease mental strain, later formalized by an assistant of the Great Library.",
+      "where": "Foundations of Elven Meditation can be dropped by Gold-Drunk Mary, Hereafter Gyldenlord and 4 more enemies and sold by Great Raven."
     },
     "icon": "UI_Item_CraftMaterial_Meditation_01.webp"
   },
@@ -6923,7 +6996,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare mark obtained from members of the Dark Blade's Fox Battalion. Used in crafting or can be sold for Gold."
+      "description": "A rare mark obtained from members of the Dark Blade's Fox Battalion. Used in crafting or can be sold for Gold.",
+      "where": "Fox Battalion Mark is obtained through dark blade."
     },
     "icon": "UI_Item_CraftMaterial_Sign_02.webp"
   },
@@ -6940,7 +7014,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A fragrant flower petal rarely obtained from wildflowers. Used as a material in advanced recipes."
+      "description": "A fragrant flower petal rarely obtained from wildflowers. Used as a material in advanced recipes.",
+      "where": "Fragrant Wild Petal can be gathered from Lily."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Petal_03.webp"
   },
@@ -6957,7 +7032,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies to increase their Freeze gauge."
+      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies to increase their Freeze gauge.",
+      "where": "Frost Shard can be dropped by Gnoll Thrower, Gnoll Fighter and 58 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_FreezingGrenade_01.webp"
   },
@@ -6974,7 +7050,8 @@
           "6 Gold"
         ]
       ],
-      "description": "An icy scale imbued with the power of waves, obtained only from powerful Dobavions. Used in crafting or can be sold for Gold."
+      "description": "An icy scale imbued with the power of waves, obtained only from powerful Dobavions. Used in crafting or can be sold for Gold.",
+      "where": "Frostbound Serpent Scale can be dropped by Meliot's Henchman, Dreadbreath Outpost Commander and 4 more enemies, sold by Great Raven and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_FreezingScales_01.webp"
   },
@@ -7218,7 +7295,8 @@
     "type": "Furniture Boxes",
     "crafts": [],
     "info": {
-      "description": "A magically packed crate containing multiple furniture pieces. Use it to obtain all listed furniture. Unpacked furniture is stored in your Housing Storage and can be claimed from a Residential Area Manager."
+      "description": "A magically packed crate containing multiple furniture pieces. Use it to obtain all listed furniture. Unpacked furniture is stored in your Housing Storage and can be claimed from a Residential Area Manager.",
+      "where": "Furniture Box: Hardwood Chair can be a reward from Home Sweet Home."
     },
     "icon": "UI_Item_Housing_SM_HS_Furniture_Chair_03A.webp"
   },
@@ -7240,7 +7318,8 @@
     "type": "Furniture Boxes",
     "crafts": [],
     "info": {
-      "description": "A magically packed crate containing multiple furniture pieces. Use it to obtain all listed furniture. Unpacked furniture is stored in your Housing Storage and can be claimed from a Residential Area Manager."
+      "description": "A magically packed crate containing multiple furniture pieces. Use it to obtain all listed furniture. Unpacked furniture is stored in your Housing Storage and can be claimed from a Residential Area Manager.",
+      "where": "Furniture Box: Ivy Fence can be a reward from Home Sweet Home."
     },
     "icon": "UI_Item_Housing_SM_RN_WoodWall_A_01.webp"
   },
@@ -7312,7 +7391,8 @@
           "40 Gold"
         ]
       ],
-      "description": "A bud from the rare Gardenbloom plant, found only in Auroria. Said to grow with its roots reaching toward the rift in the Garden."
+      "description": "A bud from the rare Gardenbloom plant, found only in Auroria. Said to grow with its roots reaching toward the rift in the Garden.",
+      "where": "Gardenbloom can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Petal_05.webp"
   },
@@ -7715,7 +7795,8 @@
           "12"
         ]
       ],
-      "description": "Boots worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites."
+      "description": "Boots worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites.",
+      "where": "Gargoyle Battalion Boots can be dropped by Dark Blade Worker, Gargoyle Battalion Swordsman and 18 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_09.webp"
   },
@@ -7770,7 +7851,8 @@
           "2"
         ]
       ],
-      "description": "Gloves worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites."
+      "description": "Gloves worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites.",
+      "where": "Gargoyle Battalion Gloves can be dropped by Dark Blade Worker, Gargoyle Battalion Swordsman and 18 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_09.webp"
   },
@@ -7825,7 +7907,8 @@
           "2"
         ]
       ],
-      "description": "A helmet worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites."
+      "description": "A helmet worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites.",
+      "where": "Gargoyle Battalion Helmet can be dropped by Dark Blade Worker, Gargoyle Battalion Swordsman and 18 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_09.webp"
   },
@@ -7880,7 +7963,8 @@
           "12"
         ]
       ],
-      "description": "Light armor worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites."
+      "description": "Light armor worn by the Gargoyle Battalion, a Dark Blades ambush unit that operates from ruins and ancient sites.",
+      "where": "Gargoyle Battalion Light Armor can be dropped by Dark Blade Worker, Gargoyle Battalion Swordsman and 18 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_09.webp"
   },
@@ -7956,7 +8040,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare mark obtained from members of the Dark Blade's Gargoyle Battalion. Used in crafting or can be sold for Gold."
+      "description": "A rare mark obtained from members of the Dark Blade's Gargoyle Battalion. Used in crafting or can be sold for Gold.",
+      "where": "Gargoyle Battalion Mark can be dropped by Dark Blade Worker, Gargoyle Battalion Swordsman and 18 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_Sign_03.webp"
   },
@@ -8129,7 +8214,8 @@
           "5 Gold"
         ]
       ],
-      "description": "Used for cooking or eaten as is."
+      "description": "Used for cooking or eaten as is.",
+      "where": "Ginseng can be dropped by Corpse Warrior, Elite Gargoyle Battalion Swordsman and 9 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_MedicinalRoot.webp"
   },
@@ -8200,7 +8286,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Gold is a common crafting materials in ArcheAge Chronicles."
+      "description": "Gold is a common crafting materials in ArcheAge Chronicles.",
+      "where": "Gold can be found in Hersander's Tower."
     },
     "icon": "item_QusetItem_Pouch.webp"
   },
@@ -8267,7 +8354,8 @@
           "70"
         ]
       ],
-      "description": "Golddrunk Staff is a rare elemental staff in ArcheAge Chronicles."
+      "description": "Golddrunk Staff is a rare elemental staff in ArcheAge Chronicles.",
+      "where": "Golddrunk Staff can be dropped by Gold-Drunk Mary."
     },
     "icon": "Icon_Item_Equipment_ElementalStaff_05.webp"
   },
@@ -8334,7 +8422,8 @@
           "100"
         ]
       ],
-      "description": "Golden Anchor Axe is a rare axe in ArcheAge Chronicles."
+      "description": "Golden Anchor Axe is a rare axe in ArcheAge Chronicles.",
+      "where": "Golden Anchor Axe can be dropped by Golden Anchor Charger."
     },
     "icon": "Icon_Item_Equipment_Axe_07.webp"
   },
@@ -8385,7 +8474,8 @@
           "1"
         ]
       ],
-      "description": "Worn by pirates who sail under the Golden Anchor, this bandana bears the faded scars of countless days at sea."
+      "description": "Worn by pirates who sail under the Golden Anchor, this bandana bears the faded scars of countless days at sea.",
+      "where": "Golden Anchor Bandana can be dropped by Jeco, Pirate and 13 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_08.webp"
   },
@@ -8440,7 +8530,8 @@
           "11"
         ]
       ],
-      "description": "Worn by pirates who sail under the Golden Anchor, this robe bears the faded scars of countless days at sea."
+      "description": "Worn by pirates who sail under the Golden Anchor, this robe bears the faded scars of countless days at sea.",
+      "where": "Golden Anchor Robe can be dropped by Jeco, Pirate and 13 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_08.webp"
   },
@@ -8495,7 +8586,8 @@
           "11"
         ]
       ],
-      "description": "Worn by pirates who sail under the Golden Anchor, these shoes bear the faded scars of countless days at sea."
+      "description": "Worn by pirates who sail under the Golden Anchor, these shoes bear the faded scars of countless days at sea.",
+      "where": "Golden Anchor Shoes can be dropped by Jeco, Pirate and 13 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_08.webp"
   },
@@ -8546,7 +8638,8 @@
           "1"
         ]
       ],
-      "description": "Worn by pirates who sail under the Golden Anchor, these sleeves bear the faded scars of countless days at sea."
+      "description": "Worn by pirates who sail under the Golden Anchor, these sleeves bear the faded scars of countless days at sea.",
+      "where": "Golden Anchor Sleeves can be dropped by Jeco, Pirate and 13 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_08.webp"
   },
@@ -8959,7 +9052,8 @@
           "40 Gold"
         ]
       ],
-      "description": "A branch from the rare Goldroot Tree, said to be linked to the power of a special tree in the Garden."
+      "description": "A branch from the rare Goldroot Tree, said to be linked to the power of a special tree in the Garden.",
+      "where": "Goldroot Branch can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Wood_05.webp"
   },
@@ -9686,7 +9780,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain furniture for decorating your house and plot."
+      "description": "Dismantle to obtain furniture for decorating your house and plot.",
+      "where": "Gurquip's Basic Furniture set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_PopularFurniture_01.webp"
   },
@@ -9703,7 +9798,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain furniture for decorating your house and plot."
+      "description": "Dismantle to obtain furniture for decorating your house and plot.",
+      "where": "Gurquip's Grand Furniture set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_RoyalFurniture_01.webp"
   },
@@ -9933,7 +10029,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "The last king of South Aust sealed his gold-filled tomb with a curse during the Age of the Great River."
+      "description": "The last king of South Aust sealed his gold-filled tomb with a curse during the Age of the Great River.",
+      "where": "Gyldenlord's Curse can be dropped by Gyldenlord, Hereafter Gyldenlord and 4 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_GoldenKing_01.webp"
   },
@@ -10264,7 +10361,8 @@
           "6 Gold"
         ]
       ],
-      "description": "Dense, sturdy logs rarely obtained from trees. Used as a material in advanced recipes."
+      "description": "Dense, sturdy logs rarely obtained from trees. Used as a material in advanced recipes.",
+      "where": "Hardened Logs can be gathered from Young Tree and Mature Tree."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Wood_06.webp"
   },
@@ -10281,7 +10379,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain wooden furniture for indoor placement. Used for housing. Obtained from trade."
+      "description": "Dismantle to obtain wooden furniture for indoor placement. Used for housing. Obtained from trade.",
+      "where": "Hardwood Furniture Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_WeaponMuralDecorations_01.webp"
   },
@@ -10298,7 +10397,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain baskets filled with harvested goods for indoor placement."
+      "description": "Dismantle to obtain baskets filled with harvested goods for indoor placement.",
+      "where": "Harvest Basket Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_HarvestTrimmingBasket_01.webp"
   },
@@ -10331,7 +10431,8 @@
           "10 Gold"
         ]
       ],
-      "description": "A tool used for gathering wild plants. Fragile and easily broken. Available from general merchants."
+      "description": "A tool used for gathering wild plants. Fragile and easily broken. Available from general merchants.",
+      "where": "Harvesting Sickle can be sold by Shopkeeper Magan, General Merchant and 21 more merchants, a reward from A Farmer's Beginning and found in Treasure Chest."
     },
     "icon": "Icon_Item_Equipment_Tools_Sickle_01.webp"
   },
@@ -10378,7 +10479,8 @@
           "2"
         ]
       ],
-      "description": "A pioneer's possession from Hatora in Arcum Iris. How it came to rest here remains a mystery."
+      "description": "A pioneer's possession from Hatora in Arcum Iris. How it came to rest here remains a mystery.",
+      "where": "Hatora Ring can be dropped by Pillager Warbringer, Pillager Champion and 10 more enemies, sold by Dhamer, Bakie and 3 more merchants and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring02.webp"
   },
@@ -10573,7 +10675,8 @@
           "59"
         ]
       ],
-      "description": "A bracelet bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent."
+      "description": "A bracelet bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent.",
+      "where": "Hereafter Constellations Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet05.webp"
   },
@@ -10624,7 +10727,8 @@
           "5"
         ]
       ],
-      "description": "Earrings bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent."
+      "description": "Earrings bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent.",
+      "where": "Hereafter Constellations Earrings can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Earring05.webp"
   },
@@ -10675,7 +10779,8 @@
           "5"
         ]
       ],
-      "description": "A necklace bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent."
+      "description": "A necklace bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent.",
+      "where": "Hereafter Constellations Necklace can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Necklace05.webp"
   },
@@ -10726,7 +10831,8 @@
           "59"
         ]
       ],
-      "description": "A ring bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent."
+      "description": "A ring bearing the constellations of the Hereafter. Legend tells that when Nui opened a path through the realm of the dead to save countless lives, the stars of the Hereafter guided them to the gates of the new continent.",
+      "where": "Hereafter Constellations Ring can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring05.webp"
   },
@@ -10777,7 +10883,8 @@
           "19"
         ]
       ],
-      "description": "A bracelet commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "A bracelet commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Flame Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet04.webp"
   },
@@ -10828,7 +10935,8 @@
           "19"
         ]
       ],
-      "description": "Earrings commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "Earrings commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Fog Earrings can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Earring04.webp"
   },
@@ -10879,7 +10987,8 @@
           "19"
         ]
       ],
-      "description": "A bracelet commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "A bracelet commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Lightning Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet08.webp"
   },
@@ -10926,7 +11035,8 @@
           "7"
         ]
       ],
-      "description": "A bracelet worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter."
+      "description": "A bracelet worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter.",
+      "where": "Hereafter Night Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet03.webp"
   },
@@ -10973,7 +11083,8 @@
           "7"
         ]
       ],
-      "description": "Earrings once worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter."
+      "description": "Earrings once worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter.",
+      "where": "Hereafter Night Earrings can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Earring03.webp"
   },
@@ -11020,7 +11131,8 @@
           "7"
         ]
       ],
-      "description": "A necklace worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter."
+      "description": "A necklace worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter.",
+      "where": "Hereafter Night Necklace can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Necklace03.webp"
   },
@@ -11067,7 +11179,8 @@
           "7"
         ]
       ],
-      "description": "A ring once worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter."
+      "description": "A ring once worn by the guardians of the Hereafter. Though the realm knows neither day nor night, they call the brief opening of its gates the Night of the Hereafter.",
+      "where": "Hereafter Night Ring can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring03.webp"
   },
@@ -11118,7 +11231,8 @@
           "19"
         ]
       ],
-      "description": "A ring commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "A ring commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Steel Ring can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring08.webp"
   },
@@ -11169,7 +11283,8 @@
           "19"
         ]
       ],
-      "description": "A ring commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "A ring commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Tide Ring can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring04.webp"
   },
@@ -11220,7 +11335,8 @@
           "19"
         ]
       ],
-      "description": "A necklace commemorating Hersander, who chose to keep watch over the gates of the Hereafter."
+      "description": "A necklace commemorating Hersander, who chose to keep watch over the gates of the Hereafter.",
+      "where": "Hereafter Wind Necklace can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Necklace04.webp"
   },
@@ -11271,7 +11387,8 @@
           "31"
         ]
       ],
-      "description": "A bracelet named for Hersander's die. As keeper of the Hereafter's gates in Nui's stead, he allows each soul to choose its own path. Those who cannot decide are said to receive a die from his hand."
+      "description": "A bracelet named for Hersander's die. As keeper of the Hereafter's gates in Nui's stead, he allows each soul to choose its own path. Those who cannot decide are said to receive a die from his hand.",
+      "where": "Hersander's Die Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet09.webp"
   },
@@ -11322,7 +11439,8 @@
           "31"
         ]
       ],
-      "description": "A ring named for Hersander's die. As keeper of the Hereafter's gates in Nui's stead, he allows each soul to choose its own path. Those who cannot decide are said to receive a die from his hand."
+      "description": "A ring named for Hersander's die. As keeper of the Hereafter's gates in Nui's stead, he allows each soul to choose its own path. Those who cannot decide are said to receive a die from his hand.",
+      "where": "Hersander's Die Ring can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring09.webp"
   },
@@ -11339,7 +11457,8 @@
           "6 Gold"
         ]
       ],
-      "description": "Iron ore of exceptional purity, rarely obtained by mining ore veins. Used as a material in advanced recipes."
+      "description": "Iron ore of exceptional purity, rarely obtained by mining ore veins. Used as a material in advanced recipes.",
+      "where": "High-Quality Iron Ore can be gathered from Dark Vein."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Iron_03.webp"
   },
@@ -11361,7 +11480,8 @@
     "type": "Mounts",
     "crafts": [],
     "info": {
-      "description": "A black horse with a midnight mane. On the open road, no other steed can overtake it. Upon use, Morello will follow you. Can be summoned at will."
+      "description": "A black horse with a midnight mane. On the open road, no other steed can overtake it. Upon use, Morello will follow you. Can be summoned at will.",
+      "where": "Horse License - Morello can be a reward from Racing the Wandering Gambler: Riding."
     },
     "icon": "UI_Item_Contents_Item_HorseCertificate_Black.webp"
   },
@@ -11372,7 +11492,8 @@
     "type": "Mounts",
     "crafts": [],
     "info": {
-      "description": "The prized steed of Malchuk, claimed as a trophy upon his defeat. Upon use, Sorel will follow you. Can be summoned at will."
+      "description": "The prized steed of Malchuk, claimed as a trophy upon his defeat. Upon use, Sorel will follow you. Can be summoned at will.",
+      "where": "Horse License - Sorel can be a reward from Well-Earned Reward."
     },
     "icon": "UI_Item_Contents_Item_HorseCertificate_Brown.webp"
   },
@@ -11383,7 +11504,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "Awakened by Rancor, the ancient Ipnya hound instinctively took up the Black Iron, now entirely consumed by a thirst for slaughter."
+      "description": "Awakened by Rancor, the ancient Ipnya hound instinctively took up the Black Iron, now entirely consumed by a thirst for slaughter.",
+      "where": "Howling Sandstorm can be dropped by Illidas of the Sandstorm and Awakened Illidas."
     },
     "icon": "UI_Item_CraftMaterial_SandStorm_01.webp"
   },
@@ -11768,7 +11890,8 @@
           "10 Gold"
         ]
       ],
-      "description": "A tool used for skinning. Fragile and easily broken. Available from general merchants."
+      "description": "A tool used for skinning. Fragile and easily broken. Available from general merchants.",
+      "where": "Hunting Knife can be sold by Shopkeeper Magan, General Merchant and 20 more merchants, a reward from First Hunt and found in Treasure Chest."
     },
     "icon": "Icon_Item_Equipment_Tools_Knife_01.webp"
   },
@@ -11785,7 +11908,8 @@
           "40 Gold"
         ]
       ],
-      "description": "The remains of a monster powerful enough to threaten the world. Used in crafting or can be sold for Gold."
+      "description": "The remains of a monster powerful enough to threaten the world. Used in crafting or can be sold for Gold.",
+      "where": "Immortal Heart can be dropped by Rift Rancor, Vanguard of Destruction and 21 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_ImmortalHeart_01.webp"
   },
@@ -11945,7 +12069,8 @@
           "90"
         ]
       ],
-      "description": "A dagger forged for the Inheritors, those who carry the divine will of the gods."
+      "description": "A dagger forged for the Inheritors, those who carry the divine will of the gods.",
+      "where": "Inheritor's Dagger can be found in Hersander's Tower."
     },
     "icon": "Icon_Item_Equipment_ShortSword_02.webp"
   },
@@ -12055,7 +12180,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A scarecrow for your garden. Currently just standing by, but it may come in handy someday."
+      "description": "A scarecrow for your garden. Currently just standing by, but it may come in handy someday.",
+      "where": "Iridescent Scarecrow can be a reward from A Farmer's Beginning."
     },
     "icon": "UI_Item_Contents_Farm_BP_HS_Scarecrow_01A.webp"
   },
@@ -12072,7 +12198,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Iron ore obtained by mining ore veins. Used to smelt ingots at a Smelting Furnace."
+      "description": "Iron ore obtained by mining ore veins. Used to smelt ingots at a Smelting Furnace.",
+      "where": "Iron Ore can be gathered from Dark Vein and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Iron_01.webp"
   },
@@ -12131,7 +12258,8 @@
           "15"
         ]
       ],
-      "description": "Forged from metal and reinforced with the bones of a colossal beast, these gauntlets are remarkably sturdy yet surprisingly light."
+      "description": "Forged from metal and reinforced with the bones of a colossal beast, these gauntlets are remarkably sturdy yet surprisingly light.",
+      "where": "Ironbone Gauntlets can be dropped by Gnoll Thrower, Gnoll Fighter and 20 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_08.webp"
   },
@@ -12190,7 +12318,8 @@
           "7"
         ]
       ],
-      "description": "Forged from metal and reinforced with the bones of a colossal beast, these greaves are remarkably sturdy yet surprisingly light."
+      "description": "Forged from metal and reinforced with the bones of a colossal beast, these greaves are remarkably sturdy yet surprisingly light.",
+      "where": "Ironbone Greaves can be dropped by Gnoll Thrower, Gnoll Fighter and 20 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_08.webp"
   },
@@ -12249,7 +12378,8 @@
           "18"
         ]
       ],
-      "description": "Forged from metal and reinforced with the bones of a colossal beast, this heavy armor is remarkably sturdy yet surprisingly light."
+      "description": "Forged from metal and reinforced with the bones of a colossal beast, this heavy armor is remarkably sturdy yet surprisingly light.",
+      "where": "Ironbone Heavy Armor can be dropped by Gnoll Thrower, Gnoll Fighter and 20 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_08.webp"
   },
@@ -12308,7 +12438,8 @@
           "10"
         ]
       ],
-      "description": "Forged from metal and reinforced with the bones of a colossal beast, this helmet is remarkably sturdy yet surprisingly light."
+      "description": "Forged from metal and reinforced with the bones of a colossal beast, this helmet is remarkably sturdy yet surprisingly light.",
+      "where": "Ironbone Helmet can be dropped by Gnoll Thrower, Gnoll Fighter and 20 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_08.webp"
   },
@@ -12325,7 +12456,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a collection of fine ceramics for decorating your house and plot."
+      "description": "Dismantle to obtain a collection of fine ceramics for decorating your house and plot.",
+      "where": "Ishvaran Fine Ceramics is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_MasterpieceCeramics_01.webp"
   },
@@ -12437,7 +12569,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "Azhra claws are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons."
+      "description": "Azhra claws are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons.",
+      "where": "Karshid's Claws can be dropped by Karshid, Tyrant of the Ruins."
     },
     "icon": "UI_Item_CraftMaterial_WindBlade_01.webp"
   },
@@ -12448,7 +12581,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "Azhra fangs are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons."
+      "description": "Azhra fangs are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons.",
+      "where": "Karshid's Fang can be dropped by Karshid, Tyrant of the Ruins."
     },
     "icon": "UI_Item_CraftMaterial_OrcCanine_01.webp"
   },
@@ -12459,7 +12593,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "Intact Azhra horns are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons."
+      "description": "Intact Azhra horns are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons.",
+      "where": "Karshid's Horn can be dropped by Karshid, Tyrant of the Ruins and sold by Eldro and Trieg."
     },
     "icon": "UI_Item_CraftMaterial_StarHorn_01.webp"
   },
@@ -12470,7 +12605,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "Azhra scales are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons."
+      "description": "Azhra scales are exceedingly rare, claimed only by hunters with both skill and luck. They are prized for crafting powerful weapons.",
+      "where": "Karshid's Scale can be dropped by Karshid, Tyrant of the Ruins and sold by Kaimder and Didie."
     },
     "icon": "UI_Item_CraftMaterial_TurtleShell.webp"
   },
@@ -12487,7 +12623,8 @@
           "100 Gold"
         ]
       ],
-      "description": "A blueprint for a station equipped with a Kitchen. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7"
+      "description": "A blueprint for a station equipped with a Kitchen. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7",
+      "where": "Kitchen can be sold by Station Architect Gyrenn."
     },
     "icon": "UI_Item_Housing_BP_FH_1F_RN_J_01.webp"
   },
@@ -12504,7 +12641,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain kitchen furniture for decorating your house and plot."
+      "description": "Dismantle to obtain kitchen furniture for decorating your house and plot.",
+      "where": "Kitchen Furniture Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_KitchenFurniture_01.webp"
   },
@@ -13092,7 +13230,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare mark obtained from members of the Dark Blade's Leopard Battalion. Used in crafting or can be sold for Gold."
+      "description": "A rare mark obtained from members of the Dark Blade's Leopard Battalion. Used in crafting or can be sold for Gold.",
+      "where": "Leopard Battalion Mark can be dropped by Dark Blade Heavy Infantryman, Helen and 44 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_Sign_01.webp"
   },
@@ -13109,7 +13248,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A levitation stone created through a fusion of magic and Harani engineering."
+      "description": "A levitation stone created through a fusion of magic and Harani engineering.",
+      "where": "Levitation Stone can be dropped by Dark Blade Worker, Blacksmith Bellum and 350 more enemies, a reward from Teddy Bear Guard and found in Worn Pillager's Bundle, Plain Pillager's Bundle and Sturdy Pillager's Bundle."
     },
     "icon": "item_CraftMaterial_MagicPiece03.webp"
   },
@@ -13161,7 +13301,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A Lv. 1 throwing weapon purchased from shops. Creates a healing field where it lands, restoring nearby allies for 10 seconds."
+      "description": "A Lv. 1 throwing weapon purchased from shops. Creates a healing field where it lands, restoring nearby allies for 10 seconds.",
+      "where": "Lifespring can be dropped by Ironhammer Hunter, Ironhammer Fighter and 15 more enemies, sold by Avon, Morgan and 14 more merchants and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_HealPotion.webp"
   },
@@ -13178,7 +13319,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A special item assigned to the Utility Pouch. Illuminates dark surroundings."
+      "description": "A special item assigned to the Utility Pouch. Illuminates dark surroundings.",
+      "where": "Light Orb can be sold by Shopkeeper Magan, General Merchant and 20 more merchants, a reward from Gift of the Deceased and found in Treasure Chest."
     },
     "icon": "UI_Item_Content_Consumable_Light.webp"
   },
@@ -13195,7 +13337,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A throwing weapon purchased from merchants. (Level 1) Summons lightning at distant enemies to increase their Shock gauge."
+      "description": "A throwing weapon purchased from merchants. (Level 1) Summons lightning at distant enemies to increase their Shock gauge.",
+      "where": "Lightning Spike can be dropped by Dobavion Commander, Gnoll Thrower and 42 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_ElectricGrenade_01.webp"
   },
@@ -13212,7 +13355,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A fragment left by restless spirits unable to enter the Hereafter. Used in crafting or can be sold for Gold."
+      "description": "A fragment left by restless spirits unable to enter the Hereafter. Used in crafting or can be sold for Gold.",
+      "where": "Lingering Soul Fragment can be dropped by Wraith Swordsman, Wraith Infantryman and 47 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_SenilityPiece_01.webp"
   },
@@ -13229,7 +13373,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A hardwood obtained from trees. Used to craft lumber at a Spagyric Table."
+      "description": "A hardwood obtained from trees. Used to craft lumber at a Spagyric Table.",
+      "where": "Log can be gathered from Young Tree and Mature Tree."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Wood_01.webp"
   },
@@ -13262,7 +13407,8 @@
           "10 Gold"
         ]
       ],
-      "description": "A tool used for cutting down trees. Fragile and easily broken. Available from general merchants."
+      "description": "A tool used for cutting down trees. Fragile and easily broken. Available from general merchants.",
+      "where": "Logging Axe can be sold by Shopkeeper Magan, General Merchant and 20 more merchants and found in Treasure Chest."
     },
     "icon": "Icon_Item_Equipment_Tools_FellingAxe_01.webp"
   },
@@ -13279,7 +13425,8 @@
           "40 Gold"
         ]
       ],
-      "description": "A rare crystal formed from particles cast down from the Big Moon, transformed into Archeum."
+      "description": "A rare crystal formed from particles cast down from the Big Moon, transformed into Archeum.",
+      "where": "Lunarite Crystal can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Arceaum_05.webp"
   },
@@ -13296,7 +13443,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain landscaping items for decorating your house and plot."
+      "description": "Dismantle to obtain landscaping items for decorating your house and plot.",
+      "where": "Lush Garden Bundle is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_GardenPack_01.webp"
   },
@@ -13343,7 +13491,8 @@
           "2"
         ]
       ],
-      "description": "A pioneer's possession from Lutesong Harbor in Villanelle. How it came to rest here remains a mystery."
+      "description": "A pioneer's possession from Lutesong Harbor in Villanelle. How it came to rest here remains a mystery.",
+      "where": "Lutesong Harbor Bracelet can be dropped by Pillager Warbringer, Pillager Champion and 9 more enemies, sold by Dhamer, Bakie and 3 more merchants and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet02.webp"
   },
@@ -13360,7 +13509,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A standard crafting reagent."
+      "description": "A standard crafting reagent.",
+      "where": "Luxury Ornament can be found in Hersander's Tower."
     },
     "icon": "item_QusetItem_OldJewelBox.webp"
   },
@@ -13415,7 +13565,8 @@
           "11"
         ]
       ],
-      "description": "Boots worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain."
+      "description": "Boots worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain.",
+      "where": "Lycaon Battalion Boots can be dropped by Blacksmith Bellum, Tanner Grady and 22 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_12.webp"
   },
@@ -13470,7 +13621,8 @@
           "1"
         ]
       ],
-      "description": "Gloves worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain."
+      "description": "Gloves worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain.",
+      "where": "Lycaon Battalion Gloves can be dropped by Blacksmith Bellum, Tanner Grady and 22 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_12.webp"
   },
@@ -13525,7 +13677,8 @@
           "1"
         ]
       ],
-      "description": "A helmet worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain."
+      "description": "A helmet worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain.",
+      "where": "Lycaon Battalion Helmet can be dropped by Blacksmith Bellum, Tanner Grady and 22 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_12.webp"
   },
@@ -13580,7 +13733,8 @@
           "11"
         ]
       ],
-      "description": "Light armor worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain."
+      "description": "Light armor worn by the Lycaon Battalion, a Dark Blades scout unit renowned for moving swiftly across even the harshest terrain.",
+      "where": "Lycaon Battalion Light Armor can be dropped by Blacksmith Bellum, Tanner Grady and 22 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_12.webp"
   },
@@ -13656,7 +13810,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare mark obtained from members of the Dark Blade's Lycaon Battalion. Used in crafting or can be sold for Gold."
+      "description": "A rare mark obtained from members of the Dark Blade's Lycaon Battalion. Used in crafting or can be sold for Gold.",
+      "where": "Lycaon Battalion Mark can be dropped by Blacksmith Bellum, Tanner Grady and 24 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_Sign_04.webp"
   },
@@ -13673,7 +13828,8 @@
           "6 Gold"
         ]
       ],
-      "description": "Archeum formed from a dense concentration of the Garden's essence. Rarely obtained and used as a material in advanced crafting."
+      "description": "Archeum formed from a dense concentration of the Garden's essence. Rarely obtained and used as a material in advanced crafting.",
+      "where": "Magic Archeum Shard can be gathered from Archeum."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Arceaum_03.webp"
   },
@@ -13959,7 +14115,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Marble obtained by mining rocks. Used to process stone at a Smelting Furnace."
+      "description": "Marble obtained by mining rocks. Used to process stone at a Smelting Furnace.",
+      "where": "Marble can be dropped by Graverobber Worker, Lycaon Battalion Archer and 3 more enemies."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Marble_01.webp"
   },
@@ -14127,7 +14284,8 @@
           "100"
         ]
       ],
-      "description": "Martyr's Fang is a rare longsword in ArcheAge Chronicles."
+      "description": "Martyr's Fang is a rare longsword in ArcheAge Chronicles.",
+      "where": "Martyr's Fang can be dropped by Martyr's Fang."
     },
     "icon": "Icon_Item_Equipment_LongSword_13.webp"
   },
@@ -14182,7 +14340,8 @@
           "2"
         ]
       ],
-      "description": "A worn yet well-kept hood, left behind by those who gave their lives for their beliefs."
+      "description": "A worn yet well-kept hood, left behind by those who gave their lives for their beliefs.",
+      "where": "Martyr's Hood can be dropped by Cult of Eternity Archer, Cult of Eternity Swordsmage and 3 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_09.webp"
   },
@@ -14237,7 +14396,8 @@
           "12"
         ]
       ],
-      "description": "A worn yet well-kept robe, left behind by those who gave their lives for their beliefs."
+      "description": "A worn yet well-kept robe, left behind by those who gave their lives for their beliefs.",
+      "where": "Martyr's Robe can be dropped by Cult of Eternity Archer, Cult of Eternity Swordsmage and 3 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_09.webp"
   },
@@ -14292,7 +14452,8 @@
           "12"
         ]
       ],
-      "description": "Worn yet well-kept shoes, left behind by those who gave their lives for their beliefs."
+      "description": "Worn yet well-kept shoes, left behind by those who gave their lives for their beliefs.",
+      "where": "Martyr's Shoes can be dropped by Cult of Eternity Archer, Cult of Eternity Swordsmage and 3 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_09.webp"
   },
@@ -14343,7 +14504,8 @@
           "2"
         ]
       ],
-      "description": "Worn yet well-kept sleeves, left behind by those who gave their lives for their beliefs."
+      "description": "Worn yet well-kept sleeves, left behind by those who gave their lives for their beliefs.",
+      "where": "Martyr's Sleeves can be dropped by Cult of Eternity Archer, Cult of Eternity Swordsmage and 3 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_09.webp"
   },
@@ -14410,7 +14572,8 @@
           "70"
         ]
       ],
-      "description": "Martyr's Spark is a rare elemental staff in ArcheAge Chronicles."
+      "description": "Martyr's Spark is a rare elemental staff in ArcheAge Chronicles.",
+      "where": "Martyr's Spark can be dropped by Martyr's Spark."
     },
     "icon": "Icon_Item_Equipment_ElementalStaff_06.webp"
   },
@@ -14473,7 +14636,8 @@
           "100"
         ]
       ],
-      "description": "Martyr's Tide is an uncommon wavesword in ArcheAge Chronicles."
+      "description": "Martyr's Tide is an uncommon wavesword in ArcheAge Chronicles.",
+      "where": "Martyr's Tide can be dropped by Martyr's Ember."
     },
     "icon": "Icon_Item_Equipment_CurvedSword_05.webp"
   },
@@ -14883,7 +15047,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A melon harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good."
+      "description": "A melon harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good.",
+      "where": "Melon is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Melon.webp"
   },
@@ -14917,7 +15082,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies in an area to increase their Poison gauge."
+      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies in an area to increase their Poison gauge.",
+      "where": "Miasma Flask can be dropped by Skeleton Archer, Dobavion Commander and 100 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_PoisionGrenade_01.webp"
   },
@@ -15020,7 +15186,8 @@
           "1"
         ]
       ],
-      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide."
+      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide.",
+      "where": "Monk's Hood can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_04.webp"
   },
@@ -15075,7 +15242,8 @@
           "7"
         ]
       ],
-      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide."
+      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide.",
+      "where": "Monk's Robe can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_04.webp"
   },
@@ -15130,7 +15298,8 @@
           "7"
         ]
       ],
-      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide."
+      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide.",
+      "where": "Monk's Shoes can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_04.webp"
   },
@@ -15181,7 +15350,8 @@
           "1"
         ]
       ],
-      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide."
+      "description": "The hood of a monk. Such garments are worn by both the devout and those with something to hide.",
+      "where": "Monk's Sleeves can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_04.webp"
   },
@@ -15228,7 +15398,8 @@
           "2"
         ]
       ],
-      "description": "A pioneer's possession from Moonswept Bay of the Crescent Throne. How it came to rest here remains a mystery."
+      "description": "A pioneer's possession from Moonswept Bay of the Crescent Throne. How it came to rest here remains a mystery.",
+      "where": "Moonswept Bay Necklace can be dropped by Pillager Warbringer, Pillager Champion and 9 more enemies, sold by Dhamer, Bakie and 3 more merchants and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Necklace02.webp"
   },
@@ -15245,7 +15416,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Prized for generations for its warmth and durability, this wool is an essential material for making clothing."
+      "description": "Prized for generations for its warmth and durability, this wool is an essential material for making clothing.",
+      "where": "Mountain Goat Wool can be dropped by Meadow Ram, Mountain Goat and 2 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_GoatFur_01.webp"
   },
@@ -15279,7 +15451,8 @@
           "2 Gold"
         ]
       ],
-      "description": "Mysterious lunar dust used to craft or disassemble a Lunastone."
+      "description": "Mysterious lunar dust used to craft or disassemble a Lunastone.",
+      "where": "Mysterious Lunar Dust can be a reward from Awakened Zerdaos Bounty, Helkum, King of Hinnon Bounty and 15 more quests."
     },
     "icon": "UI_Item_CraftMaterial_FullMoon_Powder01.webp"
   },
@@ -15296,7 +15469,8 @@
           "6 Gold"
         ]
       ],
-      "description": "Mysterious lunar fragment used to craft or disassemble a Lunastone."
+      "description": "Mysterious lunar fragment used to craft or disassemble a Lunastone.",
+      "where": "Mysterious Lunar Fragment can be dropped by Rift Rancor, Vanguard of Destruction and Enduring Nightmare Celtak and a reward from Tamar the Venerated Bounty, Thunderborn Mesabiel Bounty and 8 more quests."
     },
     "icon": "UI_Item_CraftMaterial_FullMoon_Piece01.webp"
   },
@@ -15466,7 +15640,8 @@
           "7"
         ]
       ],
-      "description": "A bracelet worn by the legendary Arden Guards. Named after their leader, it serves as a badge of their order. How such a relic found its way to Auroria remains unknown."
+      "description": "A bracelet worn by the legendary Arden Guards. Named after their leader, it serves as a badge of their order. How such a relic found its way to Auroria remains unknown.",
+      "where": "Nui's Shield Bracelet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet07.webp"
   },
@@ -15513,7 +15688,8 @@
           "7"
         ]
       ],
-      "description": "A ring worn by the legendary Arden Guards. Named after their leader, it serves as a badge of their order. How such a relic found its way to Auroria remains unknown."
+      "description": "A ring worn by the legendary Arden Guards. Named after their leader, it serves as a badge of their order. How such a relic found its way to Auroria remains unknown.",
+      "where": "Nui's Shield Signet can be found in Hersander's Tower."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring07.webp"
   },
@@ -15530,7 +15706,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain Nytro's mannequin set for indoor placement."
+      "description": "Dismantle to obtain Nytro's mannequin set for indoor placement.",
+      "where": "Nytro's Armor Display is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_ArmorExhibit_01.webp"
   },
@@ -15573,7 +15750,8 @@
           "1"
         ]
       ],
-      "description": "The gem, stripped of its luster, feels as hollow as a past left empty. A necklace for those who follow faint clues into the unknown."
+      "description": "The gem, stripped of its luster, feels as hollow as a past left empty. A necklace for those who follow faint clues into the unknown.",
+      "where": "Oblivion Necklace can be found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Necklace01.webp"
   },
@@ -15584,7 +15762,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "An old gladiator entrusted this heirloom to the Starwanderer Monastery, asking that it be passed on to his pupil after his death."
+      "description": "An old gladiator entrusted this heirloom to the Starwanderer Monastery, asking that it be passed on to his pupil after his death.",
+      "where": "Old Gladiator's Legacy can be dropped by Bloodied Glory Mozahid, Hereafter High Priest Zudaka and 4 more enemies and sold by Great Raven."
     },
     "icon": "UI_Item_CraftMaterial_LangrailSmile_01.webp"
   },
@@ -15745,7 +15924,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A thick, hard orc tusk. Used in crafting or can be sold for Gold."
+      "description": "A thick, hard orc tusk. Used in crafting or can be sold for Gold.",
+      "where": "Orc Fang can be dropped by Ironhammer Hunter, Fierce Ironhammer Hunter and 30 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_OrcCanine_01.webp"
   },
@@ -15808,7 +15988,8 @@
           "15"
         ]
       ],
-      "description": "Gauntlets worn by the Owl Knights, an order famed for their keen sight even in the dead of night."
+      "description": "Gauntlets worn by the Owl Knights, an order famed for their keen sight even in the dead of night.",
+      "where": "Owl Knights' Gauntlets can be dropped by Skeleton Archer, Broken Corpse and 39 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_10.webp"
   },
@@ -15871,7 +16052,8 @@
           "7"
         ]
       ],
-      "description": "Greaves worn by the Owl Knights, an order famed for their keen sight even in the dead of night."
+      "description": "Greaves worn by the Owl Knights, an order famed for their keen sight even in the dead of night.",
+      "where": "Owl Knights' Greaves can be dropped by Skeleton Archer, Broken Corpse and 39 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_10.webp"
   },
@@ -15934,7 +16116,8 @@
           "18"
         ]
       ],
-      "description": "Heavy armor worn by the Owl Knights, an order famed for their keen sight even in the dead of night."
+      "description": "Heavy armor worn by the Owl Knights, an order famed for their keen sight even in the dead of night.",
+      "where": "Owl Knights' Heavy Armor can be dropped by Skeleton Archer, Broken Corpse and 39 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_10.webp"
   },
@@ -15997,7 +16180,8 @@
           "10"
         ]
       ],
-      "description": "A helmet worn by the Owl Knights, an order famed for their keen sight even in the dead of night."
+      "description": "A helmet worn by the Owl Knights, an order famed for their keen sight even in the dead of night.",
+      "where": "Owl Knights' Helmet can be dropped by Skeleton Archer, Broken Corpse and 39 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_10.webp"
   },
@@ -16142,7 +16326,8 @@
           "10 Gold"
         ]
       ],
-      "description": "A tool used for mining. Fragile and easily broken. Available from general merchants."
+      "description": "A tool used for mining. Fragile and easily broken. Available from general merchants.",
+      "where": "Pickaxe can be sold by Shopkeeper Magan, General Merchant and 20 more merchants and found in Treasure Chest."
     },
     "icon": "Icon_Item_Equipment_Tools_Pick_01.webp"
   },
@@ -16201,7 +16386,8 @@
           "100"
         ]
       ],
-      "description": "An axe pillaged from the spoils of war, still retaining formidable power."
+      "description": "An axe pillaged from the spoils of war, still retaining formidable power.",
+      "where": "Pillager's Axe can be dropped by Pallatius the Severer."
     },
     "icon": "Icon_Item_Equipment_AxeShield_02_1.webp"
   },
@@ -16256,7 +16442,8 @@
           "7"
         ]
       ],
-      "description": "Boots worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law."
+      "description": "Boots worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law.",
+      "where": "Pillager's Boots can be dropped by Pillager Warrior, Pillager Warbringer and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_03.webp"
   },
@@ -16441,7 +16628,8 @@
           "70"
         ]
       ],
-      "description": "An elemental staff pillaged from the spoils of war, still retaining formidable power."
+      "description": "An elemental staff pillaged from the spoils of war, still retaining formidable power.",
+      "where": "Pillager's Elemental Staff can be dropped by Pallatius the Severer."
     },
     "icon": "Icon_Item_Equipment_ElementalStaff_02_1.webp"
   },
@@ -16555,7 +16743,8 @@
           "1"
         ]
       ],
-      "description": "Gloves worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law."
+      "description": "Gloves worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law.",
+      "where": "Pillager's Gloves can be dropped by Pillager Warrior, Pillager Warbringer and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_03.webp"
   },
@@ -16728,7 +16917,8 @@
           "1"
         ]
       ],
-      "description": "A hat worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law."
+      "description": "A hat worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law.",
+      "where": "Pillager's Hat can be dropped by Pillager Warrior, Pillager Warbringer and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_03.webp"
   },
@@ -16787,7 +16977,8 @@
           "80"
         ]
       ],
-      "description": "A hatchet pillaged from the spoils of war, still retaining formidable power."
+      "description": "A hatchet pillaged from the spoils of war, still retaining formidable power.",
+      "where": "Pillager's Hatchet can be dropped by Pallatius the Severer."
     },
     "icon": "Icon_Item_Equipment_HandAxe_02_1.webp"
   },
@@ -16842,7 +17033,8 @@
           "7"
         ]
       ],
-      "description": "Armor worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law."
+      "description": "Armor worn by Aurorian pillagers, many of whom are exiles or stowaways living beyond the reach of the law.",
+      "where": "Pillager's Light Armor can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_03.webp"
   },
@@ -17862,7 +18054,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A rare compass obtained from pirates. Used in crafting or can be sold for Gold."
+      "description": "A rare compass obtained from pirates. Used in crafting or can be sold for Gold.",
+      "where": "Pirate Compass can be dropped by Jeco, Pirate and 31 more enemies and a reward from To the Pioneers' Assembly Hall."
     },
     "icon": "UI_Item_CraftMaterial_Compass_01.webp"
   },
@@ -17980,7 +18173,8 @@
           "100"
         ]
       ],
-      "description": "A longsword steeped in the relentless greed of pirates who seek to seize every coast they find."
+      "description": "A longsword steeped in the relentless greed of pirates who seek to seize every coast they find.",
+      "where": "Pirate's Longsword can be dropped by Pallatius the Severer."
     },
     "icon": "Icon_Item_Equipment_LongSword_02_1.webp"
   },
@@ -18115,7 +18309,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item."
+      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item.",
+      "where": "Plain Pillager's Bundle can be dropped by Pillager Warrior, Pillager and 2 more enemies."
     },
     "icon": "UI_Item_Contents_PillagerPouch_02.webp"
   },
@@ -18132,7 +18327,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A potato harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good."
+      "description": "A potato harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good.",
+      "where": "Potato can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Potato.webp"
   },
@@ -18149,7 +18345,8 @@
           "40 Gold"
         ]
       ],
-      "description": "A rare metal ore infused with mana, shimmering in shifting tones."
+      "description": "A rare metal ore infused with mana, shimmering in shifting tones.",
+      "where": "Prismatic Ore can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Iron_05.webp"
   },
@@ -18166,7 +18363,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A pumpkin grown from a seedling. It can be made at the Kitchen and used as a trade good."
+      "description": "A pumpkin grown from a seedling. It can be made at the Kitchen and used as a trade good.",
+      "where": "Pumpkin can be found in Treasure Chest."
     },
     "icon": "UI_Item_Housing_BP_HS_Food_Pumpkin_01A.webp"
   },
@@ -18589,7 +18787,8 @@
           "5 Gold"
         ]
       ],
-      "description": "A magic potion that restores health."
+      "description": "A magic potion that restores health.",
+      "where": "Radiant Lifeflow Potion can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_HealPotion_02.webp"
   },
@@ -18623,7 +18822,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A torn scrap of fabric. Can be mended for crafting or sold for gold."
+      "description": "A torn scrap of fabric. Can be mended for crafting or sold for gold.",
+      "where": "Rag Scrap can be dropped by Dark Blade Worker, Blacksmith Bellum and 337 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_RagsPiece_01.webp"
   },
@@ -19239,7 +19439,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Raw meat obtained from butchering livestock such as bison and mountain goats. Can be processed into quality meat at a Kitchen."
+      "description": "Raw meat obtained from butchering livestock such as bison and mountain goats. Can be processed into quality meat at a Kitchen.",
+      "where": "Raw Meat can be dropped by Buffalo, Central Wetlands Buffalo and 11 more enemies and sold by Qineth."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Meet_01.webp"
   },
@@ -19256,7 +19457,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Raw hide obtained from butchering predators such as wolves and bears. Can be processed into quality leather at an Atelier."
+      "description": "Raw hide obtained from butchering predators such as wolves and bears. Can be processed into quality leather at an Atelier.",
+      "where": "Raw Pelt can be dropped by Buffalo, Seashore Wolf and 17 more enemies."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Leather_01.webp"
   },
@@ -20177,7 +20379,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a collection of teaware for decorating your house and plot."
+      "description": "Dismantle to obtain a collection of teaware for decorating your house and plot.",
+      "where": "Refined Tea Set Collection is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_RefreshmentsGather_01.webp"
   },
@@ -20211,7 +20414,8 @@
           "100 Gold"
         ]
       ],
-      "description": "A blueprint for a station equipped with a Refinery. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7"
+      "description": "A blueprint for a station equipped with a Refinery. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7",
+      "where": "Refinery can be sold by Station Architect Gyrenn."
     },
     "icon": "UI_Item_Housing_BP_FH_1F_RN_K_01.webp"
   },
@@ -20617,7 +20821,8 @@
           "2"
         ]
       ],
-      "description": "Its rough-hewn surface evokes roaring flames. A bracelet for those who silently dwell on their anger."
+      "description": "Its rough-hewn surface evokes roaring flames. A bracelet for those who silently dwell on their anger.",
+      "where": "Revenant Bracelet can be found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Bracelet01.webp"
   },
@@ -21130,7 +21335,8 @@
           "8"
         ]
       ],
-      "description": "Rotfang's boots. No amount of scrubbing can get rid of the stench."
+      "description": "Rotfang's boots. No amount of scrubbing can get rid of the stench.",
+      "where": "Rotfang Boots can be dropped by Voracious Bonerender, Voracious Butcher and 4 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_11.webp"
   },
@@ -21189,7 +21395,8 @@
           "8"
         ]
       ],
-      "description": "Rotfang's bracers. No amount of scrubbing can get rid of the stench."
+      "description": "Rotfang's bracers. No amount of scrubbing can get rid of the stench.",
+      "where": "Rotfang Bracers can be dropped by Voracious Bonerender, Voracious Butcher and 4 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_11.webp"
   },
@@ -21244,7 +21451,8 @@
           "8"
         ]
       ],
-      "description": "Rotfang's headware. No amount of scrubbing can get rid of the stench."
+      "description": "Rotfang's headware. No amount of scrubbing can get rid of the stench.",
+      "where": "Rotfang Headdress can be dropped by Voracious Bonerender, Voracious Butcher and 4 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_11.webp"
   },
@@ -21303,7 +21511,8 @@
           "8"
         ]
       ],
-      "description": "Rotfang's light armor. No amount of scrubbing can get rid of the stench."
+      "description": "Rotfang's light armor. No amount of scrubbing can get rid of the stench.",
+      "where": "Rotfang Light Armor can be dropped by Voracious Bonerender, Voracious Butcher and 4 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_11.webp"
   },
@@ -21417,7 +21626,8 @@
           "21-60"
         ]
       ],
-      "description": "Boots crafted using non-human techniques. Though crude in appearance, their durability rivals that of finely forged human equipment."
+      "description": "Boots crafted using non-human techniques. Though crude in appearance, their durability rivals that of finely forged human equipment.",
+      "where": "Roughbone Boots can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Shoes_04.webp"
   },
@@ -21482,7 +21692,8 @@
           "5-14"
         ]
       ],
-      "description": "Gloves crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment."
+      "description": "Gloves crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment.",
+      "where": "Roughbone Gloves can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Gloves_04.webp"
   },
@@ -21547,7 +21758,8 @@
           "5-14"
         ]
       ],
-      "description": "A hat crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment."
+      "description": "A hat crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment.",
+      "where": "Roughbone Hat can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Head_04.webp"
   },
@@ -21612,7 +21824,8 @@
           "21-60"
         ]
       ],
-      "description": "Armor crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment."
+      "description": "Armor crafted using non-human techniques. Though crude in appearance, its durability rivals that of finely forged human equipment.",
+      "where": "Roughbone Light Armor can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Leather_Suit_04.webp"
   },
@@ -22550,7 +22763,8 @@
           "100"
         ]
       ],
-      "description": "Ruthless Axe is an epic axe in ArcheAge Chronicles."
+      "description": "Ruthless Axe is an epic axe in ArcheAge Chronicles.",
+      "where": "Ruthless Axe can be dropped by Vesper the Ruthless."
     },
     "icon": "Icon_Item_Equipment_Axe_08.webp"
   },
@@ -23179,7 +23393,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A large ocean seaweed known for having a mushroom-like texture."
+      "description": "A large ocean seaweed known for having a mushroom-like texture.",
+      "where": "Sea Mushroom can be gathered from Sea Mushroom Coral."
     },
     "icon": "UI_Item_Contents_CraftedItem_SM_MushroomCoral_01A.webp"
   },
@@ -23253,7 +23468,8 @@
           "15"
         ]
       ],
-      "description": "Once used by miners at Shacklestone Quarry, these bracers were reforged for battle."
+      "description": "Once used by miners at Shacklestone Quarry, these bracers were reforged for battle.",
+      "where": "Shacklestone Bracers can be dropped by Abandoned Chain, Loathing Chain and 5 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_09.webp"
   },
@@ -23316,7 +23532,8 @@
           "7"
         ]
       ],
-      "description": "Once used by miners at Shacklestone Quarry, these greaves were reforged for battle."
+      "description": "Once used by miners at Shacklestone Quarry, these greaves were reforged for battle.",
+      "where": "Shacklestone Greaves can be dropped by Abandoned Chain, Loathing Chain and 5 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_09.webp"
   },
@@ -23379,7 +23596,8 @@
           "18"
         ]
       ],
-      "description": "Once used by miners at Shacklestone Quarry, this heavy armor was reforged for battle."
+      "description": "Once used by miners at Shacklestone Quarry, this heavy armor was reforged for battle.",
+      "where": "Shacklestone Heavy Armor can be dropped by Abandoned Chain, Loathing Chain and 5 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_09.webp"
   },
@@ -23442,7 +23660,8 @@
           "10"
         ]
       ],
-      "description": "Once used by miners at Shacklestone Quarry, this helmet was reforged for battle."
+      "description": "Once used by miners at Shacklestone Quarry, this helmet was reforged for battle.",
+      "where": "Shacklestone Helmet can be dropped by Abandoned Chain, Loathing Chain and 5 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_09.webp"
   },
@@ -23470,7 +23689,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain archery target items for decorating your house and plot."
+      "description": "Dismantle to obtain archery target items for decorating your house and plot.",
+      "where": "Sharpshooter's Decor Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_HundredPercentHittingPack_01.webp"
   },
@@ -23481,7 +23701,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "A hammer imbued with the power of Gon, who constructed the great Shatigon Bridge to invade Delphinad."
+      "description": "A hammer imbued with the power of Gon, who constructed the great Shatigon Bridge to invade Delphinad.",
+      "where": "Shatigon's Hammer can be dropped by Auctionmaster, Hereafter High Priest Zudaka and 4 more enemies and sold by Great Raven."
     },
     "icon": "UI_Item_CraftMaterial_ShatigonHammer_01.webp"
   },
@@ -23498,7 +23719,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A broken armor plate imbued with the power of steel, obtained only from powerful wraiths. Used in crafting or can be sold for Gold."
+      "description": "A broken armor plate imbued with the power of steel, obtained only from powerful wraiths. Used in crafting or can be sold for Gold.",
+      "where": "Shattered Armor Plate can be dropped by Forgotten Hero, Sightless Wraith Assault Captain and 10 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_BrokenArmor01.webp"
   },
@@ -23515,7 +23737,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A metal shard from a weapon. Can be smelted for crafting or sold for gold."
+      "description": "A metal shard from a weapon. Can be smelted for crafting or sold for gold.",
+      "where": "Shattered Blade can be dropped by Dark Blade Worker, Blacksmith Bellum and 346 more enemies, a reward from To the Pioneers' Assembly Hall and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_Cutlery_01.webp"
   },
@@ -23578,7 +23801,8 @@
           "70"
         ]
       ],
-      "description": "Shorepiercer is a rare crossbow in ArcheAge Chronicles."
+      "description": "Shorepiercer is a rare crossbow in ArcheAge Chronicles.",
+      "where": "Shorepiercer can be dropped by Pristine Clara."
     },
     "icon": "Icon_Item_Equipment_CrossBow_06.webp"
   },
@@ -23649,7 +23873,8 @@
           "80"
         ]
       ],
-      "description": "Silvery Shadow is an epic hatchet in ArcheAge Chronicles."
+      "description": "Silvery Shadow is an epic hatchet in ArcheAge Chronicles.",
+      "where": "Silvery Shadow can be dropped by Slin."
     },
     "icon": "Icon_Item_Equipment_HandAxe_06.webp"
   },
@@ -23934,7 +24159,8 @@
           "100 Gold"
         ]
       ],
-      "description": "A blueprint for a station equipped with a Smelting Furnace. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7"
+      "description": "A blueprint for a station equipped with a Smelting Furnace. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7",
+      "where": "Smelting Furnace can be sold by Station Architect Gyrenn."
     },
     "icon": "UI_Item_Housing_BP_FH_1F_RN_G_01.webp"
   },
@@ -24010,7 +24236,8 @@
           "15"
         ]
       ],
-      "description": "Forged in the smithies of South Aust, these rugged gauntlets favor function over finery."
+      "description": "Forged in the smithies of South Aust, these rugged gauntlets favor function over finery.",
+      "where": "South Aust Gauntlets can be dropped by Skeleton Archer, Broken Corpse and 52 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_07.webp"
   },
@@ -24069,7 +24296,8 @@
           "7"
         ]
       ],
-      "description": "Forged in the smithies of South Aust, these rugged greaves favor function over finery."
+      "description": "Forged in the smithies of South Aust, these rugged greaves favor function over finery.",
+      "where": "South Aust Greaves can be dropped by Skeleton Archer, Broken Corpse and 52 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_07.webp"
   },
@@ -24128,7 +24356,8 @@
           "18"
         ]
       ],
-      "description": "Forged in the smithies of South Aust, this rugged armor favors function over finery."
+      "description": "Forged in the smithies of South Aust, this rugged armor favors function over finery.",
+      "where": "South Aust Heavy Armor can be dropped by Skeleton Archer, Broken Corpse and 52 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_07.webp"
   },
@@ -24187,7 +24416,8 @@
           "10"
         ]
       ],
-      "description": "Forged in the smithies of South Aust, this rugged helmet favors function over finery."
+      "description": "Forged in the smithies of South Aust, this rugged helmet favors function over finery.",
+      "where": "South Aust Helmet can be dropped by Skeleton Archer, Broken Corpse and 52 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_07.webp"
   },
@@ -24215,7 +24445,8 @@
           "100 Gold"
         ]
       ],
-      "description": "A blueprint for a station equipped with a Spagyric Table. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7"
+      "description": "A blueprint for a station equipped with a Spagyric Table. Attaches to your house once crafted. It can be crafted at a construction workshop. Size: Type 7",
+      "where": "Spagyric Table can be sold by Station Architect Gyrenn."
     },
     "icon": "UI_Item_Housing_BP_FH_1F_RN_I_01.webp"
   },
@@ -24274,7 +24505,8 @@
           "18"
         ]
       ],
-      "description": "Armor once worn by a squire who dreamed of standing at the heart of the battlefield."
+      "description": "Armor once worn by a squire who dreamed of standing at the heart of the battlefield.",
+      "where": "Squire's Armor can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_01.webp"
   },
@@ -24333,7 +24565,8 @@
           "15"
         ]
       ],
-      "description": "Gauntlets once worn by a squire who dreamed of standing at the heart of the battlefield."
+      "description": "Gauntlets once worn by a squire who dreamed of standing at the heart of the battlefield.",
+      "where": "Squire's Gauntlets can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_01.webp"
   },
@@ -24392,7 +24625,8 @@
           "7"
         ]
       ],
-      "description": "Plate boots once worn by a squire who dreamed of standing at the heart of the battlefield."
+      "description": "Plate boots once worn by a squire who dreamed of standing at the heart of the battlefield.",
+      "where": "Squire's Greaves can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_01.webp"
   },
@@ -24451,7 +24685,8 @@
           "10"
         ]
       ],
-      "description": "A helmet once worn by a squire who dreamed of standing at the heart of the battlefield."
+      "description": "A helmet once worn by a squire who dreamed of standing at the heart of the battlefield.",
+      "where": "Squire's Helmet can be dropped by Pillager Warrior, Pillager Warbringer and 12 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_01.webp"
   },
@@ -24726,7 +24961,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A rare fragment of a Star Meteor, transformed into Archeum."
+      "description": "A rare fragment of a Star Meteor, transformed into Archeum.",
+      "where": "Star Fragment can be dropped by Hereafter Gartez, Hereafter Bound Tyrant and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Arceaum_04.webp"
   },
@@ -24825,7 +25061,8 @@
           "30"
         ]
       ],
-      "description": "Shoes worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey."
+      "description": "Shoes worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey.",
+      "where": "Starwanderer Boots can be dropped by Evalt, Karlheinz and 6 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_10.webp"
   },
@@ -24884,7 +25121,8 @@
           "30"
         ]
       ],
-      "description": "Gloves worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey."
+      "description": "Gloves worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey.",
+      "where": "Starwanderer Gloves can be dropped by Evalt, Karlheinz and 6 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_10.webp"
   },
@@ -24943,7 +25181,8 @@
           "30"
         ]
       ],
-      "description": "A hood worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey."
+      "description": "A hood worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey.",
+      "where": "Starwanderer Hood can be dropped by Evalt, Karlheinz and 6 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_10.webp"
   },
@@ -25002,7 +25241,8 @@
           "30"
         ]
       ],
-      "description": "A robe worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey."
+      "description": "A robe worn by Starwanderers who followed the stars across Auroria. Its weathered fabric bears the marks of a long journey.",
+      "where": "Starwanderer Robe can be dropped by Evalt, Karlheinz and 6 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_10.webp"
   },
@@ -25234,7 +25474,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A Lv. 1 throwing weapon available from merchants. Deals damage to enemies at range and knocks them back."
+      "description": "A Lv. 1 throwing weapon available from merchants. Deals damage to enemies at range and knocks them back.",
+      "where": "Steel Javelin can be dropped by Skeleton Archer, Dobavion Commander and 35 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_Pilum01.webp"
   },
@@ -25251,7 +25492,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain various storage furniture for decorating your house and plot."
+      "description": "Dismantle to obtain various storage furniture for decorating your house and plot.",
+      "where": "Storage Furniture Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_ReceiptFurniture_01.webp"
   },
@@ -25268,7 +25510,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item."
+      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item.",
+      "where": "Sturdy Pillager's Bundle can be dropped by Pillager Warrior, Pillager Warbringer and 13 more enemies."
     },
     "icon": "UI_Item_Contents_PillagerPouch_03.webp"
   },
@@ -25635,7 +25878,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A sweet potato harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good."
+      "description": "A sweet potato harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good.",
+      "where": "Sweet Potato is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Sweetpotato.webp"
   },
@@ -25652,7 +25896,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A dried powder made from sweetgrass found only in Auroria. Mildly sweet and sticky, with many practical uses."
+      "description": "A dried powder made from sweetgrass found only in Auroria. Mildly sweet and sticky, with many practical uses.",
+      "where": "Sweetgrass Powder can be sold by Shopkeeper Magan, General Merchant and 27 more merchants and found in Worn Pillager's Bundle, Plain Pillager's Bundle and Sturdy Pillager's Bundle."
     },
     "icon": "Icon_Item_CraftMaterial_GrassPowder_01.webp"
   },
@@ -25669,7 +25914,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A decayed chunk of flesh imbued with the power of mist, obtained only from powerful undead. Used in crafting or can be sold for Gold."
+      "description": "A decayed chunk of flesh imbued with the power of mist, obtained only from powerful undead. Used in crafting or can be sold for Gold.",
+      "where": "Tainted Flesh can be dropped by Vengeful Revenant, Meliot's Henchman and 21 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_PoisoningPiece_01.webp"
   },
@@ -26074,7 +26320,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies to increase their Bleed gauge."
+      "description": "A throwing weapon purchased from merchants. (Level 1) Thrown at distant enemies to increase their Bleed gauge.",
+      "where": "Throwing Dagger can be dropped by Gnoll Thrower, Gnoll Fighter and 94 more enemies, sold by Shopkeeper Magan, General Merchant and 16 more merchants and found in Appreciation Chest I, Worn Pillager's Bundle and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_ThrowDagger_01.webp"
   },
@@ -26192,7 +26439,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A material from a hard-shelled plant, transformed by an exceedingly rare lightning strike. Processed at an Engineering Workbench for use as a trade good."
+      "description": "A material from a hard-shelled plant, transformed by an exceedingly rare lightning strike. Processed at an Engineering Workbench for use as a trade good.",
+      "where": "Thunderstruck Shell can be sold by Kaimder, Eldro and Didie."
     },
     "icon": "UI_Item_Contents_Farm_Lightning_hardShell.webp"
   },
@@ -26263,7 +26511,8 @@
           "70"
         ]
       ],
-      "description": "Thunderstruck Staff is an epic elemental staff in ArcheAge Chronicles."
+      "description": "Thunderstruck Staff is an epic elemental staff in ArcheAge Chronicles.",
+      "where": "Thunderstruck Staff can be dropped by Thunderborn Mesabiel."
     },
     "icon": "Icon_Item_Equipment_ElementalStaff_07.webp"
   },
@@ -26314,7 +26563,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A tough fiber rarely obtained from wildfiber herbs and wildfiber blooms. Used as a material in advanced recipes."
+      "description": "A tough fiber rarely obtained from wildfiber herbs and wildfiber blooms. Used as a material in advanced recipes.",
+      "where": "Tough Wild Fiber is obtained through wildfiber herbs, blooms."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Cotton_02.webp"
   },
@@ -26503,7 +26753,8 @@
           "2"
         ]
       ],
-      "description": "Its gentle curves resemble the horizon hidden beyond a thick fog. A ring for those who seek to illuminate the truth in darkness."
+      "description": "Its gentle curves resemble the horizon hidden beyond a thick fog. A ring for those who seek to illuminate the truth in darkness.",
+      "where": "Truthbound Ring can be found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Accessory_Ring01.webp"
   },
@@ -26520,7 +26771,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A piece of alligator turtle shell. Its striking patterns and hardness make it useful for everything from everyday goods to decorations."
+      "description": "A piece of alligator turtle shell. Its striking patterns and hardness make it useful for everything from everyday goods to decorations.",
+      "where": "Turtle Shell Fragment can be dropped by Coastal Alligator Turtle, Giant Alligator Turtle and 6 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_ShellPiece_01.webp"
   },
@@ -26591,7 +26843,8 @@
           "100"
         ]
       ],
-      "description": "Twisted Fate Blade is an epic longsword in ArcheAge Chronicles."
+      "description": "Twisted Fate Blade is an epic longsword in ArcheAge Chronicles.",
+      "where": "Twisted Fate Blade can be dropped by Monstrous Tristan."
     },
     "icon": "Icon_Item_Equipment_LongSword_12.webp"
   },
@@ -26608,7 +26861,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A Dobavion scale corrupted by Rancor. Used in crafting or can be sold for Gold."
+      "description": "A Dobavion scale corrupted by Rancor. Used in crafting or can be sold for Gold.",
+      "where": "Twisted Scale can be dropped by Dobavion Commander, Non-human Champion and 12 more enemies and sold by Great Raven."
     },
     "icon": "UI_Item_CraftMaterial_TortileScales_01.webp"
   },
@@ -26675,7 +26929,8 @@
           "125"
         ]
       ],
-      "description": "Tyrant's Folly is a rare warhammer in ArcheAge Chronicles."
+      "description": "Tyrant's Folly is a rare warhammer in ArcheAge Chronicles.",
+      "where": "Tyrant's Folly can be dropped by Brock."
     },
     "icon": "Icon_Item_Equipment_WarHammer_05.webp"
   },
@@ -26704,7 +26959,8 @@
           "100 Gold"
         ]
       ],
-      "description": "Uncommon Leather Bag is an uncommon bag in ArcheAge Chronicles."
+      "description": "Uncommon Leather Bag is an uncommon bag in ArcheAge Chronicles.",
+      "where": "Uncommon Leather Bag can be a reward from Report to Donella."
     },
     "icon": "UI_Item_Equipment_LeathrBag_Bag.webp"
   },
@@ -26721,7 +26977,8 @@
           "6 Gold"
         ]
       ],
-      "description": "An unquenchable flame imbued with the power of fire, obtained only from powerful orcs. Used in crafting or can be sold for Gold."
+      "description": "An unquenchable flame imbued with the power of fire, obtained only from powerful orcs. Used in crafting or can be sold for Gold.",
+      "where": "Undying Flame can be dropped by Fierce Ironhammer Shaman, Meliot's Henchman and 5 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_UnextinguishedFlame_01.webp"
   },
@@ -26934,7 +27191,8 @@
     "type": "Rare Materials",
     "crafts": [],
     "info": {
-      "description": "A suit of armor once worn by the commander of the Crimson Army, servants of the God of Destruction."
+      "description": "A suit of armor once worn by the commander of the Crimson Army, servants of the God of Destruction.",
+      "where": "Vanguard Armor can be dropped by Vanguard of Destruction and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_CaptainArmor_01.webp"
   },
@@ -26951,7 +27209,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain a variety of vases for decorating your house and plot."
+      "description": "Dismantle to obtain a variety of vases for decorating your house and plot.",
+      "where": "Vase Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_VaseDeckGather_01.webp"
   },
@@ -27020,7 +27279,8 @@
           "21-60"
         ]
       ],
-      "description": "Armor once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter."
+      "description": "Armor once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter.",
+      "where": "Vengeful Chainmail Armor can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Suit_04.webp"
   },
@@ -27089,7 +27349,8 @@
           "5-12"
         ]
       ],
-      "description": "Gauntlets once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter."
+      "description": "Gauntlets once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter.",
+      "where": "Vengeful Chainmail Gauntlets can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Gloves_04.webp"
   },
@@ -27158,7 +27419,8 @@
           "21-60"
         ]
       ],
-      "description": "Greaves once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter."
+      "description": "Greaves once worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter.",
+      "where": "Vengeful Chainmail Greaves can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Shoes_04.webp"
   },
@@ -27227,7 +27489,8 @@
           "5-12"
         ]
       ],
-      "description": "A chainmail helmet worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter."
+      "description": "A chainmail helmet worn by an ancient soldier whose soul remains bound by a grudge, unable to answer the call of the Hereafter.",
+      "where": "Vengeful Chainmail Helmet can be dropped by Pillager Warrior, Pillager Warbringer and 14 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_Equipment_Amor_Metal_Head_04.webp"
   },
@@ -27294,7 +27557,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering armor. (Level 2)"
+      "description": "A stone used for tempering armor. (Level 2)",
+      "where": "Vivid Armor Tempering Stone can be dropped by Skeleton Archer, Broken Corpse and 92 more enemies, sold by Kaimder and Didie and found in Vivid Armor Box, Compensation Chest II and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_CrystalArtifact_05.webp"
   },
@@ -27322,7 +27586,8 @@
     "type": "Tempering",
     "crafts": [],
     "info": {
-      "description": "A stone used for tempering weapons. (Level 2)"
+      "description": "A stone used for tempering weapons. (Level 2)",
+      "where": "Vivid Weapon Tempering Stone can be dropped by Skeleton Archer, Broken Corpse and 92 more enemies, sold by Liben and Didie and found in Vivid Weapon Box, Compensation Chest II and Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_MetalArtifact_05.webp"
   },
@@ -27339,7 +27604,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A crystallized mass formed from the fusion of corruption and Rancor within the body of a powerful monster. Used in crafting or can be sold for Gold."
+      "description": "A crystallized mass formed from the fusion of corruption and Rancor within the body of a powerful monster. Used in crafting or can be sold for Gold.",
+      "where": "Void Heart can be dropped by Rift Rancor, Vanguard of Destruction and 47 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_AbyssHeart_01.webp"
   },
@@ -27356,7 +27622,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain yellow lighting decorations for indoor placement."
+      "description": "Dismantle to obtain yellow lighting decorations for indoor placement.",
+      "where": "Warm Lighting Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_YellowLightingPack_01.webp"
   },
@@ -27423,7 +27690,8 @@
           "70"
         ]
       ],
-      "description": "Watcher's Bowstring is a rare longbow in ArcheAge Chronicles."
+      "description": "Watcher's Bowstring is a rare longbow in ArcheAge Chronicles.",
+      "where": "Watcher's Bowstring can be dropped by Gargoyle Battalion Overseer."
     },
     "icon": "Icon_Item_Equipment_LongBow_05.webp"
   },
@@ -27440,7 +27708,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A watermelon harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good."
+      "description": "A watermelon harvested from a cultivated seedling. It can be made at the Kitchen and used as a trade good.",
+      "where": "Watermelon can be found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Watermelon.webp"
   },
@@ -27997,7 +28266,8 @@
           "1 Gold"
         ]
       ],
-      "description": "Dismantle to obtain weapon wall decorations for indoor placement."
+      "description": "Dismantle to obtain weapon wall decorations for indoor placement.",
+      "where": "Weapon Wall Decor Set is obtained through trade."
     },
     "icon": "UI_Item_Content_TradeGoods_WindowsCurtainPack_01.webp"
   },
@@ -28031,7 +28301,8 @@
           "2 Gold"
         ]
       ],
-      "description": "Wheat harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good."
+      "description": "Wheat harvested from a cultivated seedling. It can be made at the Kitchenand used as a trade good.",
+      "where": "Wheat is obtained through farming."
     },
     "icon": "UI_Item_Contents_CraftedItem_Crops_Wheat.webp"
   },
@@ -28065,7 +28336,8 @@
           "6 Gold"
         ]
       ],
-      "description": "Pristine white marble rarely obtained by mining rocks. Used as a material in advanced recipes."
+      "description": "Pristine white marble rarely obtained by mining rocks. Used as a material in advanced recipes.",
+      "where": "White Marble is obtained through rocks."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Marble_05.webp"
   },
@@ -28082,7 +28354,8 @@
           "40 Gold"
         ]
       ],
-      "description": "A rare horn obtained from butchering animals."
+      "description": "A rare horn obtained from butchering animals.",
+      "where": "Wild Essence is obtained through all animals."
     },
     "icon": "UI_Item_Contents_CraftMaterial_BoneChips_05.webp"
   },
@@ -28116,7 +28389,8 @@
           "20 Gold"
         ]
       ],
-      "description": "A horn occasionally obtained from butchering animals."
+      "description": "A horn occasionally obtained from butchering animals.",
+      "where": "Wild Horn is obtained through all animals."
     },
     "icon": "UI_Item_Contents_CraftMaterial_BoneChips_04.webp"
   },
@@ -28133,7 +28407,8 @@
           "1 Gold"
         ]
       ],
-      "description": "A flower petal obtained from wildflowers. Used to produce additives at a Spagyric Table."
+      "description": "A flower petal obtained from wildflowers. Used to produce additives at a Spagyric Table.",
+      "where": "Wild Petal can be gathered from Lily and found in Treasure Chest."
     },
     "icon": "UI_Item_Contents_CraftMaterial_Petal_01.webp"
   },
@@ -28150,7 +28425,8 @@
           "6 Gold"
         ]
       ],
-      "description": "A sharp claw imbued with the power of wind, obtained only from powerful beasts. Used in crafting or can be sold for Gold."
+      "description": "A sharp claw imbued with the power of wind, obtained only from powerful beasts. Used in crafting or can be sold for Gold.",
+      "where": "Wind Blade Claws can be dropped by Meliot's Henchman, Fierce Wolf and 5 more enemies."
     },
     "icon": "UI_Item_CraftMaterial_WindBlade_01.webp"
   },
@@ -28167,7 +28443,8 @@
           "1 Gold"
         ]
       ],
-      "description": "An oversized molar taken from a vicious wolf. It shows how this predator survived countless battles."
+      "description": "An oversized molar taken from a vicious wolf. It shows how this predator survived countless battles.",
+      "where": "Wolf Molar can be dropped by Alpha Wolf, Seashore Wolf and 13 more enemies and found in Treasure Chest."
     },
     "icon": "UI_Item_CraftMaterial_WolfFang_01.webp"
   },
@@ -28184,7 +28461,8 @@
           "2 Gold"
         ]
       ],
-      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item."
+      "description": "A leather bundle containing goods stolen by pillagers living in Auroria without a Pioneer's Permit. Open it to receive a random item.",
+      "where": "Worn Pillager's Bundle can be dropped by Pillager Warrior, Pillager Warbringer and 5 more enemies."
     },
     "icon": "UI_Item_Contents_PillagerPouch_01.webp"
   },
@@ -28243,7 +28521,8 @@
           "8"
         ]
       ],
-      "description": "A headware worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid."
+      "description": "A headware worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid.",
+      "where": "Worshiper Helm can be dropped by Cult of Eternity Warrior, Cult of Eternity Archer and 19 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Head_11.webp"
   },
@@ -28302,7 +28581,8 @@
           "8"
         ]
       ],
-      "description": "A robe worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid."
+      "description": "A robe worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid.",
+      "where": "Worshiper Robe can be dropped by Cult of Eternity Warrior, Cult of Eternity Archer and 19 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Suit_11.webp"
   },
@@ -28361,7 +28641,8 @@
           "8"
         ]
       ],
-      "description": "Shoes worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid."
+      "description": "Shoes worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid.",
+      "where": "Worshiper Shoes can be dropped by Cult of Eternity Warrior, Cult of Eternity Archer and 19 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Shoes_11.webp"
   },
@@ -28416,7 +28697,8 @@
           "8"
         ]
       ],
-      "description": "Sleeves worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid."
+      "description": "Sleeves worn by worshipers during their rituals. The patterns woven into the fabric remain remarkably vivid.",
+      "where": "Worshiper Sleeves can be dropped by Cult of Eternity Warrior, Cult of Eternity Archer and 19 more enemies."
     },
     "icon": "UI_Item_Equipment_Amor_Fabric_Gloves_11.webp"
   },
@@ -28483,7 +28765,8 @@
           "100"
         ]
       ],
-      "description": "Worshipper's Tide is a rare wavesword in ArcheAge Chronicles."
+      "description": "Worshipper's Tide is a rare wavesword in ArcheAge Chronicles.",
+      "where": "Worshipper's Tide can be dropped by Worshiper Lanellel."
     },
     "icon": "Icon_Item_Equipment_CurvedSword_06.webp"
   },

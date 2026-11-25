@@ -97,6 +97,22 @@ test('pagina con solo categoria, rarità e tipo: nessun campo info', () => {
   assert.equal('info' in item, false);
 });
 
+// ---- dove si trova (solo materiali grezzi) ----
+const whereHtml = (extra) => '<main><h1>Rag Scrap</h1><dl><div><dt>Rarity</dt><dd>Common</dd></div></dl>' + extra +
+  '<section><h2>Where to Get Rag Scrap</h2><p class="x">Rag Scrap can be dropped by  Dark Blade Worker, Blacksmith Bellum and 337 more enemies.</p><div><div>Dropped By</div><ul><li>Dark Blade Worker</li></ul></div></section></main>';
+
+test('materiale grezzo: info.where è la frase di "Where to Get", con gli spazi normalizzati', () => {
+  const { item } = parseItemPage(whereHtml(''), { slug: 'rag-scrap', category: 'materials' });
+  assert.equal(item.info.where, 'Rag Scrap can be dropped by Dark Blade Worker, Blacksmith Bellum and 337 more enemies.');
+});
+
+test('oggetto craftabile: nessun where (ha già la ricetta); senza la sezione nemmeno', () => {
+  const crafted = whereHtml('<h2>How to Craft Rag</h2><p>Crafted at the Bench with Tailoring level 1. Costs 10 Gold.</p><ul><li>1 x <a href="/archeage-chronicles/database/materials/thread">Thread</a></li></ul>');
+  assert.equal(parseItemPage(crafted, { slug: 'rag-scrap', category: 'armor' }).item.info, undefined);
+  const none = '<main><h1>Wild Fiber</h1><dl><div><dt>Rarity</dt><dd>Common</dd></div></dl></main>';
+  assert.equal('info' in parseItemPage(none, { slug: 'wild-fiber', category: 'materials' }).item, false);
+});
+
 // ---- Housing: case, annessi e postazioni (professione Ingegneria) ----
 test('casa: la riga "1 x <la casa stessa>" non è un ingrediente', needs('large-gothic-house'), () => {
   const { item, refs } = parseItemPage(fx('large-gothic-house'), { slug: 'large-gothic-house-1f-2', category: 'housing' });

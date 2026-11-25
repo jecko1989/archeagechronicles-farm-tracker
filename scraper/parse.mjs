@@ -87,7 +87,11 @@ export function parseItemPage(html, ctx) {
   const labels = $('dt').map((_, e) => norm($(e).text())).get();
   const typeLabel = ['Type', 'Armor Type'].find((n) => labels.includes(n)) || labels.find((n) => /Type$/.test(n)) || '';
   const type = (typeLabel && label($, [typeLabel])) || ctx.category;
-  const info = parseInfo($, typeLabel);
+  let info = parseInfo($, typeLabel);
+  // solo materiali grezzi: la frase di MetaForge "X can be dropped by A, B and N more enemies and found in …" (dove si trova);
+  // gli oggetti craftabili hanno già la ricetta. Campo facoltativo: senza la sezione (es. materiali raccolti) non c'è.
+  const where = crafts.length ? '' : norm($('h2').filter((_, e) => /^Where to Get/.test(norm($(e).text()))).first().parent().find('p').first().text()).slice(0, 300);
+  if (where) info = { ...(info || {}), where };
   return {
     item: {
       name: norm($('h1').first().text()), category: ctx.category, rarity: label($, ['Rarity']), type, crafts,
