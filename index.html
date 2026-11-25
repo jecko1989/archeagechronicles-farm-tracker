@@ -402,9 +402,10 @@ function tradePlan(trade, steps, deliveries, opts) {
 // famiglia DIVERSA da quella dell'oggetto) più la commissione, e dà `ratio × input` unità. A parità vince il craft.
 // Restituisce {id: Decision}: {id, tier, family, post, choice, unitCraft, unitTrade|null, ratio|null, ratioSource, ratioN, inputId|null,
 // why: 'trade'|'cost'|'nodata'|'noinput'}. Oggetti senza ricetta = grezzi (fuori dal risultato); l'arco che chiude un ciclo vale come grezzo.
-function decideItems(items, trade, targets, deliveries, objective) {
+// prices (facoltativo): {id: gold per unità}; un grezzo con prezzo p costa [1, p] (farm) o [p, 1] (gold).
+function decideItems(items, trade, targets, deliveries, objective, prices) {
   const farm = objective !== 'gold';
-  const RAW = farm ? [1, 0] : [0, 1];
+  const RAW = (id) => { const p = (prices && prices[id]) || 0; return farm ? [1, p] : [p, 1]; };
   const fee = (g) => (farm ? [0, g] : [g, 0]);
   const plus = (a, b) => [a[0] + b[0], a[1] + b[1]];
   const times = (a, k) => [a[0] * k, a[1] * k];
@@ -417,7 +418,7 @@ function decideItems(items, trade, targets, deliveries, objective) {
   // costo del solo craft: commissione + ingredienti al loro costo migliore (craft o commercio)
   const craftCost = (id) => {
     const r = recipe(id);
-    if (!r || visiting.has(id)) return RAW;
+    if (!r || visiting.has(id)) return RAW(id);
     if (craftMemo.has(id)) return craftMemo.get(id);
     visiting.add(id);
     let c = fee(r.gold || 0);
@@ -428,7 +429,7 @@ function decideItems(items, trade, targets, deliveries, objective) {
     return c;
   };
   const bestCost = (id) => {
-    if (!recipe(id) || visiting.has(id)) return RAW;
+    if (!recipe(id) || visiting.has(id)) return RAW(id);
     const d = evaluate(id);
     return d && d.unitTrade && less(d.unitTrade, d.unitCraft) ? d.unitTrade : d ? d.unitCraft : craftCost(id);
   };
@@ -495,9 +496,11 @@ function recommendPlan(items, trade, targets, have, deliveries, opts) {
   const EPS = 1e-9;
   const total = (o, skip) => { let n = 0; for (const [id, q] of Object.entries(o)) if (!skip || !skip.has(id)) n += q; return n; };
 
+  const prices = (opts && opts.prices) || {};
   const baseline = computeNeeds(items, targets, { have: owned });
-  const base = { farm: total(baseline.materials), gold: baseline.gold };
-  const decided = decideItems(items, trade, targets, deliveries, objective);
+  // il gold comprende i materiali ancora da comprare ai prezzi dell'utente (nessun prezzo = 0, come prima)
+  const base = { farm: total(baseline.materials), gold: baseline.gold + materialsGold(baseline.materials, owned, prices) };
+  const decided = decideItems(items, trade, targets, deliveries, objective, prices);
   const traded = new Set(Object.keys(decided).filter((id) => decided[id].choice === 'trade'));
   const flipped = new Set(); // tornati a craft perché servono come materiale di partenza di un'altra cassa
 
@@ -536,7 +539,7 @@ function recommendPlan(items, trade, targets, have, deliveries, opts) {
   const rawMaterials = {};
   for (const [id, q] of Object.entries(needs.materials)) if (!traded.has(id)) rawMaterials[id] = q;
   let plan = {
-    farm: total(rawMaterials), gold: needs.gold + lines.reduce((n, l) => n + (l.gold || 0), 0), crates, trips,
+    farm: total(rawMaterials), gold: needs.gold + lines.reduce((n, l) => n + (l.gold || 0), 0) + materialsGold(rawMaterials, owned, prices), crates, trips,
     days: trips ? Math.ceil(trips / tripsPerDay) : 0, rawMaterials,
     crateInputs: Object.keys(inputs).sort().map((id) => ({ id, qty: inputs[id] })),
   };
@@ -802,7 +805,7 @@ const STRINGS = {
     reco_why_noinput: 'no material available to fill the crates', reco_why_fallback: 'with these quantities crafting is better',
     reco_why_input: 'used as crate material for another item',
     reco_result: 'Result: {farm} raw to farm · {gold} Gold · trips: {trips} · days: {days}',
-    reco_baseline: 'Craft only: {farm} raw to farm · {gold} Gold',
+    reco_baseline: 'Craft only: {farm} raw to farm · {gold} Gold', reco_prices: 'Gold includes the material prices set in Crafting',
     reco_fallback: 'With these quantities crafting everything is at least as good.',
     reco_empty: 'Nothing here is worth trading: craft everything.', reco_raw_h: 'Raw materials of the plan', alt_h: 'Alternatives per line',
   },
@@ -850,7 +853,7 @@ const STRINGS = {
     reco_why_noinput: 'nessun materiale disponibile per riempire le casse', reco_why_fallback: 'con queste quantità conviene craftare',
     reco_why_input: 'serve come materiale per le casse di un altro oggetto',
     reco_result: 'Risultato: {farm} grezzi da farmare · {gold} Gold · viaggi: {trips} · giorni: {days}',
-    reco_baseline: 'Solo craft: {farm} grezzi da farmare · {gold} Gold',
+    reco_baseline: 'Solo craft: {farm} grezzi da farmare · {gold} Gold', reco_prices: 'Il gold comprende i prezzi dei materiali impostati in Crafting',
     reco_fallback: 'Con queste quantità craftare tutto è almeno altrettanto buono.',
     reco_empty: 'Qui non conviene commerciare niente: crafta tutto.', reco_raw_h: 'Materiali grezzi del piano', alt_h: 'Alternative per riga',
   },
@@ -1058,7 +1061,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
 
     // piano consigliato: per ogni materiale commerciabile ancora richiesto, craft o commercio (obiettivo scelto dall'utente)
     const reco = C.recommendPlan(items, trade, progress.targets, progress.have, progress.deliveries,
-      { objective, tripsPerDay: tripsMode === 'both' ? both : L.tripsPerDay.peace });
+      { objective, tripsPerDay: tripsMode === 'both' ? both : L.tripsPerDay.peace, prices: progress.prices });
     const objBtn = (v, key) => `<button type="button" class="chip${objective === v ? ' on' : ''}" data-action="objective" data-v="${v}" aria-pressed="${objective === v}">${esc(t(key))}</button>`;
     const whyKey = { cost: 'reco_why_cost', nodata: 'reco_why_nodata', noinput: 'reco_why_noinput', fallback: 'reco_why_fallback', input: 'reco_why_input' };
     const needed = reco.decisions.filter((d) => d.needed);
@@ -1078,7 +1081,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     const recoHtml = `<div class="row">${esc(t('reco_goal'))} ${objBtn('farm', 'obj_farm')} ${objBtn('gold', 'obj_gold')}</div>` +
       `<h3>${esc(t('reco_h'))}</h3>` + (needed.length ? decHtml : `<p class="muted">${esc(t('reco_empty'))}</p>`) +
       `<p><strong>${esc(t('reco_result', { farm: fmt(P.farm), gold: fmt(P.gold), trips: fmt(P.trips), days: fmt(P.days) }))}</strong></p>` +
-      `<p class="muted">${esc(t('reco_baseline', { farm: fmt(B.farm), gold: fmt(B.gold) }))}</p>` +
+      `<p class="muted">${esc(t('reco_baseline', { farm: fmt(B.farm), gold: fmt(B.gold) }))}${Object.keys(progress.prices).length ? ' · ' + esc(t('reco_prices')) : ''}</p>` +
       (reco.fallback ? `<p class="muted">${esc(t('reco_fallback'))}</p>` : '') +
       `<h3>${esc(t('reco_raw_h'))}</h3>${rawHtml}`;
     const groupsHtml = plan.groups.map((g) => {

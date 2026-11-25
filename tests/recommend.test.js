@@ -79,6 +79,19 @@ test('obiettivi diversi danno decisioni diverse', () => {
   assert.equal(gold.why, 'cost');
 });
 
+test('prezzi: un grezzo caro fa preferire il commercio anche con obiettivo gold', () => {
+  assert.equal(decideItems(base(), W, [], 'gold')['standard-ingot'].choice, 'craft');
+  const d = plain(core.decideItems(base(), trade, W, [], 'gold', { r1: 100 }))['standard-ingot'];
+  assert.equal(d.choice, 'trade');
+  nearPair(d.unitCraft, [305, 3], 'craft con prezzo');
+});
+
+test('prezzi: il gold del solo craft comprende i materiali da comprare (senza prezzi resta uguale)', () => {
+  const run = (prices) => plain(core.recommendPlan(base(), trade, W, {}, [], { objective: 'farm', tripsPerDay: 3, prices }));
+  assert.deepEqual(run({}).baseline, { farm: 5, gold: 15 });
+  assert.deepEqual(run({ r1: 10 }).baseline, { farm: 5, gold: 45 });
+});
+
 test('il materiale di partenza è di una famiglia diversa dalla destinazione', () => {
   const d = decideItems(base(), W, [], 'farm')['standard-lumber'];
   assert.equal(d.inputId, 'standard-ingot'); // mai 'standard-lumber' stesso
