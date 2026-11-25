@@ -92,6 +92,7 @@ a.ext:hover, a.ext:focus-visible { color: var(--accent); text-decoration: underl
 progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .warn { color: var(--warn); }
 .step { padding: 7px 0; border-bottom: 1px solid var(--divider); color: var(--strong); flex-wrap: wrap; row-gap: 6px; }
+.step input[type=checkbox] { flex: none; width: 18px; height: 18px; padding: 0; accent-color: var(--accent); cursor: pointer; }
 .step .st { flex: 1 1 14rem; min-width: 0; }
 .step .have { flex: none; margin-left: auto; }
 .step .of { color: var(--muted); min-width: 4.5em; white-space: nowrap; }
@@ -795,6 +796,7 @@ const STRINGS = {
     h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
     col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing', col_price: 'Gold each',
+    step_done: 'Mark {name} as done', steps_done: '{n} of {m} steps done',
     price_of: 'Gold price of {name}', materials_cost: 'Materials still to buy:', grand_total: 'Total with materials:',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
     open_mf: 'Open on MetaForge', tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
@@ -843,6 +845,7 @@ const STRINGS = {
     h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
     col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano', col_price: 'Gold cad.',
+    step_done: 'Segna {name} come fatto', steps_done: '{n} di {m} passi fatti',
     price_of: 'Prezzo in gold di {name}', materials_cost: 'Materiali ancora da comprare:', grand_total: 'Totale con materiali:',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
     open_mf: 'Apri su MetaForge', tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
@@ -1044,7 +1047,8 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
         .sort((a, b) => a.craft.profession.localeCompare(b.craft.profession) || name(a.id).localeCompare(name(b.id)))
         .map((s) =>
           // a destra: quanti ne hai già (stessa mappa `have` dei materiali); con times 0 il passo è coperto e resta visibile per poterlo correggere
-          `<div class="step nm${s.times ? '' : ' covered'}"><span class="no">${++n}</span>${icon(s.id, true)}<span class="st">${link(s.id)} ${s.times ? '×' + fmt(s.times) : '<span class="done">✓</span>'} ` +
+          // spunta "fatto": equivale a dire che ne hai già tutti i pezzi richiesti (stessa mappa `have`), quindi i materiali sopra e il gold si aggiornano
+          `<div class="step nm${s.times ? '' : ' covered'}"><input type="checkbox" data-action="step-done" data-id="${esc(s.id)}" data-need="${s.need}"${s.times ? '' : ' checked'}${s.need ? '' : ' disabled'} aria-label="${esc(t('step_done', { name: name(s.id) }))}"><span class="no">${++n}</span>${icon(s.id, true)}<span class="st">${link(s.id)} ${s.times ? '×' + fmt(s.times) : '<span class="done">✓</span>'} ` +
           `${s.craft.patch ? `<span class="badge" title="${esc(s.craft.patch)}">${esc(t('patch_badge'))}</span> ` : ''}` +
           `<small>· ${esc(s.craft.profession)} · ${esc(t('level', { n: s.craft.level }))} · ${esc((s.craft.stations || []).join(' / '))}</small></span>` +
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(s.id)}" aria-label="${esc(t('dec', { name: name(s.id) }))}">−</button>` +
@@ -1058,7 +1062,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
       <div class="line head mat"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span class="ctr">${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span><span class="num">${esc(t('col_price'))}</span></div>
       ${matHtml}
-      <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2><p class="muted">${esc(t('steps_hint'))}</p>${stepHtml}
+      <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2><p class="muted">${esc(t('steps_hint'))} · <strong>${esc(t('steps_done', { n: fmt(r.steps.filter((s) => !s.times).length), m: fmt(r.steps.length) }))}</strong></p>${stepHtml}
       <p>${esc(t('total_cost'))} <strong>${fmt(r.gold)} Gold</strong></p>
       ${mg ? `<p>${esc(t('materials_cost'))} <strong>${fmt(mg)} Gold</strong> · ${esc(t('grand_total'))} <strong>${fmt(r.gold + mg)} Gold</strong></p>` : ''}
       ${r.warnings.length ? `<p class="warn">${esc(t('warnings'))} ${r.warnings.map(esc).join(', ')}</p>` : ''}
@@ -1270,6 +1274,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     switch (el.dataset.action) {
       case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
       case 'have-set': progress.have[el.dataset.id] = v; save(); renderResults(); break;
+      case 'step-done': { const id = el.dataset.id, need = parseInt(el.dataset.need, 10) || 0; progress.have[id] = el.checked ? Math.max(progress.have[id] || 0, need) : 0; save(); renderResults(); break; }
       case 'price-set': if (v) progress.prices[el.dataset.id] = v; else delete progress.prices[el.dataset.id]; save(); renderResults(); break;
     }
     if (el.id === 'importFile' && el.files[0]) {
