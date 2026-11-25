@@ -13,7 +13,7 @@
 ## Global Constraints
 - Pagina HTML unica, senza build e senza dipendenze, apribile anche da file locale (quindi niente `<script type="module">` né `fetch` relativi quando `location.protocol === 'file:'`).
 - `DATA_BASE_URL` costante in cima al file, default `https://raw.githubusercontent.com/jecko1989/archeagechronicles-farm-tracker/main/data/`; con la pagina servita da http(s) sullo stesso host di Pages usa `./data/`; override con `?data=<url>` (serve ai test).
-- Repo: `jecko1989/archeagechronicles-farm-tracker`, branch `main`. Cartella locale: `C:\workspace\archeage-farm-tracker`.
+- Repo: `jecko1989/archeagechronicles-farm-tracker`, branch `main`.
 - Scraper: Node 20 + Playwright; rate limit ~1 richiesta/secondo; User-Agent identificabile; ignora `/recipes/...`.
 - Guardie scraper: numero oggetti non inferiore all'80% del precedente, nessun ingrediente con id sconosciuto, nessuna ricetta senza ingredienti; se falliscono: exit code ≠ 0 e nessuna scrittura.
 - Action: cron settimanale (lunedì) + `workflow_dispatch`; commit solo se `data/` è cambiata.
@@ -39,7 +39,7 @@
 
 **Files:**
 - Create: `index.html` (solo `<script id="core">` per ora), `tests/load-core.js`, `tests/calc.test.js`, `tests/fixtures/items.sample.json`, `.gitignore`
-- Run: `git init -b main` in `C:\workspace\archeage-farm-tracker`
+- Run: `git init -b main` nella cartella del progetto
 
 **Interfaces:**
 - Produces (`<script id="core">`):
