@@ -637,6 +637,28 @@ function reconcile(p, items) {
   return { progress: { v: 1, targets, have, prices, expandIntermediates: p.expandIntermediates, deliveries: p.deliveries || [] }, dropped };
 }
 
+// ---- link diretto: #craft/<id>[:qty],<id>[:qty]   (la tab è craft o trade; qty omessa = 1) ----
+function buildHash(tab, targets) {
+  if (!targets.length) return '';
+  return '#' + (tab === 'trade' ? 'trade' : 'craft') + '/' + targets.map((t) => t.id + (t.qty > 1 ? ':' + t.qty : '')).join(',');
+}
+// Restituisce {tab, targets} oppure null se non è un link valido. Si tengono solo gli oggetti craftabili che esistono
+// (gli altri si scartano), le quantità non valide valgono 1 e un oggetto ripetuto somma le quantità.
+function parseHash(hash, items) {
+  const m = /^#(craft|trade)\/([^#]+)$/.exec(hash || '');
+  if (!m) return null;
+  const targets = [];
+  for (const part of m[2].split(',')) {
+    const [id, q] = part.split(':');
+    const it = Object.hasOwn(items, id) ? items[id] : null;
+    if (!it || !it.crafts || !it.crafts.length) continue;
+    const qty = q !== undefined && /^[1-9]\d{0,5}$/.test(q) ? parseInt(q, 10) : 1;
+    const t = targets.find((x) => x.id === id);
+    if (t) t.qty += qty; else targets.push({ id, qty });
+  }
+  return targets.length ? { tab: m[1], targets } : null;
+}
+
 // ---- indirizzo della pagina MetaForge di un oggetto: database/<categoria>/<slug> ----
 const METAFORGE_DB = 'https://metaforge.app/archeage-chronicles/database';
 function itemUrl(items, id) {
@@ -870,7 +892,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -1127,6 +1149,21 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     $('#tradeView').hidden = tab !== 'trade';
     hideTip();
     if (tab === 'trade') renderTrade();
+    syncHash();
+  }
+  // l'indirizzo segue sempre la selezione e la tab: si può copiare dalla barra e condividere (non crea voci nella cronologia)
+  function syncHash() {
+    if (loadState !== 'ok') return;
+    try { history.replaceState(null, '', C.buildHash(tab, progress.targets) || location.pathname + location.search); } catch (e) { /* es. file:// ristretto: si ignora */ }
+  }
+  // un link aperto o incollato sostituisce la selezione corrente (resta salvata solo se poi la modifichi)
+  function applyLink() {
+    const link = C.parseHash(location.hash, items);
+    if (!link) { syncHash(); return; } // link non valido: l'indirizzo torna a rispecchiare la selezione
+    if (location.hash === C.buildHash(tab, progress.targets)) return;
+    progress.targets = link.targets;
+    setTab(link.tab);
+    render();
   }
   // Materiali messi = casse × materiali per cassa del livello scelto (modificabile: il gioco può dare numeri diversi)
   function fillLogInput() {
@@ -1142,7 +1179,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     renderTrade();
   }
 
-  function render() { hideTip(); renderTargets(); renderResults(); renderTrade(); }
+  function render() { hideTip(); renderTargets(); renderResults(); renderTrade(); syncHash(); }
 
   // ---- tooltip dell'oggetto (al passaggio del mouse, alla tastiera e al tocco) ----
   const tip = $('#tip');
@@ -1309,6 +1346,8 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       progress = r.progress; dropped = r.dropped;
       loadState = 'ok'; renderStatus();
       $('#error').hidden = true; $('#app').hidden = false;
+      const link = C.parseHash(location.hash, items);
+      if (link) { progress.targets = link.targets; setTab(link.tab); }
       render();
       renderPicker();
     } catch (err) {
@@ -1317,6 +1356,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       renderError();
     }
   }
+  window.addEventListener('hashchange', () => { if (loadState === 'ok') applyLink(); });
   applyStatic();
   start();
 })();
