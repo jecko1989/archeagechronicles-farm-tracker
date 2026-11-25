@@ -874,6 +874,7 @@ const STRINGS = {
     reco_baseline: 'Craft only: {farm} raw to farm · {gold} Gold', reco_prices: 'Gold includes the material prices set in Crafting',
     reco_fallback: 'With these quantities crafting everything is at least as good.',
     reco_empty: 'Nothing here is worth trading: craft everything.', reco_raw_h: 'Raw materials of the plan', alt_h: 'Alternatives per line',
+    reco_obtained_h: 'Obtained by trading', reco_crates_h: 'To put in the crates',
   },
   it: {
     loading: 'Caricamento dati…', status_ok: 'Dati aggiornati al {date} · {n} oggetti', badge_offline: 'offline', status_offline: 'dati del {date}',
@@ -928,6 +929,7 @@ const STRINGS = {
     reco_baseline: 'Solo craft: {farm} grezzi da farmare · {gold} Gold', reco_prices: 'Il gold comprende i prezzi dei materiali impostati in Crafting',
     reco_fallback: 'Con queste quantità craftare tutto è almeno altrettanto buono.',
     reco_empty: 'Qui non conviene commerciare niente: crafta tutto.', reco_raw_h: 'Materiali grezzi del piano', alt_h: 'Alternative per riga',
+    reco_obtained_h: 'Ottenuti con il commercio', reco_crates_h: 'Da mettere nelle casse',
   },
 };
 
@@ -1167,12 +1169,17 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
     const P = reco.plan, B = reco.baseline;
     const rawHtml = Object.keys(P.rawMaterials).sort((a, b) => name(a).localeCompare(name(b))).map((id) =>
       `<div class="rec nm">${icon(id, true)}<span class="num">${fmt(P.rawMaterials[id])} ×</span><span>${link(id)}</span></div>`).join('');
+    // materiali scambiabili: cosa si ottiene con il commercio e cosa va messo nelle casse (prima non comparivano da nessuna parte)
+    const listOf = (rows) => rows.map(([id, q]) => `<div class="rec nm">${icon(id, true)}<span class="num">${fmt(q)} ×</span><span>${link(id)}</span></div>`).join('');
+    const obtained = needed.filter((d) => d.choice === 'trade').map((d) => [d.id, d.units]);
+    const tradeHtml = (obtained.length ? `<h3>${esc(t('reco_obtained_h'))}</h3>${listOf(obtained)}` : '') +
+      (P.crateInputs.length ? `<h3>${esc(t('reco_crates_h'))}</h3>${listOf(P.crateInputs.map((x) => [x.id, x.qty]))}` : '');
     const recoHtml = `<div class="row">${esc(t('reco_goal'))} ${objBtn('farm', 'obj_farm')} ${objBtn('gold', 'obj_gold')}</div>` +
       `<h3>${esc(t('reco_h'))}</h3>` + (needed.length ? decHtml : `<p class="muted">${esc(t('reco_empty'))}</p>`) +
       `<p><strong>${esc(t('reco_result', { farm: fmt(P.farm), gold: fmt(P.gold), trips: fmt(P.trips), days: fmt(P.days) }))}</strong></p>` +
       `<p class="muted">${esc(t('reco_baseline', { farm: fmt(B.farm), gold: fmt(B.gold) }))}${Object.keys(progress.prices).length ? ' · ' + esc(t('reco_prices')) : ''}</p>` +
       (reco.fallback ? `<p class="muted">${esc(t('reco_fallback'))}</p>` : '') +
-      `<h3>${esc(t('reco_raw_h'))}</h3>${rawHtml}`;
+      tradeHtml + `<h3>${esc(t('reco_raw_h'))}</h3>${rawHtml}`;
     const groupsHtml = plan.groups.map((g) => {
       const post = trade.posts[g.post];
       return `<h3>${esc(g.name)} <small>· ${esc(post.families.map(familyLabel).join(' / '))}${post.seed ? ' · ' + esc(post.seed) : ''}</small></h3>` +
