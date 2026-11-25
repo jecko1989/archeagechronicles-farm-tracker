@@ -134,11 +134,11 @@
     "gold": 125
   },
   "standard-bonecraft": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
+    "note": "Patch notes (items/trade): Bone Chips 15 -> 6 (after the 2026-11-17 patch: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125). From the patch notes, not yet checked in game.",
     "ingredients": [
       {
         "id": "bone-chip",
-        "qty": 15
+        "qty": 6
       }
     ],
     "gold": 125
@@ -154,11 +154,11 @@
     "gold": 125
   },
   "standard-leather": {
-    "note": "Patch 2026-11-17: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125. Confirmed in game (ingredients and gold).",
+    "note": "Patch notes (items/trade): Raw Pelts 15 -> 6 (after the 2026-11-17 patch: Sweetgrass Powder and normal-grade loot removed; gold 100 -> 125). From the patch notes, not yet checked in game.",
     "ingredients": [
       {
         "id": "raw-pelt",
-        "qty": 15
+        "qty": 6
       }
     ],
     "gold": 125
