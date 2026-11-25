@@ -13,7 +13,7 @@
     "superior": { "input": 1, "gold": 1000 }
   },
   "ratios": {
-    "default": { "standard": 1.22, "fine": 1.1, "superior": null },
+    "default": { "standard": 1.22, "fine": 1.1, "superior": 1 },
     "byFamily": { "stone": { "standard": 0.9 } }
   },
   "limits": {

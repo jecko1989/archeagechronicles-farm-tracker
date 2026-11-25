@@ -48,12 +48,12 @@ Campi ammessi (tutti riferiti alla prima ricetta): `ingredients` (sostituisce la
 Il file attuale contiene 2 ricette cambiate dalle patch notes di oggetti/trade di novembre 2026: Standard Leather (Raw Pelt 15 → 6) e Standard Bonecraft (Bone Chip 15 → 6). Vengono dalle patch notes e **non sono ancora verificate in gioco**; vanno tolte quando MetaForge si aggiorna. Le 15 ricette di materiali lavorati della patch del 17 novembre 2026 (tolti Sweetgrass Powder e loot dei mostri, confermate in gioco) sono state tolte da questo file il 25 novembre 2026, perché i dati di MetaForge le riportano già.
 
 ### Dati del commercio: `data/trade.json`
-Scritto a mano (non viene da MetaForge): i sei avamposti con ciò che danno (`families`, più un `seed` speciale), la ricetta delle casse per livello (materiali e gold per cassa), i rapporti stimati ricevuti/messi e i limiti (7 casse per viaggio, 3 viaggi in pace + 3 in conflitto al giorno). La pagina lo scarica a ogni apertura; se manca o è rotto, la tab Commercio mostra "Dati del commercio non disponibili" e il resto funziona. Per correggere un valore basta modificare il file su GitHub. Un rapporto `null` significa "nessun dato".
+Scritto a mano (non viene da MetaForge): i sei avamposti con ciò che danno (`families`, più un `seed` speciale), la ricetta delle casse per livello (materiali e gold per cassa), i rapporti stimati ricevuti/messi e i limiti (7 casse per viaggio, 3 viaggi in pace + 3 in conflitto al giorno). La pagina lo scarica a ogni apertura; se manca o è rotto, la tab Commercio mostra "Dati del commercio non disponibili" e il resto funziona. Per correggere un valore basta modificare il file su GitHub. Un rapporto `null` significa "nessun dato". Il rapporto Superior è 1 perché nei dati di gioco ogni pacco Superior restituisce esattamente la quantità base (1 per 1); un buon mercato può dare di più, quindi registra consegne vere per correggerlo.
 ```json
 {
   "posts": { "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" } },
   "packs": { "standard": { "input": 9, "gold": 80 }, "fine": { "input": 3, "gold": 200 }, "superior": { "input": 1, "gold": 1000 } },
-  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": null }, "byFamily": { "stone": { "standard": 0.9 } } },
+  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": 1 }, "byFamily": { "stone": { "standard": 0.9 } } },
   "limits": { "perTrip": 7, "craftedCap": 10, "tripsPerDay": { "peace": 3, "conflict": 3 } }
 }
 ```

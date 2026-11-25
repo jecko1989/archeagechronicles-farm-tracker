@@ -48,12 +48,12 @@ Allowed fields (all refer to the first recipe): `ingredients` (replaces the list
 The current file holds 2 recipes changed by the items/trade patch notes of November 2026: Standard Leather (Raw Pelt 15 → 6) and Standard Bonecraft (Bone Chip 15 → 6). They come from the patch notes and are **not yet checked in game**; remove them once MetaForge catches up. The 15 processed-goods recipes of the November 17, 2026 patch (Sweetgrass Powder and monster loot removed, confirmed in game) were removed from this file on November 25, 2026, because MetaForge's data already matches them.
 
 ### Trade data: `data/trade.json`
-Hand-written (it does not come from MetaForge): the six trading posts with what they give (`families`, plus a special `seed`), the crate recipe per level (materials and gold per crate), the estimated ratios received/put in, and the limits (7 crates per trip, 3 peace + 3 conflict trips a day). The page downloads it every time it opens; if it is missing or broken, the Trade tab shows "Trade data unavailable" and everything else keeps working. To fix a value, edit the file on GitHub. A `null` ratio means "no data yet".
+Hand-written (it does not come from MetaForge): the six trading posts with what they give (`families`, plus a special `seed`), the crate recipe per level (materials and gold per crate), the estimated ratios received/put in, and the limits (7 crates per trip, 3 peace + 3 conflict trips a day). The page downloads it every time it opens; if it is missing or broken, the Trade tab shows "Trade data unavailable" and everything else keeps working. To fix a value, edit the file on GitHub. A `null` ratio means "no data yet". The Superior ratio is 1 because every Superior pack gives back exactly the base amount (1 for 1) in the game data; a good market can give more, so log real deliveries to correct it.
 ```json
 {
   "posts": { "watchers": { "name": "Watcher's Trading Post", "families": ["additive"], "seed": "pumpkin" } },
   "packs": { "standard": { "input": 9, "gold": 80 }, "fine": { "input": 3, "gold": 200 }, "superior": { "input": 1, "gold": 1000 } },
-  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": null }, "byFamily": { "stone": { "standard": 0.9 } } },
+  "ratios": { "default": { "standard": 1.22, "fine": 1.1, "superior": 1 }, "byFamily": { "stone": { "standard": 0.9 } } },
   "limits": { "perTrip": 7, "craftedCap": 10, "tripsPerDay": { "peace": 3, "conflict": 3 } }
 }
 ```
