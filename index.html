@@ -75,7 +75,7 @@ ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .r-uncommon { color: #5fd68a; } .r-rare { color: #5aa9ff; } .r-epic { color: #b388ff; } .r-legendary { color: #f5a524; }
 .line { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--divider); }
 /* tabella dei materiali: colonne a larghezza fissa, uguali per intestazione e righe, così i numeri stanno sotto i titoli */
-.line.mat { grid-template-columns: minmax(0, 1fr) 5rem 10.5rem 7rem; } /* rem, non em: l'intestazione ha un carattere più piccolo */
+.line.mat { grid-template-columns: minmax(0, 1fr) 5rem 10.5rem 7rem 6.5rem; } /* rem, non em: l'intestazione ha un carattere più piccolo */
 .line.mat .have { justify-content: center; }
 .ctr { text-align: center; }
 .ico.tipable { cursor: help; }
@@ -121,7 +121,7 @@ a { color: var(--accent); }
   header, main, footer { padding-left: 16px; padding-right: 16px; }
   .line { grid-template-columns: 1fr auto; } .line .num { text-align: left; }
   /* materiali su schermo stretto: nome su tutta la prima riga, sotto le tre colonne numeriche allineate all'intestazione */
-  .line.mat { grid-template-columns: 4rem minmax(0, 1fr) 5rem; }
+  .line.mat { grid-template-columns: 3rem minmax(0, 1fr) 3rem 4.5rem; }
   .have input { width: 4rem; } .have button { padding-left: 8px; padding-right: 8px; }
   .line.mat > :first-child { grid-column: 1 / -1; }
   .line.head.mat > :first-child { display: none; }
@@ -265,6 +265,13 @@ function computeNeeds(items, targets, opts) {
   // ordine di crafting: dal più basilare all'oggetto finale (ogni ingrediente ha profondità minore del suo uso)
   steps.sort((a, b) => a.depth - b.depth || a.craft.profession.localeCompare(b.craft.profession) || (a.id < b.id ? -1 : 1));
   return { materials, steps, gold, warnings };
+}
+
+// Gold per i materiali che ancora mancano, ai prezzi indicati dall'utente ({id: gold}); senza prezzo = 0 (li farmi tu).
+function materialsGold(materials, have, prices) {
+  let g = 0;
+  for (const [id, q] of Object.entries(materials)) g += Math.max(0, q - ((have && have[id]) || 0)) * ((prices && prices[id]) || 0);
+  return g;
 }
 
 // Ricetta diretta di ogni obiettivo (un solo livello, senza scendere nei lavorati), per la quantità richiesta.
@@ -577,10 +584,11 @@ function tipPosition({ x, y, w, h, vw, vh }) {
 }
 
 // ---- progressi dell'utente ----
-// Progress = {v:1, targets:[{id,qty}], have:{id:qty}, expandIntermediates:boolean, deliveries:[Delivery]}
+// Progress = {v:1, targets:[{id,qty}], have:{id:qty}, prices:{id:gold}, expandIntermediates:boolean, deliveries:[Delivery]}
+// prices: prezzo in gold per unità scelto dall'utente per un materiale (assente = 0, farmato); facoltativo nei file esportati prima.
 // Delivery = {family, tier, packs, input, received, at}: una consegna di trade goods annotata dall'utente (casse, materiali messi e ricevuti).
 function emptyProgress() {
-  return { v: 1, targets: [], have: {}, expandIntermediates: true, deliveries: [] };
+  return { v: 1, targets: [], have: {}, prices: {}, expandIntermediates: true, deliveries: [] };
 }
 
 function isDelivery(d) {
@@ -603,11 +611,15 @@ function parseProgress(text) {
     .map((t) => ({ id: t.id, qty: t.qty }));
   const have = {};
   for (const [id, qty] of Object.entries(raw.have)) if (Number.isInteger(qty) && qty >= 0) have[id] = qty;
+  const prices = {};
+  if (raw.prices && typeof raw.prices === 'object' && !Array.isArray(raw.prices)) {
+    for (const [id, g] of Object.entries(raw.prices)) if (Number.isInteger(g) && g > 0) prices[id] = g;
+  }
   // consegne: facoltative (i file esportati prima della tab Trade non le hanno); le voci non valide si scartano
   const deliveries = Array.isArray(raw.deliveries) ? raw.deliveries.filter(isDelivery).map((d) => ({
     family: d.family, tier: d.tier, packs: d.packs, input: d.input, received: d.received, at: typeof d.at === 'string' ? d.at : '',
   })) : [];
-  return { v: 1, targets, have, expandIntermediates: raw.expandIntermediates, deliveries };
+  return { v: 1, targets, have, prices, expandIntermediates: raw.expandIntermediates, deliveries };
 }
 
 // Dopo una patch alcuni oggetti possono sparire: li toglie dal progresso e li elenca in dropped.
@@ -617,7 +629,9 @@ function reconcile(p, items) {
   const targets = p.targets.filter((t) => keep(t.id));
   const have = {};
   for (const [id, qty] of Object.entries(p.have)) if (keep(id)) have[id] = qty;
-  return { progress: { v: 1, targets, have, expandIntermediates: p.expandIntermediates, deliveries: p.deliveries || [] }, dropped };
+  const prices = {};
+  for (const [id, g] of Object.entries(p.prices || {})) if (id in items) prices[id] = g; // un prezzo orfano si scarta senza avviso
+  return { progress: { v: 1, targets, have, prices, expandIntermediates: p.expandIntermediates, deliveries: p.deliveries || [] }, dropped };
 }
 
 // ---- indirizzo della pagina MetaForge di un oggetto: database/<categoria>/<slug> ----
@@ -755,7 +769,8 @@ const STRINGS = {
     h_farm: 'What you need to farm', farm_empty: 'Add an item above to see the materials you need.',
     h_recipe: 'To craft {name} you need',
     progress_line: '{have} / {need} materials', all_done: 'All collected ✓',
-    col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing',
+    col_material: 'Material', col_needed: 'Needed', col_have: 'Have', col_missing: 'Missing', col_price: 'Gold each',
+    price_of: 'Gold price of {name}', materials_cost: 'Materials still to buy:', grand_total: 'Total with materials:',
     dec: 'Decrease {name}', inc: 'Increase {name}', have_of: 'Owned: {name}', other: 'Other',
     open_mf: 'Open on MetaForge', tip_stats: 'Stats', tip_random: 'Random options', tip_craft: 'Crafting', tip_level: 'level {n}', tip_yield: 'Makes {n} per craft',
     h_steps: 'Crafting steps', stage: 'Stage {n}', patch_badge: 'patch',
@@ -802,7 +817,8 @@ const STRINGS = {
     h_farm: 'Cosa devi farmare', farm_empty: 'Aggiungi un oggetto qui sopra per vedere i materiali necessari.',
     h_recipe: 'Per craftare {name} servono',
     progress_line: '{have} / {need} materiali', all_done: 'Tutto raccolto ✓',
-    col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano',
+    col_material: 'Materiale', col_needed: 'Servono', col_have: 'Hai', col_missing: 'Mancano', col_price: 'Gold cad.',
+    price_of: 'Prezzo in gold di {name}', materials_cost: 'Materiali ancora da comprare:', grand_total: 'Totale con materiali:',
     dec: 'Meno {name}', inc: 'Più {name}', have_of: 'Posseduti: {name}', other: 'Altro',
     open_mf: 'Apri su MetaForge', tip_stats: 'Statistiche', tip_random: 'Opzioni casuali', tip_craft: 'Crafting', tip_level: 'livello {n}', tip_yield: 'Produce {n} per craft',
     h_steps: 'Passi di crafting', stage: 'Fase {n}', patch_badge: 'patch',
@@ -851,7 +867,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, loadTrade, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -978,6 +994,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
     const totalNeed = ids.reduce((s, id) => s + r.materials[id], 0);
     const totalHave = ids.reduce((s, id) => s + Math.min(have(id), r.materials[id]), 0);
     const allDone = ids.length > 0 && totalHave === totalNeed;
+    const mg = C.materialsGold(r.materials, progress.have, progress.prices);
 
     const groups = {};
     for (const id of ids) (groups[(items[id] && items[id].type) || t('other')] ||= []).push(id);
@@ -988,7 +1005,8 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
           `<span class="have"><button type="button" data-action="have-dec" data-id="${esc(id)}" aria-label="${esc(t('dec', { name: name(id) }))}">−</button>` +
           `<input type="number" min="0" value="${have(id)}" data-action="have-set" data-id="${esc(id)}" aria-label="${esc(t('have_of', { name: name(id) }))}">` +
           `<button type="button" data-action="have-inc" data-id="${esc(id)}" aria-label="${esc(t('inc', { name: name(id) }))}">+</button></span>` +
-          `<span class="num${missing ? '' : ' done'}">${missing ? fmt(missing) : '✓'}</span></div>`;
+          `<span class="num${missing ? '' : ' done'}">${missing ? fmt(missing) : '✓'}</span>` +
+          `<span class="have price"><input type="number" min="0" value="${progress.prices[id] || ''}" placeholder="0" data-action="price-set" data-id="${esc(id)}" aria-label="${esc(t('price_of', { name: name(id) }))}"></span></div>`;
       }).join('')
     ).join('');
 
@@ -1013,10 +1031,11 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
 
     box.innerHTML = `<h2>${esc(t('h_farm'))}</h2>${recipeHtml}
       <p><progress max="${totalNeed}" value="${totalHave}"></progress> ${esc(t('progress_line', { have: fmt(totalHave), need: fmt(totalNeed) }))}${allDone ? ` · <span class="done">${esc(t('all_done'))}</span>` : ''}</p>
-      <div class="line head mat"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span class="ctr">${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span></div>
+      <div class="line head mat"><span>${esc(t('col_material'))}</span><span class="num">${esc(t('col_needed'))}</span><span class="ctr">${esc(t('col_have'))}</span><span class="num">${esc(t('col_missing'))}</span><span class="num">${esc(t('col_price'))}</span></div>
       ${matHtml}
       <h2 style="margin-top:18px">${esc(t('h_steps'))}</h2><p class="muted">${esc(t('steps_hint'))}</p>${stepHtml}
       <p>${esc(t('total_cost'))} <strong>${fmt(r.gold)} Gold</strong></p>
+      ${mg ? `<p>${esc(t('materials_cost'))} <strong>${fmt(mg)} Gold</strong> · ${esc(t('grand_total'))} <strong>${fmt(r.gold + mg)} Gold</strong></p>` : ''}
       ${r.warnings.length ? `<p class="warn">${esc(t('warnings'))} ${r.warnings.map(esc).join(', ')}</p>` : ''}
       ${dropped.length ? `<p class="warn">${esc(t('dropped'))} ${dropped.map(esc).join(', ')}</p>` : ''}`;
   }
@@ -1211,6 +1230,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, directIngredients, tipPo
     switch (el.dataset.action) {
       case 'target-qty': { const t = progress.targets.find((x) => x.id === el.dataset.id); if (t) t.qty = Math.max(1, v); save(); render(); break; }
       case 'have-set': progress.have[el.dataset.id] = v; save(); renderResults(); break;
+      case 'price-set': if (v) progress.prices[el.dataset.id] = v; else delete progress.prices[el.dataset.id]; save(); renderResults(); break;
     }
     if (el.id === 'importFile' && el.files[0]) {
       el.files[0].text().then((text) => {
