@@ -106,3 +106,24 @@ test('loadRoutes: si riscarica, tiene in cache il file letto e senza rete lo usa
   assert.equal(offline.routes.length, 3);
   assert.equal(await C.loadRoutes('data/', { fetchFn: async () => ({ ok: false, status: 404 }), storage }), null);
 });
+
+// ---- collegamento col piano consigliato: quale pacco portare, da dove a dove ----
+const realRoutes = () => C.normalizeRoutes(require('../data/routes.json'));
+const realTrade = () => C.normalizeTrade(require('../data/trade.json'));
+const itemNames = { 'fine-lumber': { name: 'Fine Lumber' }, 'fine-additive': { name: 'Fine Additive' }, 'fine-archeum': { name: 'Fine Archeum' } };
+
+test('tradeRoute: Fine Additive si prende a Watcher\'s portando Fine Lumber da Seaglass Harbor', () => {
+  const r = C.tradeRoute(realRoutes(), realTrade(), { id: 'fine-additive', choice: 'trade', post: 'watchers', inputId: 'fine-lumber' }, itemNames);
+  assert.equal(r.pack, 'Fine Lumber Trade Goods');
+  assert.equal(r.from, 'Seaglass Harbor');
+  assert.equal(r.to, "Watcher's");
+  assert.equal(Math.round(r.seconds), 127);
+  assert.equal(r.metres, 938.954);
+});
+
+test('tradeRoute: nessuna route (non è un commercio, o il pacco non parte da lì) = null', () => {
+  const d = { id: 'fine-additive', post: 'watchers', inputId: 'fine-lumber' };
+  assert.equal(C.tradeRoute(realRoutes(), realTrade(), { ...d, choice: 'craft' }, itemNames), null);
+  assert.equal(C.tradeRoute(null, realTrade(), { ...d, choice: 'trade' }, itemNames), null);
+  assert.equal(C.tradeRoute(realRoutes(), realTrade(), { ...d, choice: 'trade', inputId: 'fine-ghost' }, itemNames), null);
+});

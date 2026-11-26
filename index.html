@@ -671,6 +671,32 @@ function routeEconomics(d, route, opts) {
   return { ranked: true, loads, seconds, payout, cost, net, perMinute: net / (seconds / 60) };
 }
 
+// Nome di una postazione di trade.json ("Watcher's Trading Post") nei dati delle route ("Watcher's"): uno è l'inizio dell'altro,
+// scritti in minuscolo e senza spazi né segni.
+function routePostName(routes, name) {
+  const norm = (s) => String(s).toLowerCase().replace(/[^a-z]/g, '');
+  const n = norm(name);
+  const p = routes.posts.find((x) => { const m = norm(x.name); return m && n && (n.startsWith(m) || m.startsWith(n)); });
+  return p ? p.name : null;
+}
+
+// Per un materiale che il piano consigliato prende col commercio (decision di recommendPlan): il pacco da portare, da quale
+// postazione e a quale, e quanto dura il viaggio. Il pacco è quello del materiale messo nelle casse ("Fine Lumber Trade Goods"),
+// la partenza è la postazione che lo dà, l'arrivo quella che dà il materiale. null se non è un commercio o la route non esiste.
+function tradeRoute(routes, trade, decision, items) {
+  if (!routes || !trade || !decision || decision.choice !== 'trade' || !decision.inputId) return null;
+  const src = tradeInfo(trade, decision.inputId);
+  const dst = trade.posts[decision.post];
+  const input = items && items[decision.inputId];
+  if (!src || !dst || !input) return null;
+  const from = routePostName(routes, trade.posts[src.post].name), to = routePostName(routes, dst.name);
+  if (!from || !to) return null;
+  const pack = `${input.name} Trade Goods`;
+  const r = routes.routes.find((x) => x.from === from && x.to === to && x.good.name === pack);
+  if (!r || r.metres === null) return null;
+  return { pack, from, to, metres: r.metres, seconds: r.metres / routes.speed };
+}
+
 // Classifica delle route che pagano in gold. total = tutte quelle con premio in gold; rows = quelle con costi noti, dalla migliore.
 // opts.by: 'perMinute' (di base) | 'net'.
 function rankRoutes(d, opts) {
@@ -983,6 +1009,7 @@ const STRINGS = {
     rt_drive_h: 'Drive times between posts', rt_all_h: 'All routes', rt_search_ph: 'Search packs, materials or posts…', rt_search_label: 'Search routes',
     rt_count: '{n} of {total} routes', rt_more: 'Showing the first {n}: refine the search to see the rest.', rt_none: 'No routes match.',
     rt_c_pack: 'Trade pack', rt_c_from: 'From', rt_c_to: 'To', rt_c_dist: 'Distance', rt_c_time: 'Time', rt_c_permin: 'Net gold / min',
+    reco_route: 'Route: {pack} · {from} → {to} · {time} one way ({km})',
     rt_c_payout: 'Payout', rt_c_cost: 'Cost', rt_c_net: 'Net gold', rt_c_reward: 'Reward', rt_source: 'Game data build {build}, checked {checked}.',
   },
   it: {
@@ -1047,6 +1074,7 @@ const STRINGS = {
     rt_drive_h: 'Tempi di viaggio tra le postazioni', rt_all_h: 'Tutte le route', rt_search_ph: 'Cerca pacchi, materiali o postazioni…', rt_search_label: 'Cerca route',
     rt_count: '{n} route su {total}', rt_more: 'Mostro le prime {n}: restringi la ricerca per vedere le altre.', rt_none: 'Nessuna route corrisponde.',
     rt_c_pack: 'Pacco', rt_c_from: 'Da', rt_c_to: 'A', rt_c_dist: 'Distanza', rt_c_time: 'Tempo', rt_c_permin: 'Gold netto / min',
+    reco_route: 'Route: {pack} · da {from} a {to} · {time} all\'andata ({km})',
     rt_c_payout: 'Pagamento', rt_c_cost: 'Costo', rt_c_net: 'Gold netto', rt_c_reward: 'Premio', rt_source: 'Dati di gioco build {build}, controllati il {checked}.',
   },
 };
@@ -1062,7 +1090,7 @@ function translator(lang) {
   };
 }
 
-Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, normalizeRoutes, driveSeconds, routeEconomics, rankRoutes, loadTrade, loadRoutes, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, parsePlans, serializePlans, upsertPlan, planProgress, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
+Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIngredients, tipPosition, normalizeTrade, tradeInfo, effectiveRatio, tradePlan, decideItems, recommendPlan, normalizeRoutes, driveSeconds, routeEconomics, rankRoutes, tradeRoute, loadTrade, loadRoutes, isDelivery, emptyProgress, serializeProgress, parseProgress, reconcile, buildHash, parseHash, parsePlans, serializePlans, upsertPlan, planProgress, loadData, applyOverrides, sortByRarity, embeddedFetch, itemUrl, STRINGS, translator });
 </script>
 <script id="ui">
 (function () {
@@ -1330,9 +1358,13 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
         ? t('reco_trade_detail', { post: trade.posts[d.post].name, crates: fmt(d.crates), qty: fmt(d.crates * trade.packs[d.tier].input), input: name(d.inputId), trips: fmt(d.trips), days: fmt(d.days) })
         : t(whyKey[d.why] || 'reco_why_cost');
       const ratioLabel = isTrade ? (d.ratioSource === 'log' ? t('ratio_log', { n: d.ratioN, r: fmtRatio(d.ratio) }) : t('ratio_estimate', { r: fmtRatio(d.ratio) })) : '';
+      // quale pacco portare, da dove a dove e quanto dura il viaggio (solo con i dati delle route)
+      const route = isTrade ? C.tradeRoute(routes, trade, d, items) : null;
+      const routeLabel = route ? t('reco_route', { pack: route.pack, from: route.from, to: route.to, time: dur(route.seconds), km: km(route.metres) }) : '';
       return `<div class="tline"><span class="nm">${icon(d.id, true)}<span>${link(d.id)} ×${fmt(d.units)}</span></span>` +
         `<span class="badge${isTrade ? '' : ' dim'}">${esc(t(isTrade ? 'reco_trade' : 'reco_craft'))}</span>` +
-        `<span class="tnums">${esc(detail)}</span>` + (ratioLabel ? `<small class="ratio">${esc(ratioLabel)}</small>` : '') + `</div>`;
+        `<span class="tnums">${esc(detail)}</span>` + (ratioLabel ? `<small class="ratio">${esc(ratioLabel)}</small>` : '') +
+        (routeLabel ? `<small class="ratio">${esc(routeLabel)}</small>` : '') + `</div>`;
     }).join('');
     const P = reco.plan, B = reco.baseline;
     const rawHtml = Object.keys(P.rawMaterials).sort((a, b) => name(a).localeCompare(name(b))).map((id) =>
