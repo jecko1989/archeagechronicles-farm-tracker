@@ -119,6 +119,7 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .rt td.n, .rt th.n { text-align: right; white-space: nowrap; }
 .rt td small { display: block; color: var(--muted); }
 .rtctl { align-items: flex-end; margin: 8px 0; }
+.pager { align-items: center; justify-content: center; margin: 4px 0 14px; }
 .rtctl label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; color: var(--muted); }
 .rtctl label.chk { flex-direction: row; align-items: center; gap: 6px; padding-bottom: 6px; }
 .rtctl input[type=number] { width: 6rem; }
@@ -697,14 +698,15 @@ function tradeRoute(routes, trade, decision, items) {
   return { pack, from, to, metres: r.metres, seconds: r.metres / routes.speed };
 }
 
-// Classifica delle route che pagano in gold. total = tutte quelle con premio in gold; rows = quelle con costi noti, dalla migliore.
+// Classifica delle route che pagano in gold. total = tutte quelle con premio in gold; rows = quelle con costi noti, dalla migliore;
+// unpriced = le altre route in gold (pacco da comprare a prezzo ignoto): il pagamento c'è, il guadagno no.
 // opts.by: 'perMinute' (di base) | 'net'.
 function rankRoutes(d, opts) {
   const by = opts && opts.by === 'net' ? 'net' : 'perMinute';
   const gold = d.routes.filter((r) => r.reward === 'Gold');
-  const rows = gold.map((route) => ({ route, econ: routeEconomics(d, route, opts) })).filter((x) => x.econ.ranked)
-    .sort((a, b) => b.econ[by] - a.econ[by]);
-  return { total: gold.length, rows };
+  const all = gold.map((route) => ({ route, econ: routeEconomics(d, route, opts) }));
+  const rows = all.filter((x) => x.econ.ranked).sort((a, b) => b.econ[by] - a.econ[by]);
+  return { total: gold.length, rows, unpriced: all.filter((x) => !x.econ.ranked) };
 }
 
 // Posizione del tooltip (px, coordinate dello schermo): 14px a destra e sotto il puntatore, e sempre dentro lo schermo.
@@ -852,8 +854,8 @@ function sortByRarity(entries) {
 }
 
 // ---- correzioni manuali delle ricette (data/overrides.json) ----
-// overrides: {id: {ingredients?:[{id,qty}], gold?, yield?, note?}}. Si applicano alla prima ricetta (crafts[0]);
-// note diventa craft.patch. Serve quando il gioco cambia le ricette prima che la fonte dei dati si aggiorni.
+// overrides: {id: {ingredients?:[{id,qty}], gold?, yield?, note?, rarity?}}. Si applicano alla prima ricetta (crafts[0]);
+// note diventa craft.patch; rarity cambia la rarità dell'oggetto (anche grezzo). Serve quando il gioco cambia le ricette prima che la fonte dei dati si aggiorni.
 // Ignora id sconosciuti, materiali grezzi e correzioni non valide; non modifica l'input.
 function applyOverrides(items, overrides) {
   const out = { ...items };
@@ -861,7 +863,10 @@ function applyOverrides(items, overrides) {
     a.every((g) => g && typeof g.id === 'string' && Number.isInteger(g.qty) && g.qty > 0);
   for (const [id, ov] of Object.entries(overrides || {})) {
     const it = items[id];
-    if (!it || !it.crafts || !it.crafts.length || !ov || typeof ov !== 'object') continue;
+    if (!it || !ov || typeof ov !== 'object') continue;
+    // rarity vale anche per i materiali grezzi (es. un materiale diventato Rare con una patch)
+    if (typeof ov.rarity === 'string' && RARITY_ORDER.includes(ov.rarity.toLowerCase())) out[id] = { ...it, rarity: ov.rarity };
+    if (!it.crafts || !it.crafts.length) continue;
     const craft = { ...it.crafts[0] };
     let changed = false;
     if ('ingredients' in ov) {
@@ -873,7 +878,7 @@ function applyOverrides(items, overrides) {
     if (Number.isInteger(ov.yield) && ov.yield > 0) { craft.yield = ov.yield; changed = true; }
     if (!changed) continue;
     if (typeof ov.note === 'string') craft.patch = ov.note;
-    out[id] = { ...it, crafts: [craft, ...it.crafts.slice(1)] };
+    out[id] = { ...out[id], crafts: [craft, ...it.crafts.slice(1)] };
   }
   return out;
 }
@@ -1005,9 +1010,9 @@ const STRINGS = {
     routes_unavailable: 'Route data unavailable.',
     rt_packs: 'Packs', rt_market: 'Market (%)', rt_rent: 'Rent a wagon ({gold} gold per load of {n})', rt_rank_by: 'Rank by',
     rt_by_min: 'Net gold per minute', rt_by_net: 'Net gold',
-    rt_rank_h: 'Gold-paying routes', rt_rank_note: '{shown} of {total} gold-paying routes ranked at {market}% market, travelling at {speed} m/s (the wagon top speed, best case). Farmed and gathered inputs count as 0 gold; crafting fees, packing, the certificate and the wagon are counted. Routes that pay in items, or need a pack bought at an unknown price, are not ranked: find them below.',
+    rt_rank_h: 'Gold-paying routes', rt_rank_note: '{shown} of {total} gold-paying routes ranked at {market}% market, travelling at {speed} m/s (the wagon top speed, best case). Farmed and gathered inputs count as 0 gold; crafting fees, packing, the certificate and the wagon are counted. Gold routes that need a pack bought at an unknown price come last, without cost or net; routes that pay in items are in the full list below.',
     rt_drive_h: 'Drive times between posts', rt_all_h: 'All routes', rt_search_ph: 'Search packs, materials or posts…', rt_search_label: 'Search routes',
-    rt_count: '{n} of {total} routes', rt_more: 'Showing the first {n}: refine the search to see the rest.', rt_none: 'No routes match.',
+    rt_count: '{n} of {total} routes', rt_page: 'Page {p} of {n}', rt_prev: 'Previous page', rt_next: 'Next page', rt_none: 'No routes match.',
     rt_c_pack: 'Trade pack', rt_c_from: 'From', rt_c_to: 'To', rt_c_dist: 'Distance', rt_c_time: 'Time', rt_c_permin: 'Net gold / min',
     reco_route: 'Route: {pack} · {from} → {to} · {time} one way ({km})',
     rt_c_payout: 'Payout', rt_c_cost: 'Cost', rt_c_net: 'Net gold', rt_c_reward: 'Reward', rt_source: 'Game data build {build}, checked {checked}.',
@@ -1070,9 +1075,9 @@ const STRINGS = {
     routes_unavailable: 'Dati delle route non disponibili.',
     rt_packs: 'Pacchi', rt_market: 'Mercato (%)', rt_rent: 'Noleggia un carro ({gold} gold per carico da {n})', rt_rank_by: 'Ordina per',
     rt_by_min: 'Gold netto al minuto', rt_by_net: 'Gold netto',
-    rt_rank_h: 'Route che pagano in gold', rt_rank_note: '{shown} route su {total} che pagano in gold, con mercato al {market}% e viaggio a {speed} m/s (la velocità massima del carro, caso migliore). Materiali coltivati e raccolti contano 0 gold; contano commissioni di crafting, imballaggio, certificato e carro. Le route che pagano in oggetti, o con un pacco da comprare a prezzo ignoto, non sono in classifica: le trovi qui sotto.',
+    rt_rank_h: 'Route che pagano in gold', rt_rank_note: '{shown} route su {total} che pagano in gold, con mercato al {market}% e viaggio a {speed} m/s (la velocità massima del carro, caso migliore). Materiali coltivati e raccolti contano 0 gold; contano commissioni di crafting, imballaggio, certificato e carro. Le route in gold con un pacco da comprare a prezzo ignoto sono in fondo, senza costo né guadagno; quelle che pagano in oggetti sono nella lista completa qui sotto.',
     rt_drive_h: 'Tempi di viaggio tra le postazioni', rt_all_h: 'Tutte le route', rt_search_ph: 'Cerca pacchi, materiali o postazioni…', rt_search_label: 'Cerca route',
-    rt_count: '{n} route su {total}', rt_more: 'Mostro le prime {n}: restringi la ricerca per vedere le altre.', rt_none: 'Nessuna route corrisponde.',
+    rt_count: '{n} route su {total}', rt_page: 'Pagina {p} di {n}', rt_prev: 'Pagina precedente', rt_next: 'Pagina successiva', rt_none: 'Nessuna route corrisponde.',
     rt_c_pack: 'Pacco', rt_c_from: 'Da', rt_c_to: 'A', rt_c_dist: 'Distanza', rt_c_time: 'Tempo', rt_c_permin: 'Gold netto / min',
     reco_route: 'Route: {pack} · da {from} a {to} · {time} all\'andata ({km})',
     rt_c_payout: 'Pagamento', rt_c_cost: 'Costo', rt_c_net: 'Gold netto', rt_c_reward: 'Premio', rt_source: 'Dati di gioco build {build}, controllati il {checked}.',
@@ -1118,7 +1123,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   let trade = null; // data/trade.json normalizzato (null = non disponibile)
   let routes = null; // data/routes.json normalizzato (null = non disponibile)
   let tradeMode = 'items'; // modo della tab Trade: items = materiali per i miei oggetti, routes = esplora le route (non salvato)
-  const rt = { packs: 1, market: 100, rent: true, by: 'perMinute', q: '' }; // impostazioni della vista route (non salvate)
+  const rt = { packs: 1, market: 100, rent: true, by: 'perMinute', q: '', rankPage: 0, allPage: 0 }; // impostazioni della vista route (non salvate)
   let tab = 'craft'; // craft | trade
   let tripsMode = 'peace'; // peace = solo viaggi in pace; both = pace + conflitto (non salvato)
   let objective = 'farm'; // obiettivo del piano consigliato: farm = farmare meno, gold = gold spesi (non salvato)
@@ -1290,25 +1295,46 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   // ---- tab Trade, modo "esplora route": classifica dei pacchi che pagano in gold, tempi di viaggio, tutte le route ----
   const dur = (s) => (s === null ? '–' : `${Math.floor(s / 60)}m ${String(Math.round(s % 60)).padStart(2, '0')}s`);
   const km = (m) => (m === null ? '–' : (m / 1000).toLocaleString(LOCALE[lang], { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km');
-  const RT_MAX_ROWS = 100;
+  const RT_PAGE = 10;
+  // pagina corrente (0-based) di rt[key], riportata dentro i limiti se le righe sono diminuite
+  const pageOf = (key, n) => (rt[key] = Math.max(0, Math.min(rt[key], Math.ceil(n / RT_PAGE) - 1)));
+  const pagerHtml = (key, n) => {
+    const pages = Math.ceil(n / RT_PAGE), page = rt[key];
+    if (pages < 2) return '';
+    const b = (label, aria, to, off) => `<button type="button" class="chip" data-action="rt-page" data-k="${key}" data-v="${to}" aria-label="${esc(t(aria))}"${off ? ' disabled' : ''}>${label}</button>`;
+    return `<div class="row pager">${b('‹', 'rt_prev', page - 1, page === 0)}<span class="muted">${esc(t('rt_page', { p: page + 1, n: pages }))}</span>${b('›', 'rt_next', page + 1, page === pages - 1)}</div>`;
+  };
   function routesAllHtml() {
     const q = rt.q.trim().toLowerCase();
     const hay = (r) => `${r.good.name} ${r.good.company} ${r.from} ${r.to} ${r.reward}`.toLowerCase();
     const rows = routes.routes.filter((r) => !q || q.split(/\s+/).every((w) => hay(r).includes(w)));
-    const shown = rows.slice(0, RT_MAX_ROWS);
+    const page = pageOf('allPage', rows.length);
+    const shown = rows.slice(page * RT_PAGE, (page + 1) * RT_PAGE);
     const rewardOf = (r) => (r.reward === 'Gold' ? `${fmt(Math.round(r.units * rt.market / 100))} Gold` : `${fmt(r.units)} × ${esc(r.reward)}`);
-    return `<p class="muted">${esc(t('rt_count', { n: fmt(rows.length), total: fmt(routes.routes.length) }))}${rows.length > shown.length ? ' · ' + esc(t('rt_more', { n: RT_MAX_ROWS })) : ''}</p>` +
+    return `<p class="muted">${esc(t('rt_count', { n: fmt(rows.length), total: fmt(routes.routes.length) }))}</p>` +
       (shown.length
         ? `<div class="rt-wrap"><table class="rt"><thead><tr><th>${esc(t('rt_c_pack'))}</th><th>${esc(t('rt_c_from'))}</th><th>${esc(t('rt_c_to'))}</th><th>${esc(t('rt_c_reward'))}</th><th class="n">${esc(t('rt_c_dist'))}</th><th class="n">${esc(t('rt_c_time'))}</th></tr></thead><tbody>` +
           shown.map((r) => `<tr><td>${esc(r.good.name)}<small>${esc(r.good.type)}</small></td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td>${rewardOf(r)}</td><td class="n">${km(r.metres)}</td><td class="n">${dur(r.metres ? r.metres / routes.speed : null)}</td></tr>`).join('') +
-          `</tbody></table></div>`
+          `</tbody></table></div>${pagerHtml('allPage', rows.length)}`
         : `<p class="muted">${esc(t('rt_none'))}</p>`);
+  }
+  const rtOpts = () => ({ packs: rt.packs, market: rt.market, rent: rt.rent, by: rt.by });
+  // classifica: prima le route con guadagno noto, poi quelle in gold con pacco da comprare a prezzo ignoto (solo pagamento e tempo)
+  function rankTableHtml() {
+    const rank = C.rankRoutes(routes, rtOpts());
+    const list = [...rank.rows, ...rank.unpriced];
+    const page = pageOf('rankPage', list.length);
+    const row = ({ route: r, econ: e }, i) => {
+      const n = (v) => (e.ranked ? fmt(Math.round(v)) : '–');
+      return `<tr><td>${e.ranked ? i + 1 : '–'}</td><td>${esc(r.good.name)}<small>${esc(r.good.type)}</small></td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td class="n">${km(r.metres)}</td><td class="n">${dur(e.seconds)}</td>` +
+        `<td class="n"><strong>${e.ranked ? fmt(Math.round(e.perMinute * 10) / 10) : '–'}</strong></td><td class="n">${fmt(Math.round(e.ranked ? e.payout : r.units * rt.market / 100 * rt.packs))}</td><td class="n">${n(e.cost)}</td><td class="n">${n(e.net)}</td></tr>`;
+    };
+    return `<div class="rt-wrap"><table class="rt"><thead><tr><th>#</th><th>${esc(t('rt_c_pack'))}</th><th>${esc(t('rt_c_from'))}</th><th>${esc(t('rt_c_to'))}</th><th class="n">${esc(t('rt_c_dist'))}</th><th class="n">${esc(t('rt_c_time'))}</th><th class="n">${esc(t('rt_c_permin'))}</th><th class="n">${esc(t('rt_c_payout'))}</th><th class="n">${esc(t('rt_c_cost'))}</th><th class="n">${esc(t('rt_c_net'))}</th></tr></thead><tbody>` +
+      list.slice(page * RT_PAGE, (page + 1) * RT_PAGE).map((x, i) => row(x, page * RT_PAGE + i)).join('') + `</tbody></table></div>${pagerHtml('rankPage', list.length)}`;
   }
   function routesView() {
     if (!routes) return `<p class="warn">${esc(t('routes_unavailable'))}</p>`;
-    const opts = { packs: rt.packs, market: rt.market, rent: rt.rent, by: rt.by };
-    const rank = C.rankRoutes(routes, opts);
-    const top = rank.rows.slice(0, 30);
+    const rank = C.rankRoutes(routes, rtOpts());
     const ctl = `<div class="row rtctl">` +
       `<label>${esc(t('rt_packs'))} <input type="number" min="1" value="${rt.packs}" data-action="rt-set" data-k="packs"></label>` +
       `<label>${esc(t('rt_market'))} <input type="number" min="1" value="${rt.market}" data-action="rt-set" data-k="market"></label>` +
@@ -1316,9 +1342,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       `<label>${esc(t('rt_rank_by'))} <select data-action="rt-set" data-k="by"><option value="perMinute"${rt.by === 'perMinute' ? ' selected' : ''}>${esc(t('rt_by_min'))}</option><option value="net"${rt.by === 'net' ? ' selected' : ''}>${esc(t('rt_by_net'))}</option></select></label></div>`;
     const rankHtml = `<h3>${esc(t('rt_rank_h'))}</h3>${ctl}` +
       `<p class="muted">${esc(t('rt_rank_note', { shown: fmt(rank.rows.length), total: fmt(rank.total), market: fmt(rt.market), speed: routes.speed.toLocaleString(LOCALE[lang]) }))}</p>` +
-      `<div class="rt-wrap"><table class="rt"><thead><tr><th>#</th><th>${esc(t('rt_c_pack'))}</th><th>${esc(t('rt_c_from'))}</th><th>${esc(t('rt_c_to'))}</th><th class="n">${esc(t('rt_c_dist'))}</th><th class="n">${esc(t('rt_c_time'))}</th><th class="n">${esc(t('rt_c_permin'))}</th><th class="n">${esc(t('rt_c_payout'))}</th><th class="n">${esc(t('rt_c_cost'))}</th><th class="n">${esc(t('rt_c_net'))}</th></tr></thead><tbody>` +
-      top.map(({ route: r, econ: e }, i) => `<tr><td>${i + 1}</td><td>${esc(r.good.name)}<small>${esc(r.good.type)}</small></td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td class="n">${km(r.metres)}</td><td class="n">${dur(e.seconds)}</td><td class="n"><strong>${fmt(Math.round(e.perMinute * 10) / 10)}</strong></td><td class="n">${fmt(Math.round(e.payout))}</td><td class="n">${fmt(Math.round(e.cost))}</td><td class="n">${fmt(Math.round(e.net))}</td></tr>`).join('') +
-      `</tbody></table></div>`;
+      `<div id="rtRank">${rankTableHtml()}</div>`;
     // matrice dei tempi: righe = postazione di partenza, colonne = postazione di arrivo
     const posts = routes.posts;
     const driveHtml = `<h3>${esc(t('rt_drive_h'))}</h3><div class="rt-wrap"><table class="rt"><thead><tr><th></th>${posts.map((p) => `<th>${esc(p.name)}</th>`).join('')}</tr></thead><tbody>` +
@@ -1549,6 +1573,12 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       case 'retry': start(); break;
       case 'lang': setLang(b.dataset.v); break;
       case 'tab': setTab(b.dataset.v); break;
+      case 'rt-page': {
+        const k = b.dataset.k === 'allPage' ? 'allPage' : 'rankPage';
+        rt[k] = Math.max(0, parseInt(b.dataset.v, 10) || 0);
+        if (k === 'rankPage') $('#rtRank').innerHTML = rankTableHtml(); else $('#rtAll').innerHTML = routesAllHtml();
+        break;
+      }
       case 'trade-mode': tradeMode = b.dataset.v === 'routes' ? 'routes' : 'items'; renderTrade(); break;
       case 'trips': tripsMode = b.dataset.v === 'both' ? 'both' : 'peace'; renderTrade(); break;
       case 'objective': objective = b.dataset.v === 'gold' ? 'gold' : 'farm'; renderTrade(); break;
@@ -1558,7 +1588,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
   });
   document.addEventListener('input', (e) => {
     if (e.target.id === 'logPacks') fillLogInput();
-    if (e.target.id === 'rtSearch' && routes) { rt.q = e.target.value; $('#rtAll').innerHTML = routesAllHtml(); } // solo la tabella: la casella di ricerca tiene il fuoco
+    if (e.target.id === 'rtSearch' && routes) { rt.q = e.target.value; rt.allPage = 0; $('#rtAll').innerHTML = routesAllHtml(); } // solo la tabella: la casella di ricerca tiene il fuoco
   });
   document.addEventListener('change', (e) => {
     const el = e.target;
@@ -1570,6 +1600,7 @@ Object.assign((globalThis.__core = {}), { computeNeeds, materialsGold, directIng
       case 'step-done': { const id = el.dataset.id, need = parseInt(el.dataset.need, 10) || 0; progress.have[id] = el.checked ? Math.max(progress.have[id] || 0, need) : 0; save(); renderResults(); break; }
       case 'rt-set': {
         const k = el.dataset.k;
+        rt.rankPage = 0;
         if (k === 'rent') rt.rent = el.checked;
         else if (k === 'by') rt.by = el.value === 'net' ? 'net' : 'perMinute';
         else rt[k] = Math.max(1, v);

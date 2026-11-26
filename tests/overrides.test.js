@@ -27,6 +27,15 @@ test('la nota diventa craft.patch, mostrata nell interfaccia', () => {
   assert.equal(r.textile.crafts[0].patch, 'Patch 2026-11-17');
 });
 
+test('rarity cambia la rarità anche di un materiale grezzo; un valore sconosciuto è ignorato', () => {
+  const items = loadSample();
+  assert.equal(applyOverrides(items, { rag: { rarity: 'Rare' } }).rag.rarity, 'Rare');
+  assert.deepEqual(applyOverrides(items, { rag: { rarity: 'Mythic' } }), items);
+  const both = applyOverrides(items, { textile: { rarity: 'Rare', gold: 50 } }).textile;
+  assert.equal(both.rarity, 'Rare');
+  assert.equal(both.crafts[0].gold, 50);
+});
+
 test('non modifica l oggetto originale', () => {
   const items = loadSample();
   const before = JSON.stringify(items);

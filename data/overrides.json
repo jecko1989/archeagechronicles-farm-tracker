@@ -18,5 +18,25 @@
       }
     ],
     "gold": 125
+  },
+  "wolf-molar": {
+    "rarity": "Rare",
+    "note": "Patch notes: grade changed to Rare. From the patch notes, not yet in MetaForge."
+  },
+  "crocodile-hide": {
+    "rarity": "Rare",
+    "note": "Patch notes: grade changed to Rare. From the patch notes, not yet in MetaForge."
+  },
+  "turtle-shell-fragment": {
+    "rarity": "Rare",
+    "note": "Patch notes: grade changed to Rare. From the patch notes, not yet in MetaForge."
+  },
+  "buffalo-horn": {
+    "rarity": "Rare",
+    "note": "Patch notes: grade changed to Rare. From the patch notes, not yet in MetaForge."
+  },
+  "mountain-goat-wool": {
+    "rarity": "Rare",
+    "note": "Patch notes: grade changed to Rare. From the patch notes, not yet in MetaForge."
   }
 }

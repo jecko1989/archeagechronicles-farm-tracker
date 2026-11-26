@@ -87,6 +87,8 @@ test('rankRoutes: solo premi in gold con prezzo noto, per gold al minuto o per g
   assert.equal(r.total, 2);
   assert.equal(r.rows.length, 1);
   assert.equal(r.rows[0].route.good.id, 1109);
+  assert.equal(r.unpriced.length, 1); // il pacco da comprare in gold senza prezzo resta in elenco, senza guadagno
+  assert.equal(r.unpriced[0].route.good.id, 1101);
   assert.equal(C.rankRoutes(d, { packs: 1, market: 100, rent: true, by: 'net' }).rows.length, 1);
 });
 
